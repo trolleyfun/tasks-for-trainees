@@ -64,7 +64,7 @@ $ans_array = $arResult["arAnswers"];
 
             <?php 
             if (isset($ans_array["phone"]) && is_array($ans_array["phone"])) {
-                /* ID of E-mail Answer */
+                /* ID of Phone Answer */
                 $ans_id = $ans_array["phone"][0]["ID"];
                 $inp_name = "form_text_" . $ans_id;
 			?>
@@ -80,7 +80,7 @@ $ans_array = $arResult["arAnswers"];
 
         <?php 
         if (isset($ans_array["message"]) && is_array($ans_array["message"])) {
-            /* ID of E-mail Answer */
+            /* ID of Message Answer */
             $ans_id = $ans_array["message"][0]["ID"];
             $inp_name = "form_textarea_" . $ans_id;
         ?>
