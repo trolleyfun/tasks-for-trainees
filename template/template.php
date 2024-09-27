@@ -87,8 +87,7 @@ $ans_array = $arResult["arAnswers"];
             <div class="contact-form__form-message">
                 <div class="input"><label class="input__label" for="medicine_message">
                     <div class="input__label-text">Сообщение</div>
-                    <textarea class="input__input" type="text" id="medicine_message" name="<?=$inp_name?>" value="">
-                    </textarea>
+                    <textarea class="input__input" type="text" id="medicine_message" name="<?=$inp_name?>" value=""></textarea>
                     <div class="input__notification"></div>
                 </label></div>
             </div>
