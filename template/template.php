@@ -6,6 +6,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 /* Array of Form Answers */
 $ans_array = $arResult["arAnswers"];
 ?>
+
 <div class="contact-form">
     <div class="contact-form__head">
         <div class="contact-form__head-title"><?=$arResult['FORM_TITLE']?></div>
@@ -27,8 +28,7 @@ $ans_array = $arResult["arAnswers"];
             ?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_name">
                     <div class="input__label-text">Ваше имя*</div>
-                    <input class="input__input" type="text" id="medicine_name" name="<?=$inp_name?>" value=""
-                        required="">
+                    <input class="input__input" type="text" id="medicine_name" name="<?=$inp_name?>" value="" required="">
                     <div class="input__notification">Поле должно содержать не менее 3-х символов</div>
                 </label></div>
             <?php } ?>
@@ -41,8 +41,7 @@ $ans_array = $arResult["arAnswers"];
 			?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_company">
                     <div class="input__label-text">Компания/Должность*</div>
-                    <input class="input__input" type="text" id="medicine_company" name="<?=$inp_name?>" value=""
-                        required="">
+                    <input class="input__input" type="text" id="medicine_company" name="<?=$inp_name?>" value="" required="">
                     <div class="input__notification">Поле должно содержать не менее 3-х символов</div>
                 </label></div>
             <?php } ?>
@@ -55,8 +54,7 @@ $ans_array = $arResult["arAnswers"];
 			?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_email">
                     <div class="input__label-text">Email*</div>
-                    <input class="input__input" type="email" id="medicine_email" name="<?=$inp_name?>" value=""
-                        required="">
+                    <input class="input__input" type="email" id="medicine_email" name="<?=$inp_name?>" value="" required="">
                     <div class="input__notification">Неверный формат почты</div>
                 </label></div>
             <?php } ?>
@@ -69,9 +67,7 @@ $ans_array = $arResult["arAnswers"];
 			?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_phone">
                     <div class="input__label-text">Номер телефона*</div>
-                    <input class="input__input" type="tel" id="medicine_phone"
-                        data-inputmask="'mask': '+79999999999', 'clearIncomplete': 'true'" maxlength="12"
-                        x-autocompletetype="phone-full" name="<?=$inp_name?>" value="" required="">
+                    <input class="input__input" type="tel" id="medicine_phone" data-inputmask="'mask': '+79999999999', 'clearIncomplete': 'true'" maxlength="12" x-autocompletetype="phone-full" name="<?=$inp_name?>" value="" required="">
                 </label></div>
             <?php } ?>
         </div>
@@ -86,14 +82,13 @@ $ans_array = $arResult["arAnswers"];
             <div class="contact-form__form-message">
                 <div class="input"><label class="input__label" for="medicine_message">
                     <div class="input__label-text">Сообщение</div>
-                    <textarea class="input__input" type="text" id="medicine_message" name="<?=$inp_name?>"
-                            value=""></textarea>
+                    <textarea class="input__input" type="text" id="medicine_message" name="<?=$inp_name?>" value=""></textarea>
                     <div class="input__notification"></div>
                 </label></div>
             </div>
             <!-- /.contact-form__form-message -->
         <?php } ?>
-        
+
         <div class="contact-form__bottom">
             <div class="contact-form__bottom-policy">Нажимая &laquo;Отправить&raquo;, Вы&nbsp;подтверждаете, что
                 ознакомлены, полностью согласны и&nbsp;принимаете условия &laquo;Согласия на&nbsp;обработку персональных
