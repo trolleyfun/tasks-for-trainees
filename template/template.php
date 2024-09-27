@@ -50,7 +50,7 @@ $ans_array = $arResult["arAnswers"];
 
             <?php 
             if (isset($ans_array["email"]) && is_array($ans_array["email"])) {
-                /* ID of E-mail Answer */
+                /* ID of Email Answer */
                 $ans_id = $ans_array["email"][0]["ID"];
                 $inp_name = "form_email_" . $ans_id;
 			?>
@@ -104,5 +104,6 @@ $ans_array = $arResult["arAnswers"];
                 <div class="form-button__title">Оставить заявку</div>
             </button>
         </div>
+        <!-- /.contact-form__bottom -->
     </form>
 </div>
