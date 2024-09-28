@@ -4,7 +4,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 }
 
 /* Array of Form Answers */
-$ans_array = $arResult["arAnswers"];
+$ans_array = $arResult['arAnswers'];
 ?>
 
 <div class="contact-form">
@@ -14,16 +14,17 @@ $ans_array = $arResult["arAnswers"];
             <div class="contact-form__head-text"><?=$arResult['FORM_DESCRIPTION']?></div>
         <?php } ?>
     </div>
-    <form class="contact-form__form" action="<?=POST_FORM_ACTION_URI?>" method="POST">
+    <form name="<?=$arResult['WEB_FORM_NAME']?>" class="contact-form__form" action="<?=POST_FORM_ACTION_URI?>"
+    method="POST">
         <input type="hidden" name="WEB_FORM_ID" value="<?=$arParams['WEB_FORM_ID']?>">
-        <input type="hidden" name="web_form_apply" value="Y">
+        <input type="hidden" name="web_form_submit" value="Y">
         <?=bitrix_sessid_post()?>
 
         <div class="contact-form__form-inputs">
             <?php 
-            if (isset($ans_array["name"]) && is_array($ans_array["name"])) {
+            if (isset($ans_array['name']) && is_array($ans_array['name'])) {
                 /* ID of Name Answer */
-                $ans_id = $ans_array["name"][0]["ID"];
+                $ans_id = $ans_array['name'][0]['ID'];
                 $inp_name = "form_text_" . $ans_id;
             ?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_name">
@@ -35,9 +36,9 @@ $ans_array = $arResult["arAnswers"];
             <?php } ?>
 
             <?php 
-            if (isset($ans_array["company"]) && is_array($ans_array["name"])) {
+            if (isset($ans_array['company']) && is_array($ans_array['company'])) {
                 /* ID of Company Answer */
-                $ans_id = $ans_array["company"][0]["ID"];
+                $ans_id = $ans_array['company'][0]['ID'];
                 $inp_name = "form_text_" . $ans_id;
 			?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_company">
@@ -49,9 +50,9 @@ $ans_array = $arResult["arAnswers"];
             <?php } ?>
 
             <?php 
-            if (isset($ans_array["email"]) && is_array($ans_array["email"])) {
+            if (isset($ans_array['email']) && is_array($ans_array['email'])) {
                 /* ID of Email Answer */
-                $ans_id = $ans_array["email"][0]["ID"];
+                $ans_id = $ans_array['email'][0]['ID'];
                 $inp_name = "form_email_" . $ans_id;
 			?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_email">
@@ -63,9 +64,9 @@ $ans_array = $arResult["arAnswers"];
             <?php } ?>
 
             <?php 
-            if (isset($ans_array["phone"]) && is_array($ans_array["phone"])) {
+            if (isset($ans_array['phone']) && is_array($ans_array['phone'])) {
                 /* ID of Phone Answer */
-                $ans_id = $ans_array["phone"][0]["ID"];
+                $ans_id = $ans_array['phone'][0]['ID'];
                 $inp_name = "form_text_" . $ans_id;
 			?>
                 <div class="input contact-form__input"><label class="input__label" for="medicine_phone">
@@ -79,9 +80,9 @@ $ans_array = $arResult["arAnswers"];
         <!-- /.contact-form__form-inputs -->
 
         <?php 
-        if (isset($ans_array["message"]) && is_array($ans_array["message"])) {
+        if (isset($ans_array['message']) && is_array($ans_array['message'])) {
             /* ID of Message Answer */
-            $ans_id = $ans_array["message"][0]["ID"];
+            $ans_id = $ans_array['message'][0]['ID'];
             $inp_name = "form_textarea_" . $ans_id;
         ?>
             <div class="contact-form__form-message">
@@ -99,7 +100,7 @@ $ans_array = $arResult["arAnswers"];
                 Нажимая &laquo;Отправить&raquo;, Вы&nbsp;подтверждаете, что ознакомлены, полностью согласны и&nbsp;
                 принимаете условия &laquo;Согласия на&nbsp;обработку персональных данных&raquo;.
             </div>
-            <button type="submit" name="web_form_submit" class="form-button contact-form__bottom-button" 
+            <button type="submit" name="web_form_send" class="form-button contact-form__bottom-button" 
             data-success="Отправлено" data-error="Ошибка отправки">
                 <div class="form-button__title">Оставить заявку</div>
             </button>
