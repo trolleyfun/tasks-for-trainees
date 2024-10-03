@@ -14,3 +14,15 @@ $APPLICATION->IncludeComponent(
     ),
     $component
 );
+
+$APPLICATION->IncludeComponent(
+    "bitrix:news.list",
+    "my_template",
+    array(
+        "IBLOCK_TYPE" => $arParams["IBLOCK_TYPE"],
+        "IBLOCK_ID" => $arParams["IBLOCK_ID"],
+        "DETAIL_URL" => $arResult["FOLDER"].$arResult["URL_TEMPLATES"]["detail"],
+        "IBLOCK_URL" => $arResult["FOLDER"].$arResult["URL_TEMPLATES"]["news"]
+    ),
+    $component
+);
