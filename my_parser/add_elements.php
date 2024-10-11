@@ -28,8 +28,8 @@ if (($handle = fopen(FILENAME, 'r'))) {
                 "MODIFIED_BY" => $USER->GetID(),
                 "IBLOCK_SECTION_ID" => false,
                 "IBLOCK_ID" => IBLOCK_ID,
-                "PROPERTY_VALUES" => $elementLoader->createPropertiesArrayLoader(),
-                "NAME" => $elementLoader->elementName,
+                "PROPERTY_VALUES" => $elementLoader->getPropertiesArrayLoader(),
+                "NAME" => $elementLoader->getElementName(),
                 "ACTIVE" => 'Y'
             ];            
             $iBlockElement->Add($loadIBlockElement);

@@ -9,9 +9,9 @@ use CIBlockProperty;
 
 class IBlockElementLoader
 {
-    public $arrProperties = [];
-    public $arrHeaders = [];
-    public $elementName = '';
+    private $arrProperties = [];
+    private $arrHeaders = [];
+    private $elementName = '';
 
     public function initProperties($iblock_id)
     {
@@ -85,13 +85,18 @@ class IBlockElementLoader
         }
     }
 
-    public function createPropertiesArrayLoader()
+    public function getPropertiesArrayLoader()
     {
         $loadProperties = [];
         foreach ($this->arrProperties as $property) {
             $loadProperties[$property['code']] = $property['value'];
         }
         return $loadProperties;
+    }
+
+    public function getElementName()
+    {
+        return $this->elementName;
     }
 
     public static function getListValueId($property_code, $list_value)
