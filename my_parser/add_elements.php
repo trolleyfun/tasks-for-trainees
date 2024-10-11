@@ -3,18 +3,18 @@
 $_SERVER['DOCUMENT_ROOT'] = "/opt/lampp/htdocs";
 require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_before.php");
 
-use lib\IBlockElementLoader;
+use Local\IBlockElementLoader;
 
 \Bitrix\Main\Loader::includeModule('iblock');
 
-$iblock_id = 11;
-$filename = 'my_vacancy.csv';
+define('IBLOCK_ID', 11);
+define('FILENAME', 'my_vacancy.csv');
 
 $iBlockElement = new CIBlockElement;
 $elementLoader = new IBlockElementLoader;
-$elementLoader->initProperties($iblock_id);
+$elementLoader->initProperties(IBLOCK_ID);
 
-if (($handle = fopen($filename, 'r'))) {
+if (($handle = fopen(FILENAME, 'r'))) {
     $data = fgetcsv($handle, separator: ',');
     if ($data = fgetcsv($handle, separator: ',')) {
         $elementLoader->initHeaders($data);
@@ -27,7 +27,7 @@ if (($handle = fopen($filename, 'r'))) {
             $loadIBlockElement = [
                 "MODIFIED_BY" => $USER->GetID(),
                 "IBLOCK_SECTION_ID" => false,
-                "IBLOCK_ID" => $iblock_id,
+                "IBLOCK_ID" => IBLOCK_ID,
                 "PROPERTY_VALUES" => $elementLoader->createPropertiesArrayLoader(),
                 "NAME" => $elementLoader->elementName,
                 "ACTIVE" => 'Y'

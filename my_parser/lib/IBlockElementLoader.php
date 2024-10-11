@@ -1,6 +1,9 @@
 <?php
 
-namespace lib;
+namespace Local;
+
+use CIBlock;
+use CIBlockProperty;
 
 \Bitrix\Main\Loader::includeModule('iblock');
 
@@ -12,7 +15,7 @@ class IBlockElementLoader
 
     public function initProperties($iblock_id)
     {
-        $rsProperties = \CIBlock::getProperties($iblock_id, array(), array());
+        $rsProperties = CIBlock::getProperties($iblock_id, array(), array());
         while ($property = $rsProperties->GetNext()) {
             $key = trim(strtolower($property['CODE']));
             $this->arrProperties[$key]['code'] = $property['CODE'];
@@ -93,7 +96,7 @@ class IBlockElementLoader
 
     public static function getListValueId($property_code, $list_value)
     {
-        $rsListValue = \CIBlockProperty::GetPropertyEnum(
+        $rsListValue = CIBlockProperty::GetPropertyEnum(
             $property_code,
             array(),
             ['VALUE' => trim($list_value)]
