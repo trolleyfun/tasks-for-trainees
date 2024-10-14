@@ -15,7 +15,7 @@ class IBlockElementLoader
 
     public function initProperties($iblock_id)
     {
-        $rsProperties = CIBlock::getProperties($iblock_id, array(), array());
+        $rsProperties = CIBlockProperty::getList(array(), ['=IBLOCK_ID' => $iblock_id]);
         while ($property = $rsProperties->GetNext()) {
             $key = trim(strtolower($property['CODE']));
             $this->arrProperties[$key]['code'] = $property['CODE'];
@@ -104,7 +104,7 @@ class IBlockElementLoader
         $rsListValue = CIBlockProperty::GetPropertyEnum(
             $property_code,
             array(),
-            ['VALUE' => trim($list_value)]
+            ['=VALUE' => trim($list_value)]
         );
         if ($listItem = $rsListValue->GetNext()) {
             return $listItem['ID'];
@@ -124,5 +124,15 @@ class IBlockElementLoader
         }
         unset($item);
         return $str;
+    }
+
+    public static function getIBlockId($code)
+    {
+        $rsIBlock = CIBLock::getList(array(), ['=CODE' => $code]);
+        if ($iblock = $rsIBlock->GetNext()) {
+            return $iblock['ID'];
+        } else {
+            return false;
+        }
     }
 }
