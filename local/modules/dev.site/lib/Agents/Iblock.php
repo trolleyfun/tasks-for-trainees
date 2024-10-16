@@ -1,6 +1,6 @@
 <?php
 
-namespace Only\Site\Agents;
+namespace Dev\Site\Agents;
 
 
 class Iblock
@@ -10,6 +10,7 @@ class Iblock
         // Здесь напиши свой агент
     }
 
+    /*
     public static function example()
     {
         global $DB;
@@ -26,4 +27,5 @@ class Iblock
         }
         return '\\' . __CLASS__ . '::' . __FUNCTION__ . '();';
     }
+    */
 }
