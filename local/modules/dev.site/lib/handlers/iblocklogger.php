@@ -29,7 +29,14 @@ class IblockLogger
             $logger_iblock['ID'],
             $element_iblock['NAME'],
             $element_iblock['CODE']
-            )) {
+        )) {
+            return;
+        }
+        if (!$arPath = self::getElementPath(
+            $element_fields['NAME'],
+            $element_fields['IBLOCK_SECTION_ID'],
+            $element_iblock['NAME']
+        )) {
             return;
         }
 
@@ -38,7 +45,9 @@ class IblockLogger
             'IBLOCK_ID' => $logger_iblock['ID'],
             'IBLOCK_SECTION_ID' => $logger_section_id,
             'NAME' => $arFields['ID'],
-            'DATE_ACTIVE_FROM' => $element_fields['TIMESTAMP_X']
+            'DATE_ACTIVE_FROM' => $element_fields['TIMESTAMP_X'],
+            'PREVIEW_TEXT_TYPE' => 'text',
+            'PREVIEW_TEXT' => implode(' -> ', $arPath)
         ]);
     }
 
@@ -60,6 +69,50 @@ class IblockLogger
         return $rsElements->GetNext();
     }
 
+    public static function getElementPath($element_name, $section_id, $iblock_name)
+    {
+        if (!$section_id) {
+            return [$iblock_name, $element_name];
+        } else {
+            if (!$section_path = self::getSectionPath($section_id)) {
+                return false;
+            } else {
+                $section_path[] = $element_name;
+                return $section_path;
+            }
+        }
+    }
+
+    public static function getSectionPath($section_id)
+    {
+        $rsSections = \CIBlockSection::GetList(
+            array(),
+            ['=ID' => $section_id],
+            false,
+            ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_SECTION_ID'],
+            false
+        );
+        if (!$section_item = $rsSections->GetNext()) {
+            return false;
+        } else {
+            if ($section_item['IBLOCK_SECTION_ID']) {
+                $parent_section_path = self::getSectionPath($section_item['IBLOCK_SECTION_ID']);
+            } else {
+                if (!$section_iblock = self::getIBlockFieldsById($section_item['IBLOCK_ID'])) {
+                    return false;
+                }
+                $parent_section_path = [$section_iblock['NAME']];
+            }
+
+            if (!$parent_section_path) {
+                return false;
+            } else {
+                $parent_section_path[] = $section_item['NAME'];
+                return $parent_section_path;
+            }
+        }
+    }
+
     public static function getLoggerSectionId($logger_id, $section_name, $section_code)
     {
         $rsLoggerSections = \CIBlockSection::GetList(array(), [
@@ -67,7 +120,7 @@ class IblockLogger
             '=NAME' => $section_name,
             '=CODE' => $section_code
         ], false, ['ID'], false);
-        if ($logger_section_item = $rsLoggerSections->Fetch()) {
+        if ($logger_section_item = $rsLoggerSections->GetNext()) {
             return $logger_section_item['ID'];
         } else {
             $section_object = new \CIBlockSection;
