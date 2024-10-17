@@ -2,9 +2,11 @@
 
 namespace Dev\Site\Handlers;
 
+use Bitrix\Main\Loader;
+
 define('LOGGER_CODE', 'LOG');
 
-\Bitrix\Main\Loader::includeModule('iblock');
+Loader::includeModule('iblock');
 
 class IblockLogger
 {
@@ -53,18 +55,27 @@ class IblockLogger
 
     public static function getIBlockFieldsByCode($iblock_code)
     {
+        if (!$iblock_code) {
+            return false;
+        }
         $rsIBlocks = \CIBlock::GetList(array(), ['=CODE' => $iblock_code]);
         return $rsIBlocks->GetNext();
     }
 
     public static function getIBlockFieldsById($iblock_id)
     {
+        if (!$iblock_id) {
+            return false;
+        }
         $rsIBlocks = \CIBlock::GetList(array(), ['=ID' => $iblock_id]);
         return $rsIBlocks->GetNext();
     }
 
     public static function getElementFieldsById($element_id)
     {
+        if (!$element_id) {
+            return false;
+        }
         $rsElements = \CIBlockElement::GetByID($element_id);
         return $rsElements->GetNext();
     }
@@ -85,6 +96,9 @@ class IblockLogger
 
     public static function getSectionPath($section_id)
     {
+        if (!$section_id) {
+            return false;
+        }
         $rsSections = \CIBlockSection::GetList(
             array(),
             ['=ID' => $section_id],
@@ -115,6 +129,9 @@ class IblockLogger
 
     public static function getLoggerSectionId($logger_id, $section_name, $section_code)
     {
+        if (!$logger_id || !$section_name || !$section_code) {
+            return false;
+        }
         $rsLoggerSections = \CIBlockSection::GetList(array(), [
             '=IBLOCK_ID' => $logger_id,
             '=NAME' => $section_name,
