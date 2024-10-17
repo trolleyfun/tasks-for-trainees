@@ -7,16 +7,16 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 use Bitrix\Main\Loader;
 use Bitrix\Main\EventManager;
 
-Loader::includeModule('dev.site');
+if (Loader::includeModule('dev.site')) {
+    EventManager::getInstance()->addEventHandlerCompatible(
+        'iblock',
+        'OnAfterIBlockElementAdd',
+        ['Dev\\Site\\Handlers\\IBlockLogger', 'OnAfterIBlockElementAddUpdateHandler']
+    );
 
-EventManager::getInstance()->addEventHandlerCompatible(
-    'iblock',
-    'OnAfterIBlockElementAdd',
-    ['Dev\\Site\\Handlers\\IBlockLogger', 'OnAfterIBlockElementAddUpdateHandler']
-);
-
-EventManager::getInstance()->addEventHandlerCompatible(
-    'iblock',
-    'OnAfterIBlockElementUpdate',
-    ['Dev\\Site\\Handlers\\IBlockLogger', 'OnAfterIBlockElementAddUpdateHandler']
-);
+    EventManager::getInstance()->addEventHandlerCompatible(
+        'iblock',
+        'OnAfterIBlockElementUpdate',
+        ['Dev\\Site\\Handlers\\IBlockLogger', 'OnAfterIBlockElementAddUpdateHandler']
+    );
+}

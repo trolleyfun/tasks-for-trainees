@@ -11,7 +11,10 @@ class IBlock
         if (!$iblock_code || !Loader::includeModule('iblock')) {
             return false;
         }
-        $rsIBlocks = \CIBlock::GetList(array(), ['=CODE' => $iblock_code]);
+        $rsIBlocks = \CIBlock::GetList(
+            array(),
+            ['CODE' => $iblock_code, 'CHECK_PERMISSIONS' => 'N']
+        );
         return $rsIBlocks->GetNext();
     }
 
@@ -20,7 +23,10 @@ class IBlock
         if (!$iblock_id || !Loader::includeModule('iblock')) {
             return false;
         }
-        $rsIBlocks = \CIBlock::GetList(array(), ['=ID' => $iblock_id]);
+        $rsIBlocks = \CIBlock::GetList(
+            array(),
+            ['ID' => $iblock_id, 'CHECK_PERMISSIONS' => 'N']
+        );
         return $rsIBlocks->GetNext();
     }
 
@@ -29,7 +35,10 @@ class IBlock
         if (!$element_id || !Loader::includeModule('iblock')) {
             return false;
         }
-        $rsElements = \CIBlockElement::GetByID($element_id);
+        $rsElements = \CIBlockElement::GetList(
+            array(),
+            ['ID' => $element_id, 'CHECK_PERMISSIONS' => 'N']
+        );
         return $rsElements->GetNext();
     }
 
@@ -54,7 +63,7 @@ class IBlock
         }
         $rsSections = \CIBlockSection::GetList(
             array(),
-            ['=ID' => $section_id],
+            ['ID' => $section_id, 'CHECK_PERMISSIONS' => 'N'],
             false,
             ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_SECTION_ID'],
             false
@@ -76,6 +85,24 @@ class IBlock
             } else {
                 $parent_section_path[] = $section_item['NAME'];
                 return $parent_section_path;
+            }
+        }
+    }
+
+    public static function deleteEmptyIBlockSections($iblock_id)
+    {
+        if (!$iblock_id || !Loader::includeModule('iblock')) {
+            return;
+        }
+        $rsSections = \CIBlockSection::GetList(
+            array(),
+            ['IBLOCK_ID' => $iblock_id, 'CHECK_PERMISSIONS' => 'N'],
+            true,
+            ['ID']
+        );
+        while ($section_item = $rsSections->GetNext()) {
+            if (!$section_item['ELEMENT_CNT']) {
+                \CIBlockSection::Delete($section_item['ID'], false);
             }
         }
     }

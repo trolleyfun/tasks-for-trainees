@@ -61,9 +61,10 @@ class IblockLogger
             return false;
         }
         $rsLoggerSections = \CIBlockSection::GetList(array(), [
-            '=IBLOCK_ID' => $logger_id,
-            '=NAME' => $section_name,
-            '=CODE' => $section_code
+            'IBLOCK_ID' => $logger_id,
+            'NAME' => $section_name,
+            'CODE' => $section_code,
+            'CHECK_PERMISSIONS' => 'N'
         ], false, ['ID'], false);
         if ($logger_section_item = $rsLoggerSections->GetNext()) {
             return $logger_section_item['ID'];
