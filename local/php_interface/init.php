@@ -9,13 +9,13 @@ use Bitrix\Main\EventManager;
 
 Loader::includeModule('dev.site');
 
-EventManager::getInstance()->addEventHandler(
+EventManager::getInstance()->addEventHandlerCompatible(
     'iblock',
     'OnAfterIBlockElementAdd',
     ['Dev\\Site\\Handlers\\IBlockLogger', 'OnAfterIBlockElementAddUpdateHandler']
 );
 
-EventManager::getInstance()->addEventHandler(
+EventManager::getInstance()->addEventHandlerCompatible(
     'iblock',
     'OnAfterIBlockElementUpdate',
     ['Dev\\Site\\Handlers\\IBlockLogger', 'OnAfterIBlockElementAddUpdateHandler']

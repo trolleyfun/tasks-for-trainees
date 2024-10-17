@@ -3,28 +3,27 @@
 namespace Dev\Site\Handlers;
 
 use Bitrix\Main\Loader;
+use Dev\Site\IBlock;
 
 define('LOGGER_CODE', 'LOG');
-
-Loader::includeModule('iblock');
 
 class IblockLogger
 {
     public static function OnAfterIBlockElementAddUpdateHandler(&$arFields)
     {
-        if (!$arFields['RESULT']) {
+        if (!$arFields['RESULT'] || !Loader::includeModule('iblock')) {
             return;
         }
-        if (!$element_iblock = self::getIBlockFieldsById($arFields['IBLOCK_ID'])) {
+        if (!$element_iblock = IBlock::getIBlockFieldsById($arFields['IBLOCK_ID'])) {
             return;
         }
         if ($element_iblock['CODE'] == LOGGER_CODE) {
             return;
         }
-        if (!$logger_iblock = self::getIBlockFieldsByCode(LOGGER_CODE)) {
+        if (!$logger_iblock = IBlock::getIBlockFieldsByCode(LOGGER_CODE)) {
             return;
         }
-        if (!$element_fields = self::getElementFieldsById($arFields['ID'])) {
+        if (!$element_fields = IBlock::getElementFieldsById($arFields['ID'])) {
             return;
         }
         if (!$logger_section_id = self::getLoggerSectionId(
@@ -34,7 +33,7 @@ class IblockLogger
         )) {
             return;
         }
-        if (!$arPath = self::getElementPath(
+        if (!$arPath = IBlock::getElementPath(
             $element_fields['NAME'],
             $element_fields['IBLOCK_SECTION_ID'],
             $element_iblock['NAME']
@@ -53,83 +52,12 @@ class IblockLogger
         ]);
     }
 
-    public static function getIBlockFieldsByCode($iblock_code)
-    {
-        if (!$iblock_code) {
-            return false;
-        }
-        $rsIBlocks = \CIBlock::GetList(array(), ['=CODE' => $iblock_code]);
-        return $rsIBlocks->GetNext();
-    }
-
-    public static function getIBlockFieldsById($iblock_id)
-    {
-        if (!$iblock_id) {
-            return false;
-        }
-        $rsIBlocks = \CIBlock::GetList(array(), ['=ID' => $iblock_id]);
-        return $rsIBlocks->GetNext();
-    }
-
-    public static function getElementFieldsById($element_id)
-    {
-        if (!$element_id) {
-            return false;
-        }
-        $rsElements = \CIBlockElement::GetByID($element_id);
-        return $rsElements->GetNext();
-    }
-
-    public static function getElementPath($element_name, $section_id, $iblock_name)
-    {
-        if (!$section_id) {
-            return [$iblock_name, $element_name];
-        } else {
-            if (!$section_path = self::getSectionPath($section_id)) {
-                return false;
-            } else {
-                $section_path[] = $element_name;
-                return $section_path;
-            }
-        }
-    }
-
-    public static function getSectionPath($section_id)
-    {
-        if (!$section_id) {
-            return false;
-        }
-        $rsSections = \CIBlockSection::GetList(
-            array(),
-            ['=ID' => $section_id],
-            false,
-            ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_SECTION_ID'],
-            false
-        );
-        if (!$section_item = $rsSections->GetNext()) {
-            return false;
-        } else {
-            if ($section_item['IBLOCK_SECTION_ID']) {
-                $parent_section_path = self::getSectionPath($section_item['IBLOCK_SECTION_ID']);
-            } else {
-                if (!$section_iblock = self::getIBlockFieldsById($section_item['IBLOCK_ID'])) {
-                    return false;
-                }
-                $parent_section_path = [$section_iblock['NAME']];
-            }
-
-            if (!$parent_section_path) {
-                return false;
-            } else {
-                $parent_section_path[] = $section_item['NAME'];
-                return $parent_section_path;
-            }
-        }
-    }
-
     public static function getLoggerSectionId($logger_id, $section_name, $section_code)
     {
         if (!$logger_id || !$section_name || !$section_code) {
+            return false;
+        }
+        if (!Loader::includeModule('iblock')) {
             return false;
         }
         $rsLoggerSections = \CIBlockSection::GetList(array(), [
