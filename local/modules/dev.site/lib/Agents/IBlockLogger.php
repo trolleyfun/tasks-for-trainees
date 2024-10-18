@@ -5,12 +5,15 @@ namespace Dev\Site\Agents;
 use Bitrix\Main\Loader;
 use Dev\Site\IBlock;
 
-define('LOGGER_CODE', 'LOG');
-
 class IBlockLogger
 {
     public static function clearOldLogs($logs_left_cnt = 10)
     {
+        if (strval($logs_left_cnt) === strval(intval($logs_left_cnt)) && $logs_left_cnt > 0) {
+            $logs_cnt_validated = $logs_left_cnt;
+        } else {
+            $logs_cnt_validated = 10;
+        }
         if (Loader::includeModule('iblock')) {
             if ($logger_iblock = IBlock::getIBlockFieldsByCode(LOGGER_CODE)) {
                 $rsElements = \CIBlockElement::GetList(
@@ -21,7 +24,7 @@ class IBlockLogger
                     ['ID', 'DATE_ACTIVE_FROM']
                 );
                 for ($i = 0; $element_item = $rsElements->GetNext(); $i++) {
-                    if ($i >= $logs_left_cnt) {
+                    if ($i >= $logs_cnt_validated) {
                         \CIBlockElement::Delete($element_item['ID']);
                     }
                 }
@@ -29,6 +32,6 @@ class IBlockLogger
             }
         }
 
-        return '\\' . __CLASS__ . '::' . __FUNCTION__ . '(' . $logs_left_cnt . ');';
+        return '\\' . __CLASS__ . '::' . __FUNCTION__ . '(' . $logs_cnt_validated . ');';
     }
 }

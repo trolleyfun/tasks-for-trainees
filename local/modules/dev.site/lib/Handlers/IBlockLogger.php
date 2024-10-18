@@ -5,8 +5,6 @@ namespace Dev\Site\Handlers;
 use Bitrix\Main\Loader;
 use Dev\Site\IBlock;
 
-define('LOGGER_CODE', 'LOG');
-
 class IblockLogger
 {
     public static function OnAfterIBlockElementAddUpdateHandler(&$arFields)
