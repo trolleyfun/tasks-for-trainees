@@ -58,13 +58,13 @@ class IblockLogger
         if (!Loader::includeModule('iblock')) {
             return false;
         }
-        $rsLoggerSections = \CIBlockSection::GetList(array(), [
+        $logger_section_item = \CIBlockSection::GetList(array(), [
             'IBLOCK_ID' => $logger_id,
             'NAME' => $section_name,
             'CODE' => $section_code,
             'CHECK_PERMISSIONS' => 'N'
-        ], false, ['ID'], false);
-        if ($logger_section_item = $rsLoggerSections->GetNext()) {
+        ], false, ['ID'])->GetNext();
+        if ($logger_section_item) {
             return $logger_section_item['ID'];
         } else {
             $section_object = new \CIBlockSection;

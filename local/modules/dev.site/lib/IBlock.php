@@ -10,36 +10,36 @@ class IBlock
     {
         if (!$iblock_code || !Loader::includeModule('iblock')) {
             return false;
+        } else {
+            return \CIBlock::GetList(
+                array(),
+                ['CODE' => $iblock_code, 'CHECK_PERMISSIONS' => 'N']
+            )->GetNext();
         }
-        $rsIBlocks = \CIBlock::GetList(
-            array(),
-            ['CODE' => $iblock_code, 'CHECK_PERMISSIONS' => 'N']
-        );
-        return $rsIBlocks->GetNext();
     }
 
     public static function getIBlockFieldsById($iblock_id)
     {
         if (!$iblock_id || !Loader::includeModule('iblock')) {
             return false;
+        } else {
+            return \CIBlock::GetList(
+                array(),
+                ['ID' => $iblock_id, 'CHECK_PERMISSIONS' => 'N']
+            )->GetNext();
         }
-        $rsIBlocks = \CIBlock::GetList(
-            array(),
-            ['ID' => $iblock_id, 'CHECK_PERMISSIONS' => 'N']
-        );
-        return $rsIBlocks->GetNext();
     }
 
     public static function getElementFieldsById($element_id)
     {
         if (!$element_id || !Loader::includeModule('iblock')) {
             return false;
+        } else {
+            return \CIBlockElement::GetList(
+                array(),
+                ['ID' => $element_id, 'CHECK_PERMISSIONS' => 'N']
+            )->GetNext();
         }
-        $rsElements = \CIBlockElement::GetList(
-            array(),
-            ['ID' => $element_id, 'CHECK_PERMISSIONS' => 'N']
-        );
-        return $rsElements->GetNext();
     }
 
     public static function getElementPath($element_name, $section_id, $iblock_name)
@@ -61,14 +61,13 @@ class IBlock
         if (!$section_id || !Loader::includeModule('iblock')) {
             return false;
         }
-        $rsSections = \CIBlockSection::GetList(
+        $section_item = \CIBlockSection::GetList(
             array(),
             ['ID' => $section_id, 'CHECK_PERMISSIONS' => 'N'],
             false,
-            ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_SECTION_ID'],
-            false
-        );
-        if (!$section_item = $rsSections->GetNext()) {
+            ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_SECTION_ID']
+        )->GetNext();
+        if (!$section_item) {
             return false;
         } else {
             if ($section_item['IBLOCK_SECTION_ID']) {
