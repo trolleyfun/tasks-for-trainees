@@ -5,7 +5,7 @@ namespace Dev\Site\Agents;
 use Bitrix\Main\Loader;
 use Dev\Site\IBlock;
 
-class IBlockLogger
+class IBlockLogger extends IBlock
 {
     public static function clearOldLogs($logs_left_cnt = 10)
     {
@@ -15,7 +15,7 @@ class IBlockLogger
             $logs_cnt_validated = 10;
         }
         if (Loader::includeModule('iblock')) {
-            if ($logger_iblock = IBlock::getIBlockFieldsByCode(LOGGER_CODE)) {
+            if ($logger_iblock = self::getIBlockFieldsByCode(LOGGER_CODE)) {
                 $rsElements = \CIBlockElement::GetList(
                     ['DATE_ACTIVE_FROM' => 'DESC', 'ID' => 'DESC'],
                     ['IBLOCK_ID' => $logger_iblock['ID'], 'CHECK_PERMISSIONS' => 'N'],
@@ -28,7 +28,7 @@ class IBlockLogger
                         \CIBlockElement::Delete($element_item['ID']);
                     }
                 }
-                IBlock::deleteEmptyIBlockSections($logger_iblock['ID']);
+                self::deleteEmptyIBlockSections($logger_iblock['ID']);
             }
         }
 

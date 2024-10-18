@@ -5,23 +5,23 @@ namespace Dev\Site\Handlers;
 use Bitrix\Main\Loader;
 use Dev\Site\IBlock;
 
-class IblockLogger
+class IblockLogger extends IBlock
 {
     public static function OnAfterIBlockElementAddUpdateHandler(&$arFields)
     {
         if (!$arFields['RESULT'] || !Loader::includeModule('iblock')) {
             return;
         }
-        if (!$element_iblock = IBlock::getIBlockFieldsById($arFields['IBLOCK_ID'])) {
+        if (!$element_iblock = self::getIBlockFieldsById($arFields['IBLOCK_ID'])) {
             return;
         }
         if ($element_iblock['CODE'] == LOGGER_CODE) {
             return;
         }
-        if (!$logger_iblock = IBlock::getIBlockFieldsByCode(LOGGER_CODE)) {
+        if (!$logger_iblock = self::getIBlockFieldsByCode(LOGGER_CODE)) {
             return;
         }
-        if (!$element_fields = IBlock::getElementFieldsById($arFields['ID'])) {
+        if (!$element_fields = self::getElementFieldsById($arFields['ID'])) {
             return;
         }
         if (!$logger_section_id = self::getLoggerSectionId(
@@ -31,7 +31,7 @@ class IblockLogger
         )) {
             return;
         }
-        if (!$arPath = IBlock::getElementPath(
+        if (!$arPath = self::getElementPath(
             $element_fields['NAME'],
             $element_fields['IBLOCK_SECTION_ID'],
             $element_iblock['NAME']
