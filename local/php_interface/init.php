@@ -9,6 +9,11 @@ use Bitrix\Main\EventManager;
 
 define('LOGGER_CODE', 'LOG');
 
+function my_is_int($value)
+{
+    return strval($value) === strval(intval($value));
+}
+
 if (Loader::includeModule('dev.site')) {
     EventManager::getInstance()->addEventHandlerCompatible(
         'iblock',

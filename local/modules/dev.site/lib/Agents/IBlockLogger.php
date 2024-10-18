@@ -9,7 +9,7 @@ class IBlockLogger extends IBlock
 {
     public static function clearOldLogs($logs_left_cnt = 10)
     {
-        if (self::dev_is_int($logs_left_cnt) && $logs_left_cnt > 0) {
+        if (my_is_int($logs_left_cnt) && $logs_left_cnt > 0) {
             $logs_cnt_validated = $logs_left_cnt;
         } else {
             $logs_cnt_validated = 10;

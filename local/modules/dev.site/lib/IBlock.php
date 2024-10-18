@@ -6,11 +6,6 @@ use Bitrix\Main\Loader;
 
 class IBlock
 {
-    public static function dev_is_int($value)
-    {
-        return strval($value) === strval(intval($value));
-    }
-
     public static function getIBlockFieldsByCode($iblock_code)
     {
         if (!$iblock_code || !Loader::includeModule('iblock')) {
