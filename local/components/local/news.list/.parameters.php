@@ -1,12 +1,6 @@
 <?php
 
-use Bitrix\Main\Loader;
-
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
-    die();
-}
-
-if (!Loader::includeModule('iblock')) {
     die();
 }
 
@@ -14,13 +8,24 @@ $arComponentParameters = [
     'GROUPS' => [],
     'PARAMETERS' => [
         'IBLOCK_TYPE' => [
-            'TYPE' => 'STRING'
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
         ],
         'IBLOCK_ID' => [
-            'TYPE' => 'STRING'
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
         ],
         'IBLOCK_CODE' => [
-            'TYPE' => 'STRING'
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
+        'CACHE_TYPE' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
+        'CACHE_TIME' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
         ]
     ]
 ];

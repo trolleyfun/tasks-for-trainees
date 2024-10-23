@@ -15,23 +15,38 @@ class NewsListComponent extends CBitrixComponent
         $arParams['IBLOCK_TYPE'] = trim((string)($arParams['IBLOCK_TYPE'] ?? ''));
         $arParams['IBLOCK_ID'] = (int)($arParams['IBLOCK_ID'] ?? 0);
         $arParams['IBLOCK_CODE'] = trim((string)($arParams['IBLOCK_CODE'] ?? ''));
+        $arParams['CACHE_TYPE'] ??= 'A';
+        if (!in_array($arParams['CACHE_TYPE'],['A', 'Y', 'N'], true)) {
+            $arParams['CACHE_TYPE'] = 'A';
+        }
+        $arParams['CACHE_TIME'] = (int)($arParams['CACHE_TIME'] ?? 36000000);
+        if ($arParams['CACHE_TIME'] < 0) {
+            $arParams['CACHE_TIME'] = 36000000;
+        }
 
         return $arParams;
     }
 
     public function executeComponent()
     {
-        $this->arResult['ITEMS'] = match (true) {
-            $this->arParams['IBLOCK_ID'] !== 0 =>
-                $this->getElementByIblockId($this->arParams['IBLOCK_ID']),
-            $this->arParams['IBLOCK_CODE'] !== '' =>
-                $this->getElementByIblockCode($this->arParams['IBLOCK_CODE']),
-            $this->arParams['IBLOCK_TYPE'] !== '' =>
-                $this->getElementByIblockType($this->arParams['IBLOCK_TYPE']),
-            default => array()
-        };
+        if ($this->startResultCache()) {
+            $this->arResult['ITEMS'] = match (true) {
+                $this->arParams['IBLOCK_ID'] !== 0 =>
+                    $this->getElementByIblockId($this->arParams['IBLOCK_ID']),
+                $this->arParams['IBLOCK_CODE'] !== '' =>
+                    $this->getElementByIblockCode($this->arParams['IBLOCK_CODE']),
+                $this->arParams['IBLOCK_TYPE'] !== '' =>
+                    $this->getElementByIblockType($this->arParams['IBLOCK_TYPE']),
+                default => array()
+            };
 
-        $this->includeComponentTemplate();
+            if (!$this->arResult['ITEMS']) {
+                $this->abortResultCache();
+                return;
+            }
+
+            $this->includeComponentTemplate();
+        }
     }
 
     protected function getElementByIblockId($iblock_id)
@@ -39,7 +54,10 @@ class NewsListComponent extends CBitrixComponent
         if (!Loader::includeModule('iblock')) {
             return array();
         }
-        if (is_null(IblockTable::getRowById($iblock_id))) {
+        if (is_null(IblockTable::getRow([
+            'filter' => ['ID' => $iblock_id, 'ACTIVE' => 'Y'],
+            'select' => ['ID']
+        ]))) {
             return array();
         }
         $rsElements = ElementTable::getList([
