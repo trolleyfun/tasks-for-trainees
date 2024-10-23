@@ -1,5 +1,9 @@
 <?php
 
+use Bitrix\Iblock\ElementTable;
+use Bitrix\Iblock\IblockTable;
+use Bitrix\Main\Loader;
+
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
@@ -17,18 +21,66 @@ class NewsListComponent extends CBitrixComponent
 
     public function executeComponent()
     {
-        $elements_filter = ['ACTIVE' => 'Y'];
-        if ($this->arParams['IBLOCK_ID']) {
-            $elements_filter['IBLOCK_ID'] = $this->arParams['IBLOCK_ID'];
-        } elseif ($this->arParams['IBLOCK_CODE']) {
-            $elements_filter['IBLOCK_CODE'] = $this->arParams['IBLOCK_CODE'];
-        }
-
-        $rsIblockElements = CIBlockElement::getList(array(), $elements_filter);
-        while ($element = $rsIblockElements->Fetch()) {
-            $this->arResult['ITEMS'][$element['ID']] = $element;
-        }
+        $this->arResult['ITEMS'] = match (true) {
+            $this->arParams['IBLOCK_ID'] !== 0 =>
+                $this->getElementByIblockId($this->arParams['IBLOCK_ID']),
+            $this->arParams['IBLOCK_CODE'] !== '' =>
+                $this->getElementByIblockCode($this->arParams['IBLOCK_CODE']),
+            $this->arParams['IBLOCK_TYPE'] !== '' =>
+                $this->getElementByIblockType($this->arParams['IBLOCK_TYPE']),
+            default => array()
+        };
 
         $this->includeComponentTemplate();
+    }
+
+    protected function getElementByIblockId($iblock_id)
+    {
+        if (!Loader::includeModule('iblock')) {
+            return array();
+        }
+        if (is_null(IblockTable::getRowById($iblock_id))) {
+            return array();
+        }
+        $rsElements = ElementTable::getList([
+            'filter' => ['IBLOCK_ID' => $iblock_id, 'ACTIVE' => 'Y']
+        ]);
+        $arElements[$iblock_id] = [];
+        while ($element = $rsElements->fetch()) {
+            $arElements[$iblock_id][$element['ID']] = $element;
+        }
+        return $arElements;
+    }
+
+    protected function getElementByIblockCode($iblock_code)
+    {
+        if (!Loader::includeModule('iblock')) {
+            return array();
+        }
+        $iblock_item = IblockTable::getRow([
+            'filter' => ['CODE' => $iblock_code, 'ACTIVE' => 'Y'],
+            'select' => ['ID']
+        ]);
+        if (is_null($iblock_item)) {
+            return array();
+        } else {
+            return $this->getElementByIblockId($iblock_item['ID']);
+        }
+    }
+
+    protected function getElementByIblockType($iblock_type)
+    {
+        if (!Loader::includeModule('iblock')) {
+            return array();
+        }
+        $rsIblocks = IblockTable::getList([
+            'filter' => ['IBLOCK_TYPE_ID' => $iblock_type, 'ACTIVE' => 'Y'],
+            'select' => ['ID']
+        ]);
+        $arElements = [];
+        while ($iblock = $rsIblocks->fetch()) {
+            $arElements += $this->getElementByIblockId($iblock['ID']);
+        }
+        return $arElements;
     }
 }
