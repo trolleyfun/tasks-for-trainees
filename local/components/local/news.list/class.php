@@ -3,12 +3,13 @@
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Loader;
+use Bitrix\Main\Type\DateTime;
 
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
 
-class NewsListComponent extends CBitrixComponent
+class NewsListComponent extends \CBitrixComponent
 {
     public function onPrepareComponentParams($arParams)
     {
@@ -65,6 +66,18 @@ class NewsListComponent extends CBitrixComponent
         ]);
         $arElements[$iblock_id] = [];
         while ($element = $rsElements->fetch()) {
+            $element['PREVIEW_PICTURE'] = \CFile::GetFileArray($element['PREVIEW_PICTURE']);
+            $element['DETAIL_PICTURE'] = \CFile::GetFileArray($element['DETAIL_PICTURE']);
+
+            $element['TIMESTAMP_X'] = $element['TIMESTAMP_X'] instanceof DateTime ?
+                $element['TIMESTAMP_X']->toString() : '';
+            $element['DATE_CREATE'] = $element['DATE_CREATE'] instanceof DateTime ?
+                $element['DATE_CREATE']->toString() : '';
+            $element['ACTIVE_FROM'] = $element['ACTIVE_FROM'] instanceof DateTime ?
+                $element['ACTIVE_FROM']->toString() : '';
+            $element['ACTIVE_TO'] = $element['ACTIVE_TO'] instanceof DateTime ?
+                $element['ACTIVE_TO']->toString() : '';
+
             $arElements[$iblock_id][$element['ID']] = $element;
         }
         return $arElements;
