@@ -28,15 +28,26 @@ $arComponentParameters = [
             'MULTIPLE' => 'N'
         ],
         'INCLUDE_SUBSECTIONS' => [
-            'TYPE' => 'CHECKBOX'
+            'TYPE' => 'CHECKBOX',
+            'DEFAULT' => 'Y'
+        ],
+        'FILTER' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'Y'
+        ],
+        'FILTER_CACHE' => [
+            'TYPE' => 'CHECKBOX',
+            'DEFAULT' => 'N'
         ],
         'CACHE_TYPE' => [
             'TYPE' => 'STRING',
-            'MULTIPLE' => 'N'
+            'MULTIPLE' => 'N',
+            'DEFAULT' => 'A'
         ],
         'CACHE_TIME' => [
             'TYPE' => 'STRING',
-            'MULTIPLE' => 'N'
+            'MULTIPLE' => 'N',
+            'DEFAULT' => '36000000'
         ]
     ]
 ];

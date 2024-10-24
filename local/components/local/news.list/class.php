@@ -23,10 +23,12 @@ class NewsListComponent extends \CBitrixComponent
         $arParams['SECTION_CODE'] = trim((string)($arParams['SECTION_CODE'] ?? ''));
         $arParams['INCLUDE_SUBSECTIONS'] ??= 'Y';
         $arParams['INCLUDE_SUBSECTIONS'] = $arParams['INCLUDE_SUBSECTIONS'] !== 'N';
-        $arParams['CACHE_TYPE'] ??= 'A';
-        if (!in_array($arParams['CACHE_TYPE'],['A', 'Y', 'N'], true)) {
-            $arParams['CACHE_TYPE'] = 'A';
+        $arParams['FILTER'] ??= array();
+        if (!is_array($arParams['FILTER'])) {
+            $arParams['FILTER'] = [];
         }
+        $arParams['FILTER_CACHE'] ??= 'N';
+        $arParams['FILTER_CACHE'] = $arParams['FILTER_CACHE'] === 'Y';
         $arParams['CACHE_TIME'] = (int)($arParams['CACHE_TIME'] ?? 36000000);
         if ($arParams['CACHE_TIME'] < 0) {
             $arParams['CACHE_TIME'] = 36000000;
@@ -37,6 +39,10 @@ class NewsListComponent extends \CBitrixComponent
 
     public function executeComponent()
     {
+        if (!$this->arParams['FILTER_CACHE'] && $this->arParams['FILTER']) {
+            $this->arParams['CACHE_TIME'] = 0;
+        }
+
         if ($this->startResultCache()) {
             $section_id = $this->getSectionIdByParams();
             if ($section_id < 0 || $section_id > 0 && !$this->sectionExists($section_id)) {
@@ -84,6 +90,7 @@ class NewsListComponent extends \CBitrixComponent
         if ($this->arSections) {
             $elements_filter['IBLOCK_SECTION_ID'] = $this->arSections;
         }
+        $elements_filter += $this->arParams['FILTER'];
 
         $element_select = [
             '*',
