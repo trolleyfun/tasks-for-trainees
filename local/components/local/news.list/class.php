@@ -4,6 +4,7 @@ use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\SectionTable;
 use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Type\DateTime;
 
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
@@ -35,6 +36,11 @@ class NewsListComponent extends \CBitrixComponent
         }
 
         return $arParams;
+    }
+
+    public function onIncludeComponentLang()
+    {
+        Loc::loadMessages(__FILE__);
     }
 
     public function executeComponent()
