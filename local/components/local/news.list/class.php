@@ -76,19 +76,27 @@ class NewsListComponent extends \CBitrixComponent
 
     protected function getElementByIblockId($iblock_id)
     {
-        if (!Loader::includeModule('iblock')) {
+        if (!$this->iblockExists($iblock_id) || !Loader::includeModule('iblock')) {
             return array();
         }
-        if (!$this->iblockExists($iblock_id)) {
-            return array();
-        }
+
         $elements_filter = ['IBLOCK_ID' => $iblock_id, 'ACTIVE' => 'Y'];
         if ($this->arSections) {
             $elements_filter['IBLOCK_SECTION_ID'] = $this->arSections;
         }
+
+        $element_select = [
+            '*',
+            'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
+            'SECTION_PAGE_URL' => 'IBLOCK.SECTION_PAGE_URL',
+            'LIST_PAGE_URL' => 'IBLOCK.LIST_PAGE_URL'
+        ];
+
         $rsElements = ElementTable::getList([
-            'filter' => $elements_filter
+            'filter' => $elements_filter,
+            'select' => $element_select
         ]);
+
         $arElements[$iblock_id] = [];
         while ($element = $rsElements->fetch()) {
             $element['PREVIEW_PICTURE'] = \CFile::GetFileArray($element['PREVIEW_PICTURE']);
@@ -102,6 +110,25 @@ class NewsListComponent extends \CBitrixComponent
                 $element['ACTIVE_FROM']->toString() : '';
             $element['ACTIVE_TO'] = $element['ACTIVE_TO'] instanceof DateTime ?
                 $element['ACTIVE_TO']->toString() : '';
+
+            $element['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
+                $element['DETAIL_PAGE_URL'],
+                $element,
+                false,
+                'E'
+            );
+            $element['SECTION_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
+                $element['SECTION_PAGE_URL'],
+                $element,
+                false,
+                'E'
+            );
+            $element['LIST_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
+                $element['LIST_PAGE_URL'],
+                $element,
+                false,
+                'E'
+            );
 
             $arElements[$iblock_id][$element['ID']] = $element;
         }
