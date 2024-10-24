@@ -19,6 +19,17 @@ $arComponentParameters = [
             'TYPE' => 'STRING',
             'MULTIPLE' => 'N'
         ],
+        'SECTION_ID' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
+        'SECTION_CODE' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
+        'INCLUDE_SUBSECTIONS' => [
+            'TYPE' => 'CHECKBOX'
+        ],
         'CACHE_TYPE' => [
             'TYPE' => 'STRING',
             'MULTIPLE' => 'N'
