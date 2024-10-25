@@ -3,8 +3,10 @@
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\SectionTable;
+use Bitrix\Iblock\TypeTable;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\SystemException;
 use Bitrix\Main\Type\DateTime;
 
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
@@ -13,6 +15,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 
 class NewsListComponent extends \CBitrixComponent
 {
+    protected $arIblocks = [];
     protected $arSections = [];
 
     public function onPrepareComponentParams($arParams)
@@ -24,6 +27,9 @@ class NewsListComponent extends \CBitrixComponent
         $arParams['SECTION_CODE'] = trim((string)($arParams['SECTION_CODE'] ?? ''));
         $arParams['INCLUDE_SUBSECTIONS'] ??= 'Y';
         $arParams['INCLUDE_SUBSECTIONS'] = $arParams['INCLUDE_SUBSECTIONS'] !== 'N';
+        $arParams['DETAIL_URL'] = trim((string)($arParams['DETAIL_URL'] ?? ''));
+        $arParams['SECTION_URL'] = trim((string)($arParams['SECTION_URL'] ?? ''));
+        $arParams['IBLOCK_URL'] = trim((string)($arParams['IBLOCK_URL'] ?? ''));
         $arParams['FILTER'] ??= array();
         if (!is_array($arParams['FILTER'])) {
             $arParams['FILTER'] = [];
@@ -50,49 +56,106 @@ class NewsListComponent extends \CBitrixComponent
         }
 
         if ($this->startResultCache()) {
-            $section_id = $this->getSectionIdByParams();
-            if ($section_id < 0 || $section_id > 0 && !$this->sectionExists($section_id)) {
+            try {
+                $this->checkModules('iblock');
+
+                $this->initComponentArrays();
+
+                $this->arResult = $this->getResultArray();
+
+                $this->includeComponentTemplate();
+            } catch (SystemException $e) {
                 $this->abortResultCache();
-                return;
+
+                ShowError($e->getMessage());
             }
-
-            if ($section_id > 0) {
-                $this->arSections = [$section_id];
-                if ($this->arParams['INCLUDE_SUBSECTIONS']) {
-                    $this->getSubsections($section_id);
-                }
-            } elseif ($this->arParams['INCLUDE_SUBSECTIONS']) {
-                $this->arSections = array(); //if array is empty -> no section filter
-            } else {
-                $this->arSections = [false];
-            }
-
-            $this->arResult['ITEMS'] = match (true) {
-                $this->arParams['IBLOCK_ID'] > 0 =>
-                    $this->getElementByIblockId($this->arParams['IBLOCK_ID']),
-                $this->arParams['IBLOCK_CODE'] !== '' =>
-                    $this->getElementByIblockCode($this->arParams['IBLOCK_CODE']),
-                $this->arParams['IBLOCK_TYPE'] !== '' =>
-                    $this->getElementByIblockType($this->arParams['IBLOCK_TYPE']),
-                default => array()
-            };
-
-            if (!$this->arResult['ITEMS']) {
-                $this->abortResultCache();
-                return;
-            }
-
-            $this->includeComponentTemplate();
         }
     }
 
-    protected function getElementByIblockId($iblock_id)
+    protected function checkModules(...$modules)
     {
-        if (!$this->iblockExists($iblock_id) || !Loader::includeModule('iblock')) {
+        foreach ($modules as $m) {
+            if (!Loader::includeModule($m)) {
+                throw new SystemException(Loc::getMessage('MODULE_NOT_FOUND'));
+            }
+        }
+    }
+
+    protected function initComponentArrays()
+    {
+        $this->initIblockArray();
+        $this->initSectionArray();
+    }
+
+    protected function initIblockArray()
+    {
+        if (!$this->arParams['IBLOCK_ID'] && !$this->arParams['IBLOCK_CODE'] && !$this->arParams['IBLOCK_TYPE']) {
+            throw new SystemException(Loc::getMessage('IBLOCK_FIELDS_EMPTY'));
+        }
+
+        if ($this->arParams['IBLOCK_ID'] > 0) {
+            $iblock_id = $this->arParams['IBLOCK_ID'];
+            if (!self::iblockExists($iblock_id)) {
+                throw new SystemException(Loc::getMessage('IBLOCK_ID_NOT_VALID'));
+            }
+        } elseif ($this->arParams['IBLOCK_CODE']) {
+            if (!$iblock_id = self::getIblockIdByCode($this->arParams['IBLOCK_CODE'])) {
+                throw new SystemException(Loc::getMessage('IBLOCK_CODE_NOT_VALID'));
+            }
+        } else {
+            $iblock_id = 0;
+        }
+
+        if ($iblock_id > 0) {
+            $this->arIblocks = [$iblock_id];
+        } elseif ($this->arParams['IBLOCK_TYPE']) {
+            if (!self::iblockTypeExists($this->arParams['IBLOCK_TYPE'])) {
+                throw new SystemException(Loc::getMessage('IBLOCK_TYPE_NOT_VALID'));
+            }
+            $this->arIblocks = self::getIblockByType($this->arParams['IBLOCK_TYPE']);
+        }
+    }
+
+    protected function initSectionArray()
+    {
+        if ($this->arParams['SECTION_ID'] > 0) {
+            $section_id = $this->arParams['SECTION_ID'];
+            if (!self::sectionExists($section_id, $this->arIblocks)) {
+                throw new SystemException(Loc::getMessage('SECTION_ID_NOT_VALID'));
+            }
+        } elseif ($this->arParams['SECTION_CODE']) {
+            if (!$section_id = self::getSectionIdByCode($this->arParams['SECTION_CODE'])) {
+                throw new SystemException(Loc::getMessage('SECTION_CODE_NOT_VALID'));
+            }
+        } else {
+            $section_id = 0;
+        }
+
+        if ($section_id > 0) {
+            $this->arSections = [$section_id];
+            if ($this->arParams['INCLUDE_SUBSECTIONS']) {
+                $this->arSections = array_merge($this->arSections, self::getSubsections($section_id));
+            }
+        } elseif ($this->arParams['INCLUDE_SUBSECTIONS']) {
+            $this->arSections = array(); //if array is empty -> no section filter
+        } else {
+            $this->arSections = [false]; //root directory
+        }
+    }
+
+    protected function getResultArray()
+    {
+        $arResult['ITEMS'] = $this->getResultItems();
+        return $arResult;
+    }
+
+    protected function getResultItems()
+    {
+        if (!Loader::includeModule('iblock')) {
             return array();
         }
 
-        $elements_filter = ['IBLOCK_ID' => $iblock_id, 'ACTIVE' => 'Y'];
+        $elements_filter = ['IBLOCK_ID' => $this->arIblocks, 'ACTIVE' => 'Y'];
         if ($this->arSections) {
             $elements_filter['IBLOCK_SECTION_ID'] = $this->arSections;
         }
@@ -110,61 +173,94 @@ class NewsListComponent extends \CBitrixComponent
             'select' => $element_select
         ]);
 
-        $arElements[$iblock_id] = [];
+        $arElements = [];
+        foreach ($this->arIblocks as $iblock) {
+            $arElements[$iblock] = [];
+        }
         while ($element = $rsElements->fetch()) {
-            $element['PREVIEW_PICTURE'] = \CFile::GetFileArray($element['PREVIEW_PICTURE']);
-            $element['DETAIL_PICTURE'] = \CFile::GetFileArray($element['DETAIL_PICTURE']);
+            $picture_keys = ['PREVIEW_PICTURE', 'DETAIL_PICTURE'];
+            self::convertPictureToArray($element, $picture_keys);
 
-            $element['TIMESTAMP_X'] = $element['TIMESTAMP_X'] instanceof DateTime ?
-                $element['TIMESTAMP_X']->toString() : '';
-            $element['DATE_CREATE'] = $element['DATE_CREATE'] instanceof DateTime ?
-                $element['DATE_CREATE']->toString() : '';
-            $element['ACTIVE_FROM'] = $element['ACTIVE_FROM'] instanceof DateTime ?
-                $element['ACTIVE_FROM']->toString() : '';
-            $element['ACTIVE_TO'] = $element['ACTIVE_TO'] instanceof DateTime ?
-                $element['ACTIVE_TO']->toString() : '';
+            $date_keys = ['TIMESTAMP_X', 'DATE_CREATE', 'ACTIVE_FROM', 'ACTIVE_TO'];
+            self::convertDateToString($element, $date_keys);
 
-            $element['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
-                $element['DETAIL_PAGE_URL'],
+            self::convertElementUrl(
                 $element,
-                false,
-                'E'
-            );
-            $element['SECTION_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
-                $element['SECTION_PAGE_URL'],
-                $element,
-                false,
-                'E'
-            );
-            $element['LIST_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
-                $element['LIST_PAGE_URL'],
-                $element,
-                false,
-                'E'
-            );
+                $this->arParams['DETAIL_URL'],
+                $this->arParams['SECTION_URL'],
+                $this->arParams['IBLOCK_URL']);
 
-            $arElements[$iblock_id][$element['ID']] = $element;
+            $arElements[$element['IBLOCK_ID']][$element['ID']] = $element;
         }
         return $arElements;
     }
 
-    protected function getElementByIblockCode($iblock_code)
+    public static function convertPictureToArray(&$array, $keys)
     {
-        if (!Loader::includeModule('iblock')) {
-            return array();
-        }
-        $iblock_item = IblockTable::getRow([
-            'filter' => ['CODE' => $iblock_code, 'ACTIVE' => 'Y'],
-            'select' => ['ID']
-        ]);
-        if (is_null($iblock_item)) {
-            return array();
-        } else {
-            return $this->getElementByIblockId($iblock_item['ID']);
+        if (is_array($array) && is_array($keys)) {
+            foreach ($keys as $k) {
+                if (isset($array[$k])) {
+                    $array[$k] = \CFile::GetFileArray($array[$k]);
+                }
+            }
         }
     }
 
-    protected function getElementByIblockType($iblock_type)
+    public static function convertDateToString(&$array, $keys)
+    {
+        if (is_array($array) && is_array($keys)) {
+            foreach ($keys as $k) {
+                if (isset($array[$k])) {
+                    $array[$k] = $array[$k] instanceof DateTime ? $array[$k]->toString() : '';
+                }
+            }
+        }
+    }
+
+    public static function convertElementUrl(&$element_array, $detail_url = '', $section_url = '', $iblock_url = '')
+    {
+        if (!Loader::includeModule('iblock')) {
+            return;
+        }
+
+        if (isset($element_array['DETAIL_PAGE_URL'])) {
+            if ($detail_url) {
+                $element_array['DETAIL_PAGE_URL'] = $detail_url;
+            }
+            $element_array['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
+                $element_array['DETAIL_PAGE_URL'],
+                $element_array,
+                false,
+                'E'
+            );
+        }
+
+        if (isset($element_array['SECTION_PAGE_URL'])) {
+            if ($section_url) {
+                $element_array['SECTION_PAGE_URL'] = $section_url;
+            }
+            $element_array['SECTION_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
+                $element_array['SECTION_PAGE_URL'],
+                $element_array,
+                false,
+                'E'
+            );
+        }
+
+        if (isset($element_array['LIST_PAGE_URL'])) {
+            if ($iblock_url) {
+                $element_array['LIST_PAGE_URL'] = $iblock_url;
+            }
+            $element_array['LIST_PAGE_URL'] = \CIBlock::ReplaceDetailUrl(
+                $element_array['LIST_PAGE_URL'],
+                $element_array,
+                false,
+                'E'
+            );
+        }
+    }
+
+    public static function getIblockByType($iblock_type)
     {
         if (!Loader::includeModule('iblock')) {
             return array();
@@ -173,42 +269,44 @@ class NewsListComponent extends \CBitrixComponent
             'filter' => ['IBLOCK_TYPE_ID' => $iblock_type, 'ACTIVE' => 'Y'],
             'select' => ['ID']
         ]);
-        $arElements = [];
+        $arIblocks = [];
         while ($iblock = $rsIblocks->fetch()) {
-            $arElements += $this->getElementByIblockId($iblock['ID']);
+            $arIblocks[] = $iblock['ID'];
         }
-        return $arElements;
+        return $arIblocks;
     }
 
-    protected function getSubsections($section_id)
+    public static function getSubsections($section_id)
     {
-        if (!$this->sectionExists($section_id) || !Loader::includeModule('main')) {
-            return;
+        if (!Loader::includeModule('iblock')) {
+            return array();
         }
         $rsSections = SectionTable::getList([
             'filter' => ['IBLOCK_SECTION_ID' => $section_id, 'ACTIVE' => 'Y'],
             'select' => ['ID']
         ]);
+        $arSections = [];
         while ($section = $rsSections->fetch()) {
-            $this->arSections[] = $section['ID'];
-            $this->getSubsections($section['ID']);
+            $arSections[] = $section['ID'];
+            $arSections = array_merge($arSections, self::getSubsections($section['ID']));
         }
+        return $arSections;
     }
 
-    protected function sectionExists($section_id)
+    public static function iblockTypeExists($iblock_type)
     {
-        if (!Loader::includeModule('main')) {
+        if (!Loader::includeModule('iblock')) {
             return false;
         }
-        return !is_null(SectionTable::getRow([
-            'filter' => ['ID' => $section_id, 'ACTIVE' => 'Y'],
+        return !is_null(TypeTable::getRow([
+            'filter' => ['ID' => $iblock_type],
             'select' => ['ID']
         ]));
     }
 
-    protected function iblockExists($iblock_id)
+    public static function iblockExists($iblock_id)
     {
-        if (!Loader::includeModule('main')) {
+        if (!Loader::includeModule('iblock')) {
             return false;
         }
         return !is_null(IblockTable::getRow([
@@ -217,9 +315,40 @@ class NewsListComponent extends \CBitrixComponent
         ]));
     }
 
-    protected function getSectionIdByCode($section_code)
+    public static function sectionExists($section_id, $iblocks = '')
     {
-        if (!Loader::includeModule('main')) {
+        if (!Loader::includeModule('iblock')) {
+            return false;
+        }
+        $filter = ['ID' => $section_id, 'ACTIVE' => 'Y'];
+        if ($iblocks) {
+            $filter['IBLOCK_ID'] = $iblocks;
+        }
+        return !is_null(SectionTable::getRow([
+            'filter' => $filter,
+            'select' => ['ID']
+        ]));
+    }
+
+    public static function getIblockIdByCode($iblock_code)
+    {
+        if (!Loader::includeModule('iblock')) {
+            return false;
+        }
+        $iblock_item = IblockTable::getRow([
+            'filter' => ['CODE' => $iblock_code, 'ACTIVE' => 'Y'],
+            'select' => ['ID']
+        ]);
+        if (is_null($iblock_item)) {
+            return false;
+        } else {
+            return $iblock_item['ID'];
+        }
+    }
+
+    public static function getSectionIdByCode($section_code)
+    {
+        if (!Loader::includeModule('iblock')) {
             return false;
         }
         $section_item = SectionTable::getRow([
@@ -231,20 +360,5 @@ class NewsListComponent extends \CBitrixComponent
         } else {
             return $section_item['ID'];
         }
-    }
-
-    protected function getSectionIdByParams()
-    {
-        if ($this->arParams['SECTION_ID'] > 0) {
-            $section_id = $this->arParams['SECTION_ID'];
-        } elseif ($this->arParams['SECTION_CODE']) {
-            $section_id = $this->getSectionIdByCode($this->arParams['SECTION_CODE']);
-            if (!$section_id) {
-                $section_id = -1;
-            }
-        } else {
-            $section_id = 0;
-        }
-        return $section_id;
     }
 }

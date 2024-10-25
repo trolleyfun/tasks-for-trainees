@@ -31,6 +31,18 @@ $arComponentParameters = [
             'TYPE' => 'CHECKBOX',
             'DEFAULT' => 'Y'
         ],
+        'DETAIL_URL' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
+        'SECTION_URL' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
+        'IBLOCK_URL' => [
+            'TYPE' => 'STRING',
+            'MULTIPLE' => 'N'
+        ],
         'FILTER' => [
             'TYPE' => 'STRING',
             'MULTIPLE' => 'Y'
