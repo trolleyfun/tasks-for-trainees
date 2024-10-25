@@ -41,12 +41,15 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 class NewsListComponent extends \CBitrixComponent
 {
     /**
-     * @var array   $arIblocks  Массив ID инфоблоков, новости которых будут выведены.
+     * @var int[] $arIblocks Массив ID инфоблоков, новости которых будут выведены.
      */
     protected $arIblocks = [];
 
     /**
-     * @var array   $arSections Массив ID разделов, новости которых будут выведены. Если элемент массива равен false, будут выведены новости корневого раздела инфоблока. Если массив пустой, будут выведены новости всех разделов инфоблока.
+     * @var (int|false)[] $arSections   Массив ID разделов, новости которых будут выведены. Если
+     *                                  элемент массива равен false, будут выведены новости корневого
+     *                                  раздела инфоблока. Если массив пустой, будут выведены новости
+     *                                  всеx разделов инфоблока.
      */
     protected $arSections = [];
 
@@ -291,7 +294,7 @@ class NewsListComponent extends \CBitrixComponent
      * Находит в исходном массиве поля с ID изображений и заменяет в этих полях ID на массив с параметрами изображения. Если не удалось сформировать массив параметров, полю присваивается значение false. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.
      *
      * @param array $array Массив, который надо преобразовать.
-     * @param array $keys Ключи элементов массива $array, в которых хранятся ID изображения.
+     * @param int|string[] $keys Ключи элементов массива $array, в которых хранятся ID изображения.
      * @return void
      */
     public static function convertPictureToArray(&$array, $keys)
@@ -311,7 +314,7 @@ class NewsListComponent extends \CBitrixComponent
      * Находит в исходном массиве поля с сущностями объекта Bitrix\Main\Type\DateTime и преобразует их в строку. Если не удалось преобразовать дату к строке, полю присвается пустая строка. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.
      *
      * @param array $array Массив, который надо преобразовать.
-     * @param array $keys Ключи элементов массива $array, в которых хранятся даты.
+     * @param int|string[] $keys Ключи элементов массива $array, в которых хранятся даты.
      * @return void
      */
     public static function convertDateToString(&$array, $keys)
@@ -389,7 +392,7 @@ class NewsListComponent extends \CBitrixComponent
      * Формирует массив с ID инфоблоков заданного типа.
      *
      * @param string $iblock_type
-     * @return array Массив с ID инфоблоков. Если не удалось сформировать массив или не найдено ни одного инфоблока указанного типа, функция вернет пустой массив.
+     * @return int[] Массив с ID инфоблоков. Если не удалось сформировать массив или не найдено ни одного инфоблока указанного типа, функция вернет пустой массив.
      */
     public static function getIblockByType($iblock_type)
     {
@@ -411,7 +414,7 @@ class NewsListComponent extends \CBitrixComponent
      * Формирует массив с ID подразделов заданного раздела инфоблока.
      *
      * @param int $section_id
-     * @return array Массив с ID подразделов. Если не удалось сформировать массив или не найдено ни одного подраздела, функция вернет пустой массив.
+     * @return int[] Массив с ID подразделов. Если не удалось сформировать массив или не найдено ни одного подраздела, функция вернет пустой массив.
      */
     public static function getSubsections($section_id)
     {
@@ -470,7 +473,7 @@ class NewsListComponent extends \CBitrixComponent
      * Проверяет существование раздела инфоблока с заданным ID. Если передан аргумент с ID инфоблока(ов), поиск производится только среди разделов этого инфоблока(ов). В противном случае поиск осуществляется среди разделов всех инфоблоков.
      *
      * @param int $section_id
-     * @param int|array $iblocks ID инфоблоков. Необязательный параметр.
+     * @param int|int[] $iblocks ID инфоблоков. Необязательный параметр.
      * @return bool
      */
     public static function sectionExists($section_id, $iblocks = '')
