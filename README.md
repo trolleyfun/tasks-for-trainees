@@ -13,7 +13,7 @@
 $APPLICATION->IncludeComponent(
     "local:news.list",
     "my_template",
-    Array(      
+    array(      
         "IBLOCK_CODE" => IBLOCK_CODE,
         "SECTION_CODE" => SECTION_CODE,
         "INCLUDE_SUBSECTIONS" => "Y",
