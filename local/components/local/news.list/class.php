@@ -13,11 +13,49 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
 
+/**
+ * Выводит список новостей.
+ *
+ * Компонент выводит список анонсов новостей.
+ *
+ * Если указан ID или символьный код инфоблока, будут выведены новости этого инфоблока. В противном случае будут выведены новости всех инфоблоков указанного типа.
+ *
+ * Параметры компонента:
+ *
+ * + IBLOCK_TYPE &ndash; ID типа инфоблока. Если заданы IBLOCK_ID или IBLOCK_CODE, данный параметр игнорируется.
+ * + IBLOCK_ID &ndash; ID инфоблока.
+ * + IBLOCK_CODE &ndash; Символьный код инфоблока. Если задан IBLOCK_ID, данный параметр игнорируется.
+ * + SECTION_ID &ndash; ID раздела, новости которого надо вывести. Если SECTION_ID и SECTION_CODE не заданы, выводятся новости корневого раздела инфоблока.
+ * + SECTION_CODE &ndash; Символьный код раздела, новости которого надо вывести. Если задан SECTION_ID, данный параметр игнорируется. Если SECTION_ID и SECTION_CODE не заданы, выводятся новости корневого раздела инфоблока.
+ * + INCLUDE_SUBSECTIONS &ndash; Если значение параметра равно "Y", то выводятся новости подразделов. Если значение равно "N", то новости подразделов не выводятся. По умолчанию "Y".
+ * + DETAIL_URL &ndash; Шаблон адреса страницы детального просмотра новости. По умолчанию значение берётся из инфоблока.
+ * + SECTION_URL &ndash; Шаблон адреса страницы раздела новостей. По умолчанию значение берётся из инфоблока.
+ * + IBLOCK_URL &ndash; Шаблон адреса страницы инфоблока. По умолчанию значение берётся из инфоблока.
+ * + FILTER &ndash; Ассоциативный массив, по которому будут отфильтрованы новости перед выводом на страницу. Если параметр не задан, фильтрация не производится.
+ * + FILTER_CACHE &ndash; Если параметр равен "Y", то при использовании фильтра компонент будет кэшироваться. Если параметр равен "N", то при использовании фильтра компонент кэшироваться не будет. По умолчанию "N".
+ * + CACHE_TYPE &ndash; Тип кэширования компонента. Допустимые значения: "A" &ndash; автоматическое кэширование, "Y" &ndash; управляемое кэширование, "N" &ndash; без кэширования. По умолчанию "A".
+ * + CACHE_TIME &ndash; Время кэширования в секундах. По умолчанию 36000000.
+ *
+ * Для корректной работы компонента необходимо задать хотя бы один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.
+ */
 class NewsListComponent extends \CBitrixComponent
 {
+    /**
+     * @var array   $arIblocks  Массив ID инфоблоков, новости которых будут выведены.
+     */
     protected $arIblocks = [];
+
+    /**
+     * @var array   $arSections Массив ID разделов, новости которых будут выведены. Если элемент массива равен false, будут выведены новости корневого раздела инфоблока. Если массив пустой, будут выведены новости всех разделов инфоблока.
+     */
     protected $arSections = [];
 
+    /**
+     * Обрабатывает параметры инфоблока.
+     *
+     * @param array $arParams
+     * @return array $arParams
+     */
     public function onPrepareComponentParams($arParams)
     {
         $arParams['IBLOCK_TYPE'] = trim((string)($arParams['IBLOCK_TYPE'] ?? ''));
@@ -44,11 +82,23 @@ class NewsListComponent extends \CBitrixComponent
         return $arParams;
     }
 
+    /**
+     * Подключает языковые фразы.
+     *
+     * @return void
+     */
     public function onIncludeComponentLang()
     {
         Loc::loadMessages(__FILE__);
     }
 
+    /**
+     * Обрабатывает входные данные перед выводом на страницу сайта.
+     *
+     * Обрабатывает данные из массива $arParams и формирует массив $arResult, который передаётся в шаблон компонента.
+     *
+     * @return void
+     */
     public function executeComponent()
     {
         if (!$this->arParams['FILTER_CACHE'] && $this->arParams['FILTER']) {
@@ -59,7 +109,7 @@ class NewsListComponent extends \CBitrixComponent
             try {
                 $this->checkModules('iblock');
 
-                $this->initComponentArrays();
+                $this->initComponentProperties();
 
                 $this->arResult = $this->getResultArray();
 
@@ -72,6 +122,13 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Подключает модули.
+     *
+     * @param string ...$modules
+     * @return void
+     * @throws Bitrix\Main\SystemException если не удалось подключить модуль.
+     */
     protected function checkModules(...$modules)
     {
         foreach ($modules as $m) {
@@ -81,12 +138,25 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
-    protected function initComponentArrays()
+    /**
+     * Инициализирует свойства класса компонента.
+     *
+     * @return void
+     */
+    protected function initComponentProperties()
     {
         $this->initIblockArray();
         $this->initSectionArray();
     }
 
+    /**
+     * Инициализирует массив инфоблоков компонента.
+     *
+     * Заполняет массив $arIblocks ID инфоблоков, новости которых необходимо вывести.
+     *
+     * @return void
+     * @throws Bitrix\Main\SystemException если ID или символьный код инфоблока, либо ID типа инфоблока некорректны, либо если не задан ни один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.
+     */
     protected function initIblockArray()
     {
         if (!$this->arParams['IBLOCK_ID'] && !$this->arParams['IBLOCK_CODE'] && !$this->arParams['IBLOCK_TYPE']) {
@@ -116,6 +186,14 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Инициализирует массив разделов инфоблока.
+     *
+     * Заполняет массив $arSections ID разделов инфоблока, новости которых необходимо вывести.
+     *
+     * @return void
+     * @throws Bitrix\Main\SystemException если раздел с указанным ID или символьным кодом не найден в инфоблоках компонента.
+     */
     protected function initSectionArray()
     {
         if ($this->arParams['SECTION_ID'] > 0) {
@@ -143,12 +221,24 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Формирует массив $arResult.
+     *
+     * @return array
+     */
     protected function getResultArray()
     {
         $arResult['ITEMS'] = $this->getResultItems();
         return $arResult;
     }
 
+    /**
+     * Формирует массив элементов инфоблока новостей.
+     *
+     * Формирует массив элементов инфоблока новостей. Элементы сгруппированы по ID инфоблоков. В качестве ключей для элементов используется ID элемента.
+     *
+     * @return array Если не удалось сформировать массив или по заданным условиям не найдено ни одного элемента, метод вернет пустой массив.
+     */
     protected function getResultItems()
     {
         if (!Loader::includeModule('iblock')) {
@@ -195,6 +285,15 @@ class NewsListComponent extends \CBitrixComponent
         return $arElements;
     }
 
+    /**
+     * Формирует массив с параметрами изображения по ID изображения.
+     *
+     * Находит в исходном массиве поля с ID изображений и заменяет в этих полях ID на массив с параметрами изображения. Если не удалось сформировать массив параметров, полю присваивается значение false. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.
+     *
+     * @param array $array Массив, который надо преобразовать.
+     * @param array $keys Ключи элементов массива $array, в которых хранятся ID изображения.
+     * @return void
+     */
     public static function convertPictureToArray(&$array, $keys)
     {
         if (is_array($array) && is_array($keys)) {
@@ -206,6 +305,15 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Преобразовывает дату в строку.
+     *
+     * Находит в исходном массиве поля с сущностями объекта Bitrix\Main\Type\DateTime и преобразует их в строку. Если не удалось преобразовать дату к строке, полю присвается пустая строка. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.
+     *
+     * @param array $array Массив, который надо преобразовать.
+     * @param array $keys Ключи элементов массива $array, в которых хранятся даты.
+     * @return void
+     */
     public static function convertDateToString(&$array, $keys)
     {
         if (is_array($array) && is_array($keys)) {
@@ -217,6 +325,23 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Формирует URL-адрес из шаблона URL-адреса.
+     *
+     * Преобразовывает шаблоны URL-адреса страницы детального просмотра, URL-адреса страницы раздела и URL-адреса страницы инфоблока. Адреса должны хранится в полях массива с ключами "DETAIL_PAGE_URL", "SECTION_PAGE_URL" и "LIST_PAGE_URL" массива полей элемента инфоблока.
+     *
+     * Если аргументы с шаблонами соответствующих URL-адресов не переданы, будут использованы шаблоны из массива полей элемента.
+     *
+     * В массиве полей элемента должны присутствовать поля с ключами, которые используются в шаблонах.
+     *
+     * Если не удалось преобразовать шаблон URL-адреса, полю присвается пустая строка. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.
+     *
+     * @param array $element_array Массив полей элемента.
+     * @param string $detail_url Шаблон адреса страницы детального просмотра. Необязательный параметр.
+     * @param string $section_url Шаблон адреса страницы раздела. Необязательный параметр.
+     * @param string $iblock_url Шаблон адреса страницы инфоблока. Необязательный параметр.
+     * @return void
+     */
     public static function convertElementUrl(&$element_array, $detail_url = '', $section_url = '', $iblock_url = '')
     {
         if (!Loader::includeModule('iblock')) {
@@ -260,6 +385,12 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Формирует массив с ID инфоблоков заданного типа.
+     *
+     * @param string $iblock_type
+     * @return array Массив с ID инфоблоков. Если не удалось сформировать массив или не найдено ни одного инфоблока указанного типа, функция вернет пустой массив.
+     */
     public static function getIblockByType($iblock_type)
     {
         if (!Loader::includeModule('iblock')) {
@@ -276,6 +407,12 @@ class NewsListComponent extends \CBitrixComponent
         return $arIblocks;
     }
 
+    /**
+     * Формирует массив с ID подразделов заданного раздела инфоблока.
+     *
+     * @param int $section_id
+     * @return array Массив с ID подразделов. Если не удалось сформировать массив или не найдено ни одного подраздела, функция вернет пустой массив.
+     */
     public static function getSubsections($section_id)
     {
         if (!Loader::includeModule('iblock')) {
@@ -293,6 +430,12 @@ class NewsListComponent extends \CBitrixComponent
         return $arSections;
     }
 
+    /**
+     * Проверяет существование типа инфоблока с заданным ID.
+     *
+     * @param string $iblock_type
+     * @return bool
+     */
     public static function iblockTypeExists($iblock_type)
     {
         if (!Loader::includeModule('iblock')) {
@@ -304,6 +447,12 @@ class NewsListComponent extends \CBitrixComponent
         ]));
     }
 
+    /**
+     * Проверяет существование инфоблока с заданным ID.
+     *
+     * @param int $iblock_id
+     * @return bool
+     */
     public static function iblockExists($iblock_id)
     {
         if (!Loader::includeModule('iblock')) {
@@ -315,6 +464,15 @@ class NewsListComponent extends \CBitrixComponent
         ]));
     }
 
+    /**
+     * Проверяет существование раздела инфоблока с заданным ID.
+     *
+     * Проверяет существование раздела инфоблока с заданным ID. Если передан аргумент с ID инфоблока(ов), поиск производится только среди разделов этого инфоблока(ов). В противном случае поиск осуществляется среди разделов всех инфоблоков.
+     *
+     * @param int $section_id
+     * @param int|array $iblocks ID инфоблоков. Необязательный параметр.
+     * @return bool
+     */
     public static function sectionExists($section_id, $iblocks = '')
     {
         if (!Loader::includeModule('iblock')) {
@@ -330,6 +488,12 @@ class NewsListComponent extends \CBitrixComponent
         ]));
     }
 
+    /**
+     * Находит ID инфоблока по заданному символьному коду.
+     *
+     * @param $iblock_code
+     * @return int|false Возвращает ID инфоблока. Если найти инфоблок не удалось, возвращает false.
+     */
     public static function getIblockIdByCode($iblock_code)
     {
         if (!Loader::includeModule('iblock')) {
@@ -346,6 +510,12 @@ class NewsListComponent extends \CBitrixComponent
         }
     }
 
+    /**
+     * Находит ID раздела инфоблока по заданному символьному коду.
+     *
+     * @param $section_code
+     * @return int|false Возвращает ID раздела инфоблока. Если найти инфоблок не удалось, возвращает false.
+     */
     public static function getSectionIdByCode($section_code)
     {
         if (!Loader::includeModule('iblock')) {
