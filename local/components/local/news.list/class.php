@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @package Components
+ */
+
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;

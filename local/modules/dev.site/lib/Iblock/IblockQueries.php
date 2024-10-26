@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @package Dev\Site\Iblock
+ */
+
 namespace Dev\Site\Iblock;
 
 use Bitrix\Iblock\IblockTable;

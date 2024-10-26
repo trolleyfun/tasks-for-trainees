@@ -51,56 +51,6 @@ Search.appendIndex(
             "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u044D\u043B\u0435\u043C\u0435\u043D\u0442\u043E\u0432\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u043D\u043E\u0432\u043E\u0441\u0442\u0435\u0439.",
             "url": "classes/NewsListComponent.html#method_getResultItems"
         },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AconvertPictureToArray\u0028\u0029",
-            "name": "convertPictureToArray",
-            "summary": "\u041F\u0440\u0435\u043E\u0431\u0440\u0430\u0437\u0443\u0435\u0442\u0020ID\u0020\u0438\u0437\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F\u0020\u0432\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u0441\u0020\u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u0430\u043C\u0438\u0020\u0438\u0437\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F.",
-            "url": "classes/NewsListComponent.html#method_convertPictureToArray"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AconvertDateToString\u0028\u0029",
-            "name": "convertDateToString",
-            "summary": "\u041F\u0440\u0435\u043E\u0431\u0440\u0430\u0437\u043E\u0432\u044B\u0432\u0430\u0435\u0442\u0020\u0434\u0430\u0442\u0443\u0020\u0432\u0020\u0441\u0442\u0440\u043E\u043A\u0443.",
-            "url": "classes/NewsListComponent.html#method_convertDateToString"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AconvertElementUrl\u0028\u0029",
-            "name": "convertElementUrl",
-            "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020URL\u002D\u0430\u0434\u0440\u0435\u0441\u0020\u043F\u043E\u0020\u0448\u0430\u0431\u043B\u043E\u043D\u0443\u0020URL\u002D\u0430\u0434\u0440\u0435\u0441\u0430.",
-            "url": "classes/NewsListComponent.html#method_convertElementUrl"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AgetIblockByType\u0028\u0029",
-            "name": "getIblockByType",
-            "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u0441\u0020ID\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u043E\u0432\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u043E\u0433\u043E\u0020\u0442\u0438\u043F\u0430.",
-            "url": "classes/NewsListComponent.html#method_getIblockByType"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AgetSubsections\u0028\u0029",
-            "name": "getSubsections",
-            "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u0441\u0020ID\u0020\u043F\u043E\u0434\u0440\u0430\u0437\u0434\u0435\u043B\u043E\u0432\u0020\u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u0433\u043E\u0020\u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430.",
-            "url": "classes/NewsListComponent.html#method_getSubsections"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AiblockTypeExists\u0028\u0029",
-            "name": "iblockTypeExists",
-            "summary": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0020\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u0435\u0020\u0442\u0438\u043F\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u0441\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C\u0020ID.",
-            "url": "classes/NewsListComponent.html#method_iblockTypeExists"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AiblockExists\u0028\u0029",
-            "name": "iblockExists",
-            "summary": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0020\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u0435\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u0441\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C\u0020ID.",
-            "url": "classes/NewsListComponent.html#method_iblockExists"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AsectionExists\u0028\u0029",
-            "name": "sectionExists",
-            "summary": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0020\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u0435\u0020\u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u0441\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C\u0020ID.",
-            "url": "classes/NewsListComponent.html#method_sectionExists"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AgetIblockIdByCode\u0028\u0029",
-            "name": "getIblockIdByCode",
-            "summary": "\u041D\u0430\u0445\u043E\u0434\u0438\u0442\u0020ID\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u043F\u043E\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u043E\u043C\u0443\u0020\u0441\u0438\u043C\u0432\u043E\u043B\u044C\u043D\u043E\u043C\u0443\u0020\u043A\u043E\u0434\u0443.",
-            "url": "classes/NewsListComponent.html#method_getIblockIdByCode"
-        },                {
-            "fqsen": "\\NewsListComponent\u003A\u003AgetSectionIdByCode\u0028\u0029",
-            "name": "getSectionIdByCode",
-            "summary": "\u041D\u0430\u0445\u043E\u0434\u0438\u0442\u0020ID\u0020\u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u043F\u043E\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u043E\u043C\u0443\u0020\u0441\u0438\u043C\u0432\u043E\u043B\u044C\u043D\u043E\u043C\u0443\u0020\u043A\u043E\u0434\u0443.",
-            "url": "classes/NewsListComponent.html#method_getSectionIdByCode"
-        },                {
             "fqsen": "\\NewsListComponent\u003A\u003A\u0024arIblocks",
             "name": "arIblocks",
             "summary": "",
@@ -111,9 +61,89 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/NewsListComponent.html#property_arSections"
         },                {
+            "fqsen": "\\Dev\\Site\\Exceptions\\ComponentException",
+            "name": "ComponentException",
+            "summary": "\u041A\u043B\u0430\u0441\u0441\u0020\u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0439\u0020\u0434\u043B\u044F\u0020\u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u043E\u0432.",
+            "url": "classes/Dev-Site-Exceptions-ComponentException.html"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries",
+            "name": "IblockQueries",
+            "summary": "\u041A\u043B\u0430\u0441\u0441\u0020\u0434\u043B\u044F\u0020\u0440\u0430\u0431\u043E\u0442\u044B\u0020\u0441\u0020\u0432\u044B\u0431\u043E\u0440\u043A\u0430\u043C\u0438\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u043E\u0432.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AconvertPictureToArray\u0028\u0029",
+            "name": "convertPictureToArray",
+            "summary": "\u041F\u0440\u0435\u043E\u0431\u0440\u0430\u0437\u0443\u0435\u0442\u0020ID\u0020\u0438\u0437\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F\u0020\u0432\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u0441\u0020\u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u0430\u043C\u0438\u0020\u0438\u0437\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_convertPictureToArray"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AconvertDateToString\u0028\u0029",
+            "name": "convertDateToString",
+            "summary": "\u041F\u0440\u0435\u043E\u0431\u0440\u0430\u0437\u043E\u0432\u044B\u0432\u0430\u0435\u0442\u0020\u0434\u0430\u0442\u0443\u0020\u0432\u0020\u0441\u0442\u0440\u043E\u043A\u0443.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_convertDateToString"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AconvertElementUrl\u0028\u0029",
+            "name": "convertElementUrl",
+            "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020URL\u002D\u0430\u0434\u0440\u0435\u0441\u0020\u043F\u043E\u0020\u0448\u0430\u0431\u043B\u043E\u043D\u0443\u0020URL\u002D\u0430\u0434\u0440\u0435\u0441\u0430.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_convertElementUrl"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AgetIblockByType\u0028\u0029",
+            "name": "getIblockByType",
+            "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u0441\u0020ID\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u043E\u0432\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u043E\u0433\u043E\u0020\u0442\u0438\u043F\u0430.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_getIblockByType"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AgetSubsections\u0028\u0029",
+            "name": "getSubsections",
+            "summary": "\u0424\u043E\u0440\u043C\u0438\u0440\u0443\u0435\u0442\u0020\u043C\u0430\u0441\u0441\u0438\u0432\u0020\u0441\u0020ID\u0020\u043F\u043E\u0434\u0440\u0430\u0437\u0434\u0435\u043B\u043E\u0432\u0020\u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u0433\u043E\u0020\u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_getSubsections"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AiblockTypeExists\u0028\u0029",
+            "name": "iblockTypeExists",
+            "summary": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0020\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u0435\u0020\u0442\u0438\u043F\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u0441\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C\u0020ID.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_iblockTypeExists"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AiblockExists\u0028\u0029",
+            "name": "iblockExists",
+            "summary": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0020\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u0435\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u0441\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C\u0020ID.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_iblockExists"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AsectionExists\u0028\u0029",
+            "name": "sectionExists",
+            "summary": "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u0442\u0020\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043E\u0432\u0430\u043D\u0438\u0435\u0020\u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u0441\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C\u0020ID.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_sectionExists"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AgetIblockIdByCode\u0028\u0029",
+            "name": "getIblockIdByCode",
+            "summary": "\u041D\u0430\u0445\u043E\u0434\u0438\u0442\u0020ID\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u043F\u043E\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u043E\u043C\u0443\u0020\u0441\u0438\u043C\u0432\u043E\u043B\u044C\u043D\u043E\u043C\u0443\u0020\u043A\u043E\u0434\u0443.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_getIblockIdByCode"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock\\IblockQueries\u003A\u003AgetSectionIdByCode\u0028\u0029",
+            "name": "getSectionIdByCode",
+            "summary": "\u041D\u0430\u0445\u043E\u0434\u0438\u0442\u0020ID\u0020\u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0020\u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\u0020\u043F\u043E\u0020\u0437\u0430\u0434\u0430\u043D\u043D\u043E\u043C\u0443\u0020\u0441\u0438\u043C\u0432\u043E\u043B\u044C\u043D\u043E\u043C\u0443\u0020\u043A\u043E\u0434\u0443.",
+            "url": "classes/Dev-Site-Iblock-IblockQueries.html#method_getSectionIdByCode"
+        },                {
             "fqsen": "\\",
             "name": "\\",
             "summary": "",
             "url": "namespaces/default.html"
+        },                {
+            "fqsen": "\\Dev\\Site\\Exceptions",
+            "name": "Exceptions",
+            "summary": "",
+            "url": "namespaces/dev-site-exceptions.html"
+        },                {
+            "fqsen": "\\Dev\\Site",
+            "name": "Site",
+            "summary": "",
+            "url": "namespaces/dev-site.html"
+        },                {
+            "fqsen": "\\Dev",
+            "name": "Dev",
+            "summary": "",
+            "url": "namespaces/dev.html"
+        },                {
+            "fqsen": "\\Dev\\Site\\Iblock",
+            "name": "Iblock",
+            "summary": "",
+            "url": "namespaces/dev-site-iblock.html"
         }            ]
 );

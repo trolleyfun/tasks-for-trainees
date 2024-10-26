@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @package Dev\Site\Exceptions
+ */
+
 namespace Dev\Site\Exceptions;
 
 use Bitrix\Main\SystemException;
