@@ -3,7 +3,7 @@
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
-use Bitrix\Main\SystemException;
+use Dev\Site\Exceptions\ComponentException;
 use Dev\Site\Iblock\IblockQueries;
 
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
@@ -124,7 +124,7 @@ class NewsListComponent extends \CBitrixComponent
                 $this->arResult = $this->getResultArray();
 
                 $this->includeComponentTemplate();
-            } catch (SystemException $e) {
+            } catch (ComponentException $e) {
                 $this->abortResultCache();
 
                 ShowError($e->getMessage());
@@ -137,13 +137,13 @@ class NewsListComponent extends \CBitrixComponent
      *
      * @param string ...$modules
      * @return void
-     * @throws Bitrix\Main\SystemException если не удалось подключить модуль.
+     * @throws Dev\Site\Exceptions\ComponentException если не удалось подключить модуль.
      */
     protected function checkModules(...$modules)
     {
         foreach ($modules as $m) {
             if (!Loader::includeModule($m)) {
-                throw new SystemException(Loc::getMessage('MODULE_NOT_FOUND'));
+                throw new ComponentException(Loc::getMessage('MODULE_NOT_FOUND'));
             }
         }
     }
@@ -165,25 +165,26 @@ class NewsListComponent extends \CBitrixComponent
      * Заполняет массив $arIblocks значениями ID инфоблоков, новости которых необходимо вывести.
      *
      * @return void
-     * @throws Bitrix\Main\SystemException  + некорректный ID инфоблока
-     *                                      + некорректный символьный код инфоблока
-     *                                      + некорректный ID типа инфоблока
-     *                                      + не задан ни один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.
+     * @throws Dev\Site\Exceptions\ComponentException
+     *      + некорректный ID инфоблока
+     *      + некорректный символьный код инфоблока
+     *      + некорректный ID типа инфоблока
+     *      + не задан ни один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.
      */
     protected function initIblockArray()
     {
         if (!$this->arParams['IBLOCK_ID'] && !$this->arParams['IBLOCK_CODE'] && !$this->arParams['IBLOCK_TYPE']) {
-            throw new SystemException(Loc::getMessage('IBLOCK_FIELDS_EMPTY'));
+            throw new ComponentException(Loc::getMessage('IBLOCK_FIELDS_EMPTY'));
         }
 
         if ($this->arParams['IBLOCK_ID'] > 0) {
             $iblock_id = $this->arParams['IBLOCK_ID'];
             if (!IblockQueries::iblockExists($iblock_id)) {
-                throw new SystemException(Loc::getMessage('IBLOCK_ID_NOT_VALID'));
+                throw new ComponentException(Loc::getMessage('IBLOCK_ID_NOT_VALID'));
             }
         } elseif ($this->arParams['IBLOCK_CODE']) {
             if (!$iblock_id = IblockQueries::getIblockIdByCode($this->arParams['IBLOCK_CODE'])) {
-                throw new SystemException(Loc::getMessage('IBLOCK_CODE_NOT_VALID'));
+                throw new ComponentException(Loc::getMessage('IBLOCK_CODE_NOT_VALID'));
             }
         } else {
             $iblock_id = 0;
@@ -193,7 +194,7 @@ class NewsListComponent extends \CBitrixComponent
             $this->arIblocks = [$iblock_id];
         } elseif ($this->arParams['IBLOCK_TYPE']) {
             if (!IblockQueries::iblockTypeExists($this->arParams['IBLOCK_TYPE'])) {
-                throw new SystemException(Loc::getMessage('IBLOCK_TYPE_NOT_VALID'));
+                throw new ComponentException(Loc::getMessage('IBLOCK_TYPE_NOT_VALID'));
             }
             $this->arIblocks = IblockQueries::getIblockByType($this->arParams['IBLOCK_TYPE']);
         }
@@ -205,21 +206,20 @@ class NewsListComponent extends \CBitrixComponent
      * Заполняет массив $arSections значениями ID разделов инфоблока, новости которых необходимо вывести.
      *
      * @return void
-     * @throws Bitrix\Main\SystemException  + раздел с указанным ID не найден в инфоблоках,
-     *                                      перечисленных в массиве $arIblocks
-     *                                      + раздел с указанным символьным кодом не найден в инфоблоках,
-     *                                      перечисленных в массиве $arIblocks
+     * @throws Dev\Site\Exceptions\ComponentException
+     *      + раздел с указанным ID не найден в инфоблоках, перечисленных в массиве $arIblocks
+     *      + раздел с указанным символьным кодом не найден в инфоблоках, перечисленных в массиве $arIblocks
      */
     protected function initSectionArray()
     {
         if ($this->arParams['SECTION_ID'] > 0) {
             $section_id = $this->arParams['SECTION_ID'];
             if (!IblockQueries::sectionExists($section_id, $this->arIblocks)) {
-                throw new SystemException(Loc::getMessage('SECTION_ID_NOT_VALID'));
+                throw new ComponentException(Loc::getMessage('SECTION_ID_NOT_VALID'));
             }
         } elseif ($this->arParams['SECTION_CODE']) {
             if (!$section_id = IblockQueries::getSectionIdByCode($this->arParams['SECTION_CODE'])) {
-                throw new SystemException(Loc::getMessage('SECTION_CODE_NOT_VALID'));
+                throw new ComponentException(Loc::getMessage('SECTION_CODE_NOT_VALID'));
             }
         } else {
             $section_id = 0;
