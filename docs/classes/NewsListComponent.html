@@ -107,7 +107,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">41</span>
+    <span class="phpdocumentor-element-found-in__line">51</span>
 
     </aside>
 
@@ -115,24 +115,34 @@
 
 
     <section class="phpdocumentor-description"><p>Компонент выводит список анонсов новостей.</p>
-<p>Если указан ID или символьный код инфоблока, будут выведены новости этого инфоблока. В противном случае будут выведены новости всех инфоблоков указанного типа.</p>
+<p>Если указан ID или символьный код инфоблока, будут выведены новости этого инфоблока. В противном
+случае будут выведены новости всех инфоблоков указанного типа.</p>
 <p>Параметры компонента:</p>
 <ul>
 <li>IBLOCK_TYPE – ID типа инфоблока. Если заданы IBLOCK_ID или IBLOCK_CODE, данный параметр игнорируется.</li>
 <li>IBLOCK_ID – ID инфоблока.</li>
 <li>IBLOCK_CODE – Символьный код инфоблока. Если задан IBLOCK_ID, данный параметр игнорируется.</li>
-<li>SECTION_ID – ID раздела, новости которого надо вывести. Если SECTION_ID и SECTION_CODE не заданы, выводятся новости корневого раздела инфоблока.</li>
-<li>SECTION_CODE – Символьный код раздела, новости которого надо вывести. Если задан SECTION_ID, данный параметр игнорируется. Если SECTION_ID и SECTION_CODE не заданы, выводятся новости корневого раздела инфоблока.</li>
-<li>INCLUDE_SUBSECTIONS – Если значение параметра равно &quot;Y&quot;, то выводятся новости подразделов. Если значение равно &quot;N&quot;, то новости подразделов не выводятся. По умолчанию &quot;Y&quot;.</li>
-<li>DETAIL_URL – Шаблон адреса страницы детального просмотра новости. По умолчанию значение берётся из инфоблока.</li>
+<li>SECTION_ID – ID раздела, новости которого надо вывести. Если SECTION_ID и SECTION_CODE не заданы,
+выводятся новости корневого раздела инфоблока.</li>
+<li>SECTION_CODE – Символьный код раздела, новости которого надо вывести. Если задан SECTION_ID,
+данный параметр игнорируется. Если SECTION_ID и SECTION_CODE не заданы, выводятся новости
+корневого раздела инфоблока.</li>
+<li>INCLUDE_SUBSECTIONS – Если значение параметра равно &quot;Y&quot;, то выводятся новости подразделов.
+Если значение равно &quot;N&quot;, то новости подразделов не выводятся. По умолчанию &quot;Y&quot;.</li>
+<li>DETAIL_URL – Шаблон адреса страницы детального просмотра новости. По умолчанию значение
+берётся из инфоблока.</li>
 <li>SECTION_URL – Шаблон адреса страницы раздела новостей. По умолчанию значение берётся из инфоблока.</li>
 <li>IBLOCK_URL – Шаблон адреса страницы инфоблока. По умолчанию значение берётся из инфоблока.</li>
-<li>FILTER – Ассоциативный массив, по которому будут отфильтрованы новости перед выводом на страницу. Если параметр не задан, фильтрация не производится.</li>
-<li>FILTER_CACHE – Если параметр равен &quot;Y&quot;, то при использовании фильтра компонент будет кэшироваться. Если параметр равен &quot;N&quot;, то при использовании фильтра компонент кэшироваться не будет. По умолчанию &quot;N&quot;.</li>
-<li>CACHE_TYPE – Тип кэширования компонента. Допустимые значения: &quot;A&quot; – автоматическое кэширование, &quot;Y&quot; – управляемое кэширование, &quot;N&quot; – без кэширования. По умолчанию &quot;A&quot;.</li>
+<li>FILTER – Ассоциативный массив, по которому будут отфильтрованы новости перед выводом на страницу.
+Если параметр не задан, фильтрация не производится.</li>
+<li>FILTER_CACHE – Если параметр равен &quot;Y&quot;, то при использовании фильтра компонент будет кэшироваться.
+Если параметр равен &quot;N&quot;, то при использовании фильтра компонент кэшироваться не будет. По умолчанию &quot;N&quot;.</li>
+<li>CACHE_TYPE – Тип кэширования компонента. Допустимые значения: &quot;A&quot; – автоматическое кэширование,
+&quot;Y&quot; – управляемое кэширование, &quot;N&quot; – без кэширования. По умолчанию &quot;A&quot;.</li>
 <li>CACHE_TIME – Время кэширования в секундах. По умолчанию 36000000.</li>
 </ul>
-<p>Для корректной работы компонента необходимо задать хотя бы один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.</p>
+<p>Для корректной работы компонента необходимо задать хотя бы один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.
+Остальные параметры необязательные.</p>
 </section>
 
 
@@ -193,21 +203,21 @@
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Формирует URL-адрес из шаблона URL-адреса.</dd>
+<dd>Формирует URL-адрес по шаблону URL-адреса.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/NewsListComponent.html#method_convertPictureToArray">convertPictureToArray()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Формирует массив с параметрами изображения по ID изображения.</dd>
+<dd>Преобразует ID изображения в массив с параметрами изображения.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/NewsListComponent.html#method_executeComponent">executeComponent()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Обрабатывает входные данные перед выводом на страницу сайта.</dd>
+<dd>Формирует данные, которые необходимо вывести на страницу сайта.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/NewsListComponent.html#method_getIblockByType">getIblockByType()</a>
@@ -235,7 +245,7 @@
     <span>
                                 &nbsp;: array&lt;string|int, int&gt;    </span>
 </dt>
-<dd>Формирует массив с ID подразделов заданного раздела инфоблока.</dd>
+<dd>Формирует массив с ID подразделов указанного раздела инфоблока.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/NewsListComponent.html#method_iblockExists">iblockExists()</a>
@@ -256,7 +266,7 @@
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Подключает языковые фразы.</dd>
+<dd>Подключает языковые файлы.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/NewsListComponent.html#method_onPrepareComponentParams">onPrepareComponentParams()</a>
@@ -344,7 +354,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">46</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -382,7 +392,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">54</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -428,7 +438,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">320</span>
+    <span class="phpdocumentor-element-found-in__line">368</span>
 
     </aside>
 
@@ -436,12 +446,16 @@
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">convertDateToString</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$array</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">int|array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$keys</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">convertDateToString</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$array</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, string|int&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$keys</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Находит в исходном массиве поля с сущностями объекта Bitrix\Main\Type\DateTime и преобразует их в строку. Если не удалось преобразовать дату к строке, полю присвается пустая строка. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.</p>
+        <section class="phpdocumentor-description"><p>Преобразовывает сущность объекта Bitrix\Main\Type\DateTime в строку.</p>
+<p>Находит в исходном массиве поля, соответствующие ключам, которые были переданы в качестве
+аргумента функции, и формирует для этих полей строку, содержащую дату.</p>
+<p>Если не удалось преобразовать дату к строке, полю присвается пустая строка.</p>
+<p>Преобразования осуществляются в массиве, который передан в качестве аргумента функции.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -451,13 +465,13 @@
                 : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Массив, который надо преобразовать.</p>
+                    <section class="phpdocumentor-description"><p>Массив, который необходимо преобразовать.</p>
 </section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$keys</span>
-                : <span class="phpdocumentor-signature__argument__return-type">int|array&lt;string|int, string&gt;</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, string|int&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                     <section class="phpdocumentor-description"><p>Ключи элементов массива $array, в которых хранятся даты.</p>
@@ -486,11 +500,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">348</span>
+    <span class="phpdocumentor-element-found-in__line">401</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Формирует URL-адрес из шаблона URL-адреса.</p>
+        <p class="phpdocumentor-summary">Формирует URL-адрес по шаблону URL-адреса.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -499,10 +513,15 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Преобразовывает шаблоны URL-адреса страницы детального просмотра, URL-адреса страницы раздела и URL-адреса страницы инфоблока. Адреса должны хранится в полях массива с ключами &quot;DETAIL_PAGE_URL&quot;, &quot;SECTION_PAGE_URL&quot; и &quot;LIST_PAGE_URL&quot; массива полей элемента инфоблока.</p>
-<p>Если аргументы с шаблонами соответствующих URL-адресов не переданы, будут использованы шаблоны из массива полей элемента.</p>
-<p>В массиве полей элемента должны присутствовать поля с ключами, которые используются в шаблонах.</p>
-<p>Если не удалось преобразовать шаблон URL-адреса, полю присвается пустая строка. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.</p>
+        <section class="phpdocumentor-description"><p>Преобразовывает шаблоны URL-адреса страницы детального просмотра, URL-адреса страницы раздела
+и URL-адреса страницы инфоблока.</p>
+<p>Адреса хранятся в полях массива с ключами &quot;DETAIL_PAGE_URL&quot;, &quot;SECTION_PAGE_URL&quot; и &quot;LIST_PAGE_URL&quot; соотвественно.
+В исходном массиве должны присутствовать эти поля. Также в исходном массиве должны присутствовать поля,
+которые используются в шаблонах адресов (ID, SECTION_ID, IBLOCK_ID и др.).</p>
+<p>Если в функцию переданы аргументы с шаблонами адресов, будут использованы эти шаблоны. В противном случае
+будут использованы шаблоны, заданные в параметрах инфоблока.</p>
+<p>Если не удалось преобразовать шаблон URL-адреса, полю присвается пустая строка. Преобразования
+осуществляются в массиве, который передан в качестве аргумента функции.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -565,39 +584,40 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">300</span>
+    <span class="phpdocumentor-element-found-in__line">341</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Формирует массив с параметрами изображения по ID изображения.</p>
+        <p class="phpdocumentor-summary">Преобразует ID изображения в массив с параметрами изображения.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">convertPictureToArray</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$array</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">int|array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$keys</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">convertPictureToArray</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$array</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, string|int&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$keys</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Находит в исходном массиве поля с ID изображений и заменяет в этих полях ID на массив с параметрами изображения. Если не удалось сформировать массив параметров, полю присваивается значение false. Преобразования осуществляются в массиве, который передан в качестве аргумента функции.</p>
+        <section class="phpdocumentor-description"><p>Находит в исходном массиве поля, соответствующие ключам, которые были переданы в качестве
+аргумента функции, и формирует для этих полей массив параметров изображения.</p>
+<p>Если не удалось сформировать массив параметров, полю присваивается значение false.</p>
+<p>Преобразования осуществляются в массиве, который передан в качестве аргумента функции.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$array</span>
-                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Массив, который надо преобразовать.</p>
-</section>
-
+                
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$keys</span>
-                : <span class="phpdocumentor-signature__argument__return-type">int|array&lt;string|int, string&gt;</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, string|int&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Ключи элементов массива $array, в которых хранятся ID изображения.</p>
+                    <section class="phpdocumentor-description"><p>Ключи элементов массива $array, в которых хранятся ID изображений.</p>
 </section>
 
             </dd>
@@ -623,11 +643,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">115</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Обрабатывает входные данные перед выводом на страницу сайта.</p>
+        <p class="phpdocumentor-summary">Формирует данные, которые необходимо вывести на страницу сайта.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -660,7 +680,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">397</span>
+    <span class="phpdocumentor-element-found-in__line">451</span>
 
     </aside>
 
@@ -693,7 +713,8 @@
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, int&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Массив с ID инфоблоков. Если не удалось сформировать массив или не найдено ни одного инфоблока указанного типа, функция вернет пустой массив.</p>
+                <section class="phpdocumentor-description"><p>Массив с ID инфоблоков. Если не удалось сформировать массив или не найдено
+ни одного инфоблока указанного типа, функция вернет пустой массив.</p>
 </section>
 
             </section>
@@ -713,7 +734,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">500</span>
+    <span class="phpdocumentor-element-found-in__line">558</span>
 
     </aside>
 
@@ -721,7 +742,7 @@
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">getIblockIdByCode</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$iblock_code</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int|false</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">getIblockIdByCode</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$iblock_code</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int|false</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -731,7 +752,7 @@
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$iblock_code</span>
-                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -766,7 +787,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">522</span>
+    <span class="phpdocumentor-element-found-in__line">580</span>
 
     </aside>
 
@@ -774,7 +795,7 @@
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">getSectionIdByCode</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$section_code</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int|false</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">getSectionIdByCode</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$section_code</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int|false</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -784,7 +805,7 @@
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$section_code</span>
-                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -819,11 +840,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">419</span>
+    <span class="phpdocumentor-element-found-in__line">474</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Формирует массив с ID подразделов заданного раздела инфоблока.</p>
+        <p class="phpdocumentor-summary">Формирует массив с ID подразделов указанного раздела инфоблока.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -852,7 +873,8 @@
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, int&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Массив с ID подразделов. Если не удалось сформировать массив или не найдено ни одного подраздела, функция вернет пустой массив.</p>
+                <section class="phpdocumentor-description"><p>Массив с ID подразделов. Если не удалось сформировать массив или не найдено
+ни одного подраздела, функция вернет пустой массив.</p>
 </section>
 
             </section>
@@ -872,7 +894,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">459</span>
+    <span class="phpdocumentor-element-found-in__line">514</span>
 
     </aside>
 
@@ -921,7 +943,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">442</span>
+    <span class="phpdocumentor-element-found-in__line">497</span>
 
     </aside>
 
@@ -970,11 +992,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">93</span>
+    <span class="phpdocumentor-element-found-in__line">103</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Подключает языковые фразы.</p>
+        <p class="phpdocumentor-summary">Подключает языковые файлы.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1005,7 +1027,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">72</span>
 
     </aside>
 
@@ -1058,7 +1080,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">479</span>
+    <span class="phpdocumentor-element-found-in__line">537</span>
 
     </aside>
 
@@ -1071,7 +1093,9 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Проверяет существование раздела инфоблока с заданным ID. Если передан аргумент с ID инфоблока(ов), поиск производится только среди разделов этого инфоблока(ов). В противном случае поиск осуществляется среди разделов всех инфоблоков.</p>
+        <section class="phpdocumentor-description"><p>Проверяет существование раздела инфоблока с заданным ID.</p>
+<p>Если передан аргумент с ID инфоблока(ов), поиск производится только среди разделов этого инфоблока(ов).
+В противном случае поиск осуществляется среди разделов всех инфоблоков.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1118,7 +1142,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">135</span>
+    <span class="phpdocumentor-element-found-in__line">145</span>
 
     </aside>
 
@@ -1180,7 +1204,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">232</span>
+    <span class="phpdocumentor-element-found-in__line">256</span>
 
     </aside>
 
@@ -1193,7 +1217,14 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>Формирует массив $arResult. Структура массива:</p>
+<pre class="prettyprint"><code class="prettyprint">Array
+(
+    ['ITEMS'] =&gt;
+)
+</code></pre>
+</section>
+
     
     
 
@@ -1219,7 +1250,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">245</span>
+    <span class="phpdocumentor-element-found-in__line">281</span>
 
     </aside>
 
@@ -1232,7 +1263,16 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Формирует массив элементов инфоблока новостей. Элементы сгруппированы по ID инфоблоков. В качестве ключей для элементов используется ID элемента.</p>
+        <section class="phpdocumentor-description"><p>Формирует массив элементов инфоблока новостей. Элементы сгруппированы по ID инфоблоков.</p>
+<p>Структура массива:</p>
+<pre class="prettyprint"><code class="prettyprint">Array
+(
+     [IBLOCK_ID] =&gt; Array
+         (
+             [ELEMENT_ID] =&gt; Array()
+         )
+)
+</code></pre>
 </section>
 
     
@@ -1244,7 +1284,8 @@
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Если не удалось сформировать массив или по заданным условиям не найдено ни одного элемента, метод вернет пустой массив.</p>
+                <section class="phpdocumentor-description"><p>Если не удалось сформировать массив или по заданным условиям не найдено
+ни одного элемента, метод вернет пустой массив.</p>
 </section>
 
             </section>
@@ -1264,7 +1305,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">149</span>
+    <span class="phpdocumentor-element-found-in__line">159</span>
 
     </aside>
 
@@ -1299,7 +1340,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">163</span>
+    <span class="phpdocumentor-element-found-in__line">176</span>
 
     </aside>
 
@@ -1312,7 +1353,7 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Заполняет массив $arIblocks ID инфоблоков, новости которых необходимо вывести.</p>
+        <section class="phpdocumentor-description"><p>Заполняет массив $arIblocks значениями ID инфоблоков, новости которых необходимо вывести.</p>
 </section>
 
     
@@ -1329,7 +1370,12 @@
                 <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\Bitrix\Main\SystemException">SystemException</abbr></span>
                                                             
-                                                 <section class="phpdocumentor-description"><p>если ID или символьный код инфоблока, либо ID типа инфоблока некорректны, либо если не задан ни один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.</p>
+                                                 <section class="phpdocumentor-description"><ul>
+<li>некорректный ID инфоблока</li>
+<li>некорректный символьный код инфоблока</li>
+<li>некорректный ID типа инфоблока</li>
+<li>не задан ни один из параметров IBLOCK_TYPE, IBLOCK_ID, IBLOCK_CODE.</li>
+</ul>
 </section>
 
                                     </dd>
@@ -1353,7 +1399,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="local/components/local/news.list/class.php"><a href="files/local-components-local-news-list-class.html"><abbr title="local/components/local/news.list/class.php">class.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">200</span>
+    <span class="phpdocumentor-element-found-in__line">216</span>
 
     </aside>
 
@@ -1366,7 +1412,7 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Заполняет массив $arSections ID разделов инфоблока, новости которых необходимо вывести.</p>
+        <section class="phpdocumentor-description"><p>Заполняет массив $arSections значениями ID разделов инфоблока, новости которых необходимо вывести.</p>
 </section>
 
     
@@ -1383,7 +1429,12 @@
                 <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\Bitrix\Main\SystemException">SystemException</abbr></span>
                                                             
-                                                 <section class="phpdocumentor-description"><p>если раздел с указанным ID или символьным кодом не найден в инфоблоках компонента.</p>
+                                                 <section class="phpdocumentor-description"><ul>
+<li>раздел с указанным ID не найден в инфоблоках,
+перечисленных в массиве $arIblocks</li>
+<li>раздел с указанным символьным кодом не найден в инфоблоках,
+перечисленных в массиве $arIblocks</li>
+</ul>
 </section>
 
                                     </dd>
