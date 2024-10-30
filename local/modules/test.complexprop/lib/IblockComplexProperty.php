@@ -15,15 +15,15 @@ class IblockComplexProperty
         ],
         'date' => [
             'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_DATETYPE_NAME',
-            'METHOD' => ''
+            'METHOD' => 'getDatePropertyTypeHtml'
         ],
         'file' => [
             'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_FILETYPE_NAME',
-            'METHOD' => ''
+            'METHOD' => 'getFilePropertyTypeHtml'
         ],
         'element' => [
             'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_ELEMENTTYPE_NAME',
-            'METHOD' => ''
+            'METHOD' => 'getElementPropertyTypeHtml'
         ]
     ];
 
@@ -211,6 +211,51 @@ class IblockComplexProperty
             </tr>';
         }
         return $result;
+    }
+
+    public static function getDatePropertyTypeHtml($settings, $value, $strHTMLControlName)
+    {
+        if (empty($settings['CODE']) || empty($settings['TITLE'])) {
+            $result = '';
+        } else {
+            $titleValue = htmlspecialcharsbx($settings['TITLE']);
+            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).']';
+            if (!empty($value['VALUE'][$settings['CODE']])) {
+                $inputValue = htmlspecialcharsbx($value['VALUE'][$settings['CODE']]);
+            } else {
+                $inputValue = '';
+            }
+
+            $result = '<tr>
+                        <td align="right" valign="top">'.$titleValue.': </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td style="padding: 0;">
+                                        <div class="adm-input-wrap adm-input-wrap-calendar">
+                                            <input class="adm-input adm-input-calendar" type="text"
+                                                name="'.$inputName.'" size="23" value="'.$inputValue.'">
+                                            <span class="adm-calendar-icon"
+                                                onclick="BX.calendar({node: this, field:\''.$inputName
+                                                .'\', form: \'\', bTime: true, bHideTime: false});"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>';
+        }
+        return $result;
+    }
+
+    public static function getFilePropertyTypeHtml($settings, $value, $strHTMLControlName)
+    {
+
+    }
+
+    public static function getElementPropertyTypeHtml($settings, $value, $strHTMLControlName)
+    {
+
     }
 
     protected static function getPropertyTypesList($selectedType = '')
