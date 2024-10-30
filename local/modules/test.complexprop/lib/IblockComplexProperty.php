@@ -8,8 +8,27 @@ use Bitrix\Main\Localization\Loc;
 
 class IblockComplexProperty
 {
-    private static $showedCss = false;
-    private static $showedJs = false;
+    protected const PROPERTIES_TYPES = [
+        'string' => [
+            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_STRINGTYPE_NAME',
+            'METHOD' => ''
+        ],
+        'date' => [
+            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_DATETYPE_NAME',
+            'METHOD' => ''
+        ],
+        'file' => [
+            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_FILETYPE_NAME',
+            'METHOD' => ''
+        ],
+        'element' => [
+            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_ELEMENTTYPE_NAME',
+            'METHOD' => ''
+        ]
+    ];
+
+    protected static $showedCss = false;
+    protected static $showedJs = false;
 
     public static function GetUserTypeDescription()
     {
@@ -117,7 +136,11 @@ class IblockComplexProperty
             $subProperties = array();
         } else {
             foreach ($subProperties as &$prop) {
-                if (empty($prop['TITLE']) || empty($prop['TYPE'])) {
+                if (
+                    empty($prop['TITLE'])
+                    || empty($prop['TYPE'])
+                    || !in_array($prop['TYPE'], array_keys(self::PROPERTIES_TYPES))
+                ) {
                     unset($prop);
                 }
             }
@@ -125,17 +148,11 @@ class IblockComplexProperty
         return $subProperties;
     }
 
-    private static function getPropertyTypesList($selectedType = '')
+    protected static function getPropertyTypesList($selectedType = '')
     {
-        $propertyTypes = [
-            'string' => Loc::getMessage('COMPLEXPROP_IBLOCK_STRINGTYPE_NAME'),
-            'date' => Loc::getMessage('COMPLEXPROP_IBLOCK_DATETYPE_NAME'),
-            'file' => Loc::getMessage('COMPLEXPROP_IBLOCK_FILETYPE_NAME'),
-            'element' => Loc::getMessage('COMPLEXPROP_IBLOCK_ELEMENTTYPE_NAME')
-        ];
-        $result = '';
-        foreach ($propertyTypes as $code=>$type) {
-            $typeTitle = htmlspecialcharsbx($type);
+        $result = '<option value="">'.Loc::getMessage('COMPLEXPROP_IBLOCK_SETTINGS_TYPEOPTION').'</option>';
+        foreach (self::PROPERTIES_TYPES as $code=>$type) {
+            $typeTitle = htmlspecialcharsbx(Loc::getMessage($type['TITLE_CODE']));
             $typeValue = htmlspecialcharsbx($code);
             $selected = '';
             if ($code === $selectedType) {
@@ -146,7 +163,7 @@ class IblockComplexProperty
         return $result;
     }
 
-    private static function showJsForSetting($inputName)
+    protected static function showJsForSetting($inputName)
     {
         \CJSCore::Init(array("jquery"));
         if (!self::$showedJs) {
@@ -179,7 +196,7 @@ class IblockComplexProperty
         }
     }
 
-    private static function showCssForSetting()
+    protected static function showCssForSetting()
     {
         if(!self::$showedCss) {
             self::$showedCss = true;
@@ -192,7 +209,7 @@ class IblockComplexProperty
                 .inp-sort{text-align: center;}
                 .inp-type{min-width: 125px;}
             </style>
-            <?
+            <?php
         }
     }
 }
