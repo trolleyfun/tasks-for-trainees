@@ -3,22 +3,20 @@
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
-use Test\Multiprop\IblockMultiProperty;
+use Test\Complexprop\IblockComplexProperty;
 
-class test_multiprop extends CModule
+class test_complexprop extends CModule
 {
-    public $MODULE_ID = 'test.multiprop';
-
     public function __construct()
     {
-        $this->MODULE_ID = 'test.multiprop';
+        $this->MODULE_ID = 'test.complexprop';
         $arModuleVersion = [];
         include_once(__DIR__ . '/version.php');
         $this->MODULE_VERSION = $arModuleVersion['VERSION'] ?? '';
         $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'] ?? '';
-        $this->MODULE_NAME = Loc::getMessage('MULTIPROP_MODULE_NAME');
-        $this->MODULE_DESCRIPTION = Loc::getMessage('MULTIPROP_MODULE_DESCRIPTION');
-        $this->PARTNER_NAME = Loc::getMessage('MULTIPROP_MODULE_PARTNER_NAME');
+        $this->MODULE_NAME = Loc::getMessage('COMPLEXPROP_MODULE_NAME');
+        $this->MODULE_DESCRIPTION = Loc::getMessage('COMPLEXPROP_MODULE_DESCRIPTION');
+        $this->PARTNER_NAME = Loc::getMessage('COMPLEXPROP_MODULE_PARTNER_NAME');
     }
 
     public function DoInstall()
@@ -41,7 +39,7 @@ class test_multiprop extends CModule
             'iblock',
             'OnIBlockPropertyBuildList',
             $this->MODULE_ID,
-            IblockMultiProperty::class,
+            IblockComplexProperty::class,
             'GetUserTypeDescription'
         );
     }
@@ -52,7 +50,7 @@ class test_multiprop extends CModule
             'iblock',
             'OnIBlockPropertyBuildList',
             $this->MODULE_ID,
-            IblockMultiProperty::class,
+            IblockComplexProperty::class,
             'GetUserTypeDescription'
         );
     }
