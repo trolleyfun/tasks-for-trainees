@@ -44,7 +44,9 @@ class IblockComplexProperty
             'ConvertFromDB' => [__CLASS__, 'ConvertFromDB'],
             'GetSettingsHTML' => [__CLASS__, 'GetSettingsHTML'],
             'PrepareSettings' => [__CLASS__, 'PrepareSettings'],
-            'GetPropertyFieldHtml' => [__CLASS__, 'GetPropertyFieldHtml']
+            'GetPropertyFieldHtml' => [__CLASS__, 'GetPropertyFieldHtml'],
+            'GetLength' => [__CLASS__, 'GetLength'],
+            'CheckFields' => [__CLASS__, 'CheckFields']
         ];
     }
 
@@ -214,6 +216,50 @@ class IblockComplexProperty
         $result .= '</table>';
 
         return $result;
+    }
+
+    public static function GetLength($arProperty, $value)
+    {
+        if (!is_array($value['VALUE'])) {
+            return !empty($value['VALUE']);
+        } else {
+            $result = true;
+            foreach ($value['VALUE'] as $item) {
+                $result = $result && !empty($item);
+            }
+            return $result;
+        }
+    }
+
+    public static function CheckFields($arProperty, $value)
+    {
+        $errors = [];
+
+        if (isset($arProperty['USER_TYPE_SETTINGS'])) {
+            if (is_array($arProperty['USER_TYPE_SETTINGS'])) {
+                $subProperties = $arProperty['USER_TYPE_SETTINGS'];
+            } elseif (is_string($arProperty['USER_TYPE_SETTINGS'])){
+                $subProperties = unserialize($arProperty['USER_TYPE_SETTINGS']);
+            } else {
+                $subProperties = '';
+            }
+        } else {
+            $subProperties = '';
+        }
+
+        if (is_array($value['VALUE'])) {
+            foreach ($value['VALUE'] as $code=>$val) {
+                if (isset($subProperties[$code]['TYPE']) && $val) {
+                    if ($subProperties[$code]['TYPE'] === 'date' && !self::dateValidation($val)) {
+                        $errors[] = Loc::getMessage('COMPLEXPROP_IBLOCK_ERROR_INVALID_DATE');
+                    } elseif ($subProperties[$code]['TYPE'] === 'element' && !self::elementIdValidation($val)) {
+                        $errors[] = Loc::getMessage('COMPLEXPROP_IBLOCK_ERROR_INVALID_ELEMENT');
+                    }
+                }
+            }
+        }
+
+        return $errors;
     }
 
     protected static function getStringPropertyTypeHtml($settings, $value, $strHTMLControlName)
@@ -411,6 +457,31 @@ class IblockComplexProperty
             }
             return $result;
         }
+    }
+
+    public static function dateValidation($dateString)
+    {
+        $dateArray = explode('.', $dateString);
+        if (count($dateArray) !== 3) {
+            return false;
+        } else {
+            list($day, $month, $year) = $dateArray;
+            return checkdate($month, $day, $year);
+        }
+    }
+
+    public static function elementIdValidation($fileId)
+    {
+        if (!Loader::includeModule('iblock')) {
+            return false;
+        }
+
+        $arFile = ElementTable::getRow([
+            'filter' => ['ID' => $fileId],
+            'select' => ['ID']
+        ]);
+
+        return (bool)$arFile;
     }
 
     protected static function showJsForSetting($inputName)
