@@ -49,10 +49,33 @@ class IblockComplexProperty
 
     public static function ConvertToDB($arProperty, $value)
     {
-        return $result = [
-            'VALUE' => json_encode($value['VALUE']),
-            'DESCRIPTION' => $value['DESCRIPTION']
-        ];
+        if (isset($arProperty['USER_TYPE_SETTINGS'])) {
+            $subProperties = $arProperty['USER_TYPE_SETTINGS'];
+        } else {
+            $subProperties = '';
+        }
+
+        if (is_array($value['VALUE'])) {
+            foreach ($value['VALUE'] as $code=>&$val) {
+                if (isset($subProperties[$code]['TYPE']) && $subProperties[$code]['TYPE'] === 'file') {
+                    $val = self::prepareFiletoDB($val);
+                }
+            }
+        }
+
+        if (self::complexEmpty($value['VALUE'])) {
+            $result = [
+                'VALUE' => '',
+                'DESCRIPTION' => ''
+            ];
+        } else {
+            $result = [
+                'VALUE' => json_encode($value['VALUE']),
+                'DESCRIPTION' => $value['DESCRIPTION']
+            ];
+        }
+
+        return $result;
     }
 
     public static function ConvertFromDB($arProperty, $value)
@@ -250,7 +273,57 @@ class IblockComplexProperty
 
     public static function getFilePropertyTypeHtml($settings, $value, $strHTMLControlName)
     {
+        $result = '';
+        if (!empty($settings['CODE']) && !empty($settings['TITLE'])) {
+            if (!empty($value['VALUE'][$settings['CODE']])) {
+                $fileId = $value['VALUE'][$settings['CODE']];
+            } else {
+                $fileId = '';
+            }
 
+            $titleValue = htmlspecialcharsbx($settings['TITLE']);
+            $inputNameOld = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][OLD]';
+            $inputNameNew = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][NEW]';
+            $inputNameDel = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][DEL]';
+
+            $result .= '
+                <tr>
+                    <td align="right" valign="top">'.$titleValue.': </td>';
+
+            if ($fileId) {
+                if ($arFile = \CFile::GetFileArray($fileId)) {
+                    //$uploadDirPath = \COption::GetOptionString('main', 'upload_dir', 'upload');
+                    //$filePath = "/{$uploadDirPath}/{$arFile['SUBDIR']}/{$arFile['FILE_NAME']}";
+                    if (\CFile::IsImage($arFile['FILE_NAME'])) {
+                        $fileHtml = '<img src="'.htmlspecialcharsbx($arFile['SRC']).'">';
+                    } else {
+                        $fileHtml = '<div class="mf-file-name">'.htmlspecialcharsbx($arFile['FILE_NAME']).'</div>';
+                    }
+
+                    $result .= '
+                        <td>
+                            <table class="mf-img-table">
+                                <tr>
+                                    <td>'.$fileHtml.'<br>
+                                        <div>
+                                            <label><input name="'.$inputNameDel.'" value="Y" type="checkbox"> '
+                                            .Loc::getMessage("COMPLEXPROP_IBLOCK_EDIT_DELETEFILE_BUTTON_NAME")
+                                            .'</label>
+                                            <input name="'.$inputNameOld.'" value="'.$fileId.'" type="hidden">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>';
+                }
+            }
+
+            $result .= '
+                <td><input type="file" value="" name="'.$inputNameNew.'"></td>
+            </tr>';
+        }
+
+        return $result;
     }
 
     public static function getElementPropertyTypeHtml($settings, $value, $strHTMLControlName)
@@ -271,6 +344,37 @@ class IblockComplexProperty
             $result .= "<option value=\"{$typeValue}\" {$selected}>{$typeTitle}</option>";
         }
         return $result;
+    }
+
+    protected static function prepareFiletoDB($arFile)
+    {
+        $fileId = false;
+        if (is_array($arFile)) {
+            if (!empty($arFile['NEW']['name'])) {
+                $fileId = \CFile::SaveFile($arFile['NEW'], 'iblock');
+            }
+            if ($fileId || !empty($arFile['DEL']) && $arFile['DEL']) {
+                if (!empty($arFile['OLD'])) {
+                    \CFile::Delete($arFile['OLD']);
+                }
+            } elseif (!$fileId && !empty($arFile['OLD'])) {
+                    $fileId = $arFile['OLD'];
+            }
+        }
+        return $fileId;
+    }
+
+    protected static function complexEmpty($value)
+    {
+        if (!is_array($value)) {
+            return empty($value);
+        } else {
+            $result = true;
+            foreach ($value as $item) {
+                $result = $result && empty($item);
+            }
+            return $result;
+        }
     }
 
     protected static function showJsForSetting($inputName)
