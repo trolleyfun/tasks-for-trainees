@@ -2,6 +2,7 @@
 
 namespace Test\Complexprop;
 
+use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
@@ -292,8 +293,6 @@ class IblockComplexProperty
 
             if ($fileId) {
                 if ($arFile = \CFile::GetFileArray($fileId)) {
-                    //$uploadDirPath = \COption::GetOptionString('main', 'upload_dir', 'upload');
-                    //$filePath = "/{$uploadDirPath}/{$arFile['SUBDIR']}/{$arFile['FILE_NAME']}";
                     if (\CFile::IsImage($arFile['FILE_NAME'])) {
                         $fileHtml = '<img src="'.htmlspecialcharsbx($arFile['SRC']).'">';
                     } else {
@@ -328,7 +327,44 @@ class IblockComplexProperty
 
     public static function getElementPropertyTypeHtml($settings, $value, $strHTMLControlName)
     {
+        if (!Loader::includeModule('iblock')) {
+            return '';
+        }
 
+        $result = '';
+        if (!empty($settings['CODE']) && !empty($settings['TITLE'])) {
+            $titleValue = htmlspecialcharsbx($settings['TITLE']);
+            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).']';
+            $code = htmlspecialcharsbx($settings['CODE']);
+
+            $elementId = '';
+            $elementUrl = '';
+            if (!empty($value['VALUE'][$settings['CODE']])) {
+                $elementId = $value['VALUE'][$settings['CODE']];
+                $arElement = ElementTable::getRow([
+                    'filter' => ['ID' => $elementId],
+                    'select' => ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_TYPE_ID' => 'IBLOCK.IBLOCK_TYPE_ID']
+                ]);
+                if ($arElement) {
+                    $elementUrl = '<a target="_blank" href="/bitrix/admin/iblock_element_edit.php?IBLOCK_ID='
+                    .$arElement['IBLOCK_ID'].'&ID='.$arElement['ID'].'&type='.$arElement['IBLOCK_TYPE_ID']
+                    .'">'.$arElement['NAME'].'</a>';
+                }
+            }
+
+            $result = '
+                <tr>
+                    <td align="right">'.$titleValue.': </td>
+                    <td>
+                        <input name="'.$inputName.'" id="'.$inputName.'" value="'.$elementId.'" size="8"
+                            type="text" class="mf-inp-bind-elem">
+                        <input type="button" value="..." onClick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&IBLOCK_ID=0&n='.$strHTMLControlName['VALUE'].'&k='.$code.'\', 900, 700);">&nbsp;
+                        <span>'.$elementUrl.'</span>
+                    </td>
+                </tr>';
+        }
+
+        return $result;
     }
 
     protected static function getPropertyTypesList($selectedType = '')
