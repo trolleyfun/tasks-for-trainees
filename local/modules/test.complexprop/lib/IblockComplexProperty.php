@@ -5,10 +5,16 @@ namespace Test\Complexprop;
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\Localization\Loc;
+use Test\Complexprop\SubProperties\BaseType;
+use Test\Complexprop\SubProperties\DateType;
+use Test\Complexprop\SubProperties\EditorType;
+use Test\Complexprop\SubProperties\ElementType;
+use Test\Complexprop\SubProperties\FileType;
+use Test\Complexprop\SubProperties\StringType;
 
 class IblockComplexProperty
 {
-    protected const PROPERTIES_TYPES = [
+    /*protected const PROPERTIES_TYPES = [
         'string' => [
             'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_STRINGTYPE_NAME',
             'METHOD' => 'getStringPropertyTypeHtml'
@@ -29,6 +35,14 @@ class IblockComplexProperty
             'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_EDITORTYPE_NAME',
             'METHOD' => 'getEditorPropertyTypeHtml'
         ]
+    ];*/
+
+    protected const PROPERTIES_TYPES = [
+        'string' => StringType::class,
+        'date' => DateType::class,
+        'file' => FileType::class,
+        'element' => ElementType::class,
+        'editor' => EditorType::class
     ];
 
     protected static $showedCss = false;
@@ -97,15 +111,18 @@ class IblockComplexProperty
     {
         $arPropertyFields = [
             'USER_TYPE_SETTINGS_TITLE' => Loc::getMessage('COMPLEXPROP_IBLOCK_SETTINGS_TITLE'),
-            'HIDE' => ['ROW_COUNT', 'COL_COUNT', 'DEFAULT_VALUE', 'SEARCHABLE', 'SMART_FILTER', 'WITH_DESCRIPTION', 'FILTRABLE'],
-            'SET' => ['MULTIPLE_CNT' => 1]
+            'HIDE' => ['ROW_COUNT', 'COL_COUNT', 'DEFAULT_VALUE', 'SEARCHABLE', 'SMART_FILTER', 'WITH_DESCRIPTION', 'FILTRABLE']
         ];
 
-        if (isset($arProperty['USER_TYPE_SETTINGS'])) {
-            $subProperties = $arProperty['USER_TYPE_SETTINGS'];
-        } else {
-            $subProperties = '';
+        if (
+            empty($arProperty['USER_TYPE_SETTINGS'])
+            && !empty($arProperty['PROPINFO'])
+            && is_string($arProperty['PROPINFO'])
+        ) {
+            $arProperty = unserialize($arProperty['PROPINFO']);
         }
+
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
 
         self::showCssForSetting();
         self::showJsForSetting($strHTMLControlName['NAME']);
@@ -120,13 +137,13 @@ class IblockComplexProperty
                 </tr>';
 
         if (is_array($subProperties)) {
-            foreach ($subProperties as $code=>$prop) {
-                if (!empty($prop['CODE']) && !empty($prop['TITLE']) && !empty($prop['TYPE'])) {
-                    $codeName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($code).'][CODE]';
-                    $codeValue = htmlspecialcharsbx($code);
-                    $titleName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($code).'][TITLE]';
-                    $titleValue = htmlspecialcharsbx($prop['TITLE']);
-                    $typeName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($code).'][TYPE]';
+            foreach ($subProperties as $prop) {
+                if ($prop instanceof BaseType && $prop->getCode()) {
+                    $codeName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($prop->getCode()).'][CODE]';
+                    $codeValue = htmlspecialcharsbx($prop->getCode());
+                    $titleName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($prop->getCode()).'][TITLE]';
+                    $titleValue = htmlspecialcharsbx($prop->getName());
+                    $typeName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($prop->getCode()).'][TYPE]';
                     $result .= '
                         <tr valign="top">
                             <td><input type="text" class="inp-code" size="20" name="'.$codeName.'"
@@ -135,7 +152,7 @@ class IblockComplexProperty
                                 value="'.$titleValue.'"></td>
                             <td>
                                 <select class="inp-type" name="'.$typeName.'">
-                                    '.self::getPropertyTypesList($prop['TYPE']).'
+                                    '.self::getPropertyTypesList($prop->getTypeCode()).'
                                 </select>
                             </td>
                         </tr>';
@@ -166,18 +183,21 @@ class IblockComplexProperty
 
     public static function PrepareSettings($arProperty)
     {
-        $subProperties = $arProperty['USER_TYPE_SETTINGS'];
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         if (!is_array($subProperties)) {
             $subProperties = array();
         } else {
             foreach ($subProperties as &$prop) {
+                $className = self::PROPERTIES_TYPES[$prop['TYPE']] ?? '';
                 if (
                     empty($prop['CODE'])
                     || empty($prop['TITLE'])
                     || empty($prop['TYPE'])
-                    || !in_array($prop['TYPE'], array_keys(self::PROPERTIES_TYPES))
+                    || !class_exists($className)
                 ) {
                     unset($prop);
+                } else {
+                    $prop = new $className($prop['CODE'], $prop['TITLE'], $prop['TYPE']);
                 }
             }
         }
@@ -459,13 +479,15 @@ class IblockComplexProperty
     {
         $result = '<option value="">'.Loc::getMessage('COMPLEXPROP_IBLOCK_SETTINGS_TYPEOPTION').'</option>';
         foreach (self::PROPERTIES_TYPES as $code=>$type) {
-            $typeTitle = htmlspecialcharsbx(Loc::getMessage($type['TITLE_CODE']));
-            $typeValue = htmlspecialcharsbx($code);
-            $selected = '';
-            if ($code === $selectedType) {
-                $selected = 'selected';
+            if (class_exists($type)) {
+                $typeTitle = htmlspecialcharsbx($type::getTypeName());
+                $typeValue = htmlspecialcharsbx($code);
+                $selected = '';
+                if ($code === $selectedType) {
+                    $selected = 'selected';
+                }
+                $result .= "<option value=\"{$typeValue}\" {$selected}>{$typeTitle}</option>";
             }
-            $result .= "<option value=\"{$typeValue}\" {$selected}>{$typeTitle}</option>";
         }
         return $result;
     }

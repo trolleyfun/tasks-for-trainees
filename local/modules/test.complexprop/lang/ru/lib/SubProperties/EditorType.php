@@ -1,0 +1,3 @@
+<?php
+
+$MESS['COMPLEXPROP_SUBPROPERTY_EDITORTYPE_NAME'] = "HTML/Визуальный редактор";
