@@ -1,9 +1,9 @@
 <?
 IncludeModuleLangFile(__FILE__);
 
-class CCustomTypeHtml extends CUserTypeString
+class CCustomTypeHtml extends Bitrix\Main\UserField\Types\StringType
 {
-	function GetUserTypeDescription()
+	public static function GetUserTypeDescription():array
 	{
 		return array(
 			"USER_TYPE_ID" => "customhtml",
@@ -13,7 +13,7 @@ class CCustomTypeHtml extends CUserTypeString
 		);
 	}
 
-	function GetEditFormHTML($arUserField, $arHtmlControl)
+	public static function GetEditFormHTML(array $arUserField, ?array $arHtmlControl):string
 	{
 		if($arUserField["ENTITY_VALUE_ID"]<1 && strlen($arUserField["SETTINGS"]["DEFAULT_VALUE"])>0)
 			$arHtmlControl["VALUE"] = htmlspecialcharsbx($arUserField["SETTINGS"]["DEFAULT_VALUE"]);
@@ -24,6 +24,7 @@ class CCustomTypeHtml extends CUserTypeString
 			$name = preg_replace("/[\[\]]/i", "_", $arHtmlControl["NAME"]);
 		else
 			$name = $arHtmlControl["NAME"];
+		my_logger(print_r($arUserField, true));
 
 		ob_start();
 
@@ -31,7 +32,7 @@ class CCustomTypeHtml extends CUserTypeString
 			$name,
 			$arHtmlControl["VALUE"],
 			$name."_TYPE",
-			strlen($arHtmlControl["VALUE"])?"html":"text",
+			"text",
 			array(
 				'height' => $arUserField['SETTINGS']['ROWS']*10,
 			)
@@ -46,7 +47,7 @@ class CCustomTypeHtml extends CUserTypeString
 		return $html;
 	}
 
-	function OnBeforeSave($arUserField, $value)
+	public static function OnBeforeSave($arUserField, $value)
     {
 		if($arUserField['MULTIPLE'] == 'Y')
 		{

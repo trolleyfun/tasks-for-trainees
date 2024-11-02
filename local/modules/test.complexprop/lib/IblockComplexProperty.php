@@ -252,6 +252,11 @@ class IblockComplexProperty
         return $result;
     }
 
+    public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
+    {
+        return '';
+    }
+
     public static function GetLength($arProperty, $value)
     {
         if (
