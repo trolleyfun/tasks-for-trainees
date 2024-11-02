@@ -14,29 +14,6 @@ use Test\Complexprop\SubProperties\StringType;
 
 class IblockComplexProperty
 {
-    /*protected const PROPERTIES_TYPES = [
-        'string' => [
-            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_STRINGTYPE_NAME',
-            'METHOD' => 'getStringPropertyTypeHtml'
-        ],
-        'date' => [
-            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_DATETYPE_NAME',
-            'METHOD' => 'getDatePropertyTypeHtml'
-        ],
-        'file' => [
-            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_FILETYPE_NAME',
-            'METHOD' => 'getFilePropertyTypeHtml'
-        ],
-        'element' => [
-            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_ELEMENTTYPE_NAME',
-            'METHOD' => 'getElementPropertyTypeHtml'
-        ],
-        'editor' => [
-            'TITLE_CODE' => 'COMPLEXPROP_IBLOCK_EDITORTYPE_NAME',
-            'METHOD' => 'getEditorPropertyTypeHtml'
-        ]
-    ];*/
-
     protected const PROPERTIES_TYPES = [
         'string' => StringType::class,
         'date' => DateType::class,
@@ -66,28 +43,35 @@ class IblockComplexProperty
 
     public static function ConvertToDB($arProperty, $value)
     {
-        if (isset($arProperty['USER_TYPE_SETTINGS'])) {
-            $subProperties = $arProperty['USER_TYPE_SETTINGS'];
-        } else {
-            $subProperties = '';
+        if (
+            empty($arProperty['USER_TYPE_SETTINGS'])
+            && !empty($arProperty['PROPINFO'])
+            && is_string($arProperty['PROPINFO'])
+        ) {
+            $arProperty = unserialize($arProperty['PROPINFO']);
         }
 
-        if (is_array($value['VALUE'])) {
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+
+        $isEmpty = true;
+        if (is_array($value['VALUE']) && is_array($subProperties)) {
             foreach ($value['VALUE'] as $code=>&$val) {
-                if (isset($subProperties[$code]['TYPE']) && $subProperties[$code]['TYPE'] === 'file') {
-                    $val = self::prepareFiletoDB($val);
+                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
+                    $val = $subProperties[$code]->onBeforeSave($val);
+                    $isEmpty = $isEmpty && $subProperties[$code]->isEmpty($val);
                 }
             }
         }
 
-        if (self::complexEmpty($value['VALUE'])) {
+        if ($isEmpty) {
             $result = [
                 'VALUE' => '',
                 'DESCRIPTION' => ''
             ];
         } else {
             $result = [
-                'VALUE' => json_encode($value['VALUE']),
+                'VALUE' => serialize($value['VALUE']),
                 'DESCRIPTION' => $value['DESCRIPTION']
             ];
         }
@@ -97,11 +81,30 @@ class IblockComplexProperty
 
     public static function ConvertFromDB($arProperty, $value)
     {
+        if (
+            empty($arProperty['USER_TYPE_SETTINGS'])
+            && !empty($arProperty['PROPINFO'])
+            && is_string($arProperty['PROPINFO'])
+        ) {
+            $arProperty = unserialize($arProperty['PROPINFO']);
+        }
+
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+
+        if (is_array($value['VALUE']) && is_array($subProperties)) {
+            foreach ($value['VALUE'] as $code=>&$val) {
+                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
+                    $val = $subProperties[$code]->onAfterReceive($val);
+                }
+            }
+        }
+
         $result = [
-            'VALUE' => json_decode($value['VALUE'], true),
+            'VALUE' => is_string($value['VALUE'])? unserialize($value['VALUE']): '',
             'DESCRIPTION' => $value['DESCRIPTION']
         ];
-        if (is_null($result['VALUE'])) {
+        if (!$result['VALUE']) {
             $result['VALUE'] = array();
         }
         return $result;
@@ -123,6 +126,7 @@ class IblockComplexProperty
         }
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         self::showCssForSetting();
         self::showJsForSetting($strHTMLControlName['NAME']);
@@ -201,16 +205,21 @@ class IblockComplexProperty
                 }
             }
         }
-        return $subProperties;
+        return serialize($subProperties);
     }
 
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
     {
-        if (!isset($arProperty['USER_TYPE_SETTINGS'])) {
-            return '';
-        } else {
-            $subProperties = $arProperty['USER_TYPE_SETTINGS'];
+        if (
+            empty($arProperty['USER_TYPE_SETTINGS'])
+            && !empty($arProperty['PROPINFO'])
+            && is_string($arProperty['PROPINFO'])
+        ) {
+            $arProperty = unserialize($arProperty['PROPINFO']);
         }
+
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         self::showCss();
         self::showJs();
@@ -228,11 +237,9 @@ class IblockComplexProperty
 
         if (is_array($subProperties)) {
             foreach ($subProperties as $prop) {
-                if (!empty($prop['TYPE']) && !empty(self::PROPERTIES_TYPES[$prop['TYPE']])) {
-                    $method = self::PROPERTIES_TYPES[$prop['TYPE']]['METHOD'];
-                    if (method_exists(__CLASS__, $method)) {
-                        $result .= self::$method($prop, $value, $strHTMLControlName);
-                    }
+                if ($prop instanceof BaseType) {
+                    $val = $value['VALUE'][$prop->getCode()] ?? '';
+                    $result .= $prop->getPropertyFieldHtml($val, $strHTMLControlName);
                 }
             }
         }
@@ -244,151 +251,56 @@ class IblockComplexProperty
 
     public static function GetLength($arProperty, $value)
     {
-        if (!is_array($value['VALUE'])) {
-            return !empty($value['VALUE']);
-        } else {
-            $result = true;
-            foreach ($value['VALUE'] as $item) {
-                $result = $result && !empty($item);
-            }
-            return $result;
+        if (
+            empty($arProperty['USER_TYPE_SETTINGS'])
+            && !empty($arProperty['PROPINFO'])
+            && is_string($arProperty['PROPINFO'])
+        ) {
+            $arProperty = unserialize($arProperty['PROPINFO']);
         }
+
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+
+        $result = true;
+        if (is_array($value['VALUE']) && is_array($subProperties)) {
+            foreach ($value['VALUE'] as $code=>$val) {
+                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
+                    $result = $result && $subProperties[$code]->getLength($val);
+                }
+            }
+        }
+
+        return $result;
     }
 
     public static function CheckFields($arProperty, $value)
     {
         $errors = [];
 
-        if (isset($arProperty['USER_TYPE_SETTINGS'])) {
-            if (is_array($arProperty['USER_TYPE_SETTINGS'])) {
-                $subProperties = $arProperty['USER_TYPE_SETTINGS'];
-            } elseif (is_string($arProperty['USER_TYPE_SETTINGS'])){
-                $subProperties = unserialize($arProperty['USER_TYPE_SETTINGS']);
-            } else {
-                $subProperties = '';
-            }
-        } else {
-            $subProperties = '';
+        if (
+            empty($arProperty['USER_TYPE_SETTINGS'])
+            && !empty($arProperty['PROPINFO'])
+            && is_string($arProperty['PROPINFO'])
+        ) {
+            $arProperty = unserialize($arProperty['PROPINFO']);
         }
 
-        if (is_array($value['VALUE'])) {
+        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+
+        if (is_array($value['VALUE']) && is_array($subProperties)) {
             foreach ($value['VALUE'] as $code=>$val) {
-                if (isset($subProperties[$code]['TYPE']) && $val) {
-                    if ($subProperties[$code]['TYPE'] === 'date' && !self::dateValidation($val)) {
-                        $errors[] = Loc::getMessage('COMPLEXPROP_IBLOCK_ERROR_INVALID_DATE');
-                    } elseif ($subProperties[$code]['TYPE'] === 'element' && !self::elementIdValidation($val)) {
-                        $errors[] = Loc::getMessage('COMPLEXPROP_IBLOCK_ERROR_INVALID_ELEMENT');
-                    }
+                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
+                    $err = $subProperties[$code]->checkFields($val);
+                    $errors = array_merge($errors, $err);
                 }
             }
         }
 
         return $errors;
-    }
-
-    protected static function getStringPropertyTypeHtml($settings, $value, $strHTMLControlName)
-    {
-        if (empty($settings['CODE']) || empty($settings['TITLE'])) {
-            $result = '';
-        } else {
-            $titleValue = htmlspecialcharsbx($settings['TITLE']);
-            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).']';
-            if (!empty($value['VALUE'][$settings['CODE']])) {
-                $inputValue = htmlspecialcharsbx($value['VALUE'][$settings['CODE']]);
-            } else {
-                $inputValue = '';
-            }
-
-            $result = '<tr>
-                <td align="right">'.$titleValue.': </td>
-                <td><input type="text" value="'.$inputValue.'" name="'.$inputName.'"></td>
-            </tr>';
-        }
-        return $result;
-    }
-
-    protected static function getDatePropertyTypeHtml($settings, $value, $strHTMLControlName)
-    {
-        if (empty($settings['CODE']) || empty($settings['TITLE'])) {
-            $result = '';
-        } else {
-            $titleValue = htmlspecialcharsbx($settings['TITLE']);
-            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).']';
-            if (!empty($value['VALUE'][$settings['CODE']])) {
-                $inputValue = htmlspecialcharsbx($value['VALUE'][$settings['CODE']]);
-            } else {
-                $inputValue = '';
-            }
-
-            $result = '<tr>
-                        <td align="right" valign="top">'.$titleValue.': </td>
-                        <td>
-                            <table>
-                                <tr>
-                                    <td style="padding: 0;">
-                                        <div class="adm-input-wrap adm-input-wrap-calendar">
-                                            <input class="adm-input adm-input-calendar" type="text"
-                                                name="'.$inputName.'" size="23" value="'.$inputValue.'">
-                                            <span class="adm-calendar-icon"
-                                                onclick="BX.calendar({node: this, field:\''.$inputName
-                                                .'\', form: \'\', bTime: true, bHideTime: false});"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>';
-        }
-        return $result;
-    }
-
-    protected static function getFilePropertyTypeHtml($settings, $value, $strHTMLControlName)
-    {
-        $result = '';
-        if (!empty($settings['CODE']) && !empty($settings['TITLE'])) {
-            $fileId = $value['VALUE'][$settings['CODE']]['OLD'] ?? '';
-
-            $titleValue = htmlspecialcharsbx($settings['TITLE']);
-            $inputNameOld = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][OLD]';
-            $inputNameNew = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][NEW]';
-            $inputNameDel = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][DEL]';
-
-            $result = '
-                <tr>
-                    <td align="right" valign="top">'.$titleValue.': </td>';
-
-            if ($fileId) {
-                if ($arFile = \CFile::GetFileArray($fileId)) {
-                    if (\CFile::IsImage($arFile['FILE_NAME'])) {
-                        $fileHtml = '<img src="'.htmlspecialcharsbx($arFile['SRC']).'">';
-                    } else {
-                        $fileHtml = '<div class="mf-file-name">'.htmlspecialcharsbx($arFile['FILE_NAME']).'</div>';
-                    }
-
-                    $result .= '
-                        <td>
-                            <table class="mf-img-table">
-                                <tr>
-                                    <td>'.$fileHtml.'<br>
-                                        <div>
-                                            <label><input name="'.$inputNameDel.'" value="Y" type="checkbox"> '
-                                            .Loc::getMessage("COMPLEXPROP_IBLOCK_EDIT_DELETEFILE_BUTTON_NAME")
-                                            .'</label>
-                                            <input name="'.$inputNameOld.'" value="'.$fileId.'" type="hidden">
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>';
-                }
-            }
-
-            $result .= '
-                <td><input type="file" value="" name="'.$inputNameNew.'"></td>
-            </tr>';
-        }
-
-        return $result;
     }
 
     protected static function getElementPropertyTypeHtml($settings, $value, $strHTMLControlName)
@@ -490,48 +402,6 @@ class IblockComplexProperty
             }
         }
         return $result;
-    }
-
-    protected static function prepareFiletoDB($arFile)
-    {
-        $fileID = '';
-        if (is_array($arFile)) {
-            if (!empty($arFile['NEW']['name'])) {
-                $fileId = \CFile::SaveFile($arFile['NEW'], 'iblock');
-            }
-            if ($fileId || !empty($arFile['DEL']) && $arFile['DEL']) {
-                if (!empty($arFile['OLD'])) {
-                    \CFile::Delete($arFile['OLD']);
-                }
-            } elseif (!$fileId && !empty($arFile['OLD'])) {
-                    $fileId = $arFile['OLD'];
-            }
-        }
-        return ['OLD' => $fileId];
-    }
-
-    protected static function complexEmpty($value)
-    {
-        if (!is_array($value)) {
-            return empty($value);
-        } else {
-            $result = true;
-            foreach ($value as $item) {
-                $result = $result && empty($item);
-            }
-            return $result;
-        }
-    }
-
-    public static function dateValidation($dateString)
-    {
-        $dateArray = explode('.', $dateString);
-        if (count($dateArray) !== 3) {
-            return false;
-        } else {
-            list($day, $month, $year) = $dateArray;
-            return checkdate($month, $day, $year);
-        }
     }
 
     public static function elementIdValidation($fileId)
