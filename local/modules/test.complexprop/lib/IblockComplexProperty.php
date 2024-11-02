@@ -224,6 +224,8 @@ class IblockComplexProperty
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
+        $inputName = $strHTMLControlName['VALUE'] ?? '';
+
         self::showCss();
         self::showJs();
 
@@ -238,11 +240,11 @@ class IblockComplexProperty
 
         $result .= '<table class="mf-fields-list active">';
 
-        if (is_array($subProperties)) {
+        if (is_array($subProperties) && $inputName) {
             foreach ($subProperties as $prop) {
                 if ($prop instanceof BaseType) {
                     $val = $value['VALUE'][$prop->getCode()] ?? '';
-                    $result .= $prop->getPropertyFieldHtml($val, $strHTMLControlName);
+                    $result .= $prop->getPropertyFieldHtml($val, $inputName);
                 }
             }
         }

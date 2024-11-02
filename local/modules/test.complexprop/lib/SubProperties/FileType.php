@@ -11,16 +11,16 @@ class FileType extends BaseType
         return Loc::getMessage('COMPLEXPROP_SUBPROPERTY_FILETYPE_NAME');
     }
 
-    public function getPropertyFieldHtml($value, array $strHTMLControlName): string
+    public function getPropertyFieldHtml($value, string $name): string
     {
         $result = '';
         if ($this->code && $this->name) {
             $fileId = $value['OLD'] ?? '';
 
             $titleValue = htmlspecialcharsbx($this->name);
-            $inputNameOld = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).'][OLD]';
-            $inputNameNew = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).'][NEW]';
-            $inputNameDel = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).'][DEL]';
+            $inputNameOld = $name.'['.htmlspecialcharsbx($this->code).'][OLD]';
+            $inputNameNew = $name.'['.htmlspecialcharsbx($this->code).'][NEW]';
+            $inputNameDel = $name.'['.htmlspecialcharsbx($this->code).'][DEL]';
 
             $result = '
                 <tr>
@@ -74,6 +74,9 @@ class FileType extends BaseType
             } elseif (!$fileId && !empty($value['OLD'])) {
                     $fileId = $value['OLD'];
             }
+        }
+        if ($this->isEmpty($value)) {
+            return '';
         }
         return ['OLD' => $fileId];
     }

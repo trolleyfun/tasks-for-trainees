@@ -12,12 +12,12 @@ class ElementType extends BaseType
         return Loc::getMessage('COMPLEXPROP_SUBPROPERTY_ELEMENTTYPE_NAME');
     }
 
-    public function getPropertyFieldHtml($value, array $strHTMLControlName): string
+    public function getPropertyFieldHtml($value, string $name): string
     {
         $result = '';
         if ($this->code && $this->name) {
             $titleValue = htmlspecialcharsbx($this->name);
-            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).']';
+            $inputName = $name.'['.htmlspecialcharsbx($this->code).']';
             $code = htmlspecialcharsbx($this->code);
 
             $elementId = '';
@@ -41,7 +41,7 @@ class ElementType extends BaseType
                     <td>
                         <input name="'.$inputName.'" id="'.$inputName.'" value="'.$elementId.'" size="8"
                             type="text" class="mf-inp-bind-elem">
-                        <input type="button" value="..." onClick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&IBLOCK_ID=0&n='.$strHTMLControlName['VALUE'].'&k='.$code.'\', 900, 700);">&nbsp;
+                        <input type="button" value="..." onClick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&IBLOCK_ID=0&n='.$name.'&k='.$code.'\', 900, 700);">&nbsp;
                         <span>'.$elementUrl.'</span>
                     </td>
                 </tr>';

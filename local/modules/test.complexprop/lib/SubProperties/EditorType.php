@@ -11,13 +11,13 @@ class EditorType extends BaseType
         return Loc::getMessage('COMPLEXPROP_SUBPROPERTY_EDITORTYPE_NAME');
     }
 
-    public function getPropertyFieldHtml($value, array $strHTMLControlName): string
+    public function getPropertyFieldHtml($value, string $name): string
     {
         $result = '';
         if ($this->code && $this->name) {
             $titleValue = htmlspecialcharsbx($this->name);
-            $inputNameText = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).'][TEXT]';
-            $inputNameType = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).'][TYPE]';
+            $inputNameText = $name.'['.htmlspecialcharsbx($this->code).'][TEXT]';
+            $inputNameType = $name.'['.htmlspecialcharsbx($this->code).'][TYPE]';
 
             if (empty($value['TEXT'])) {
                 $inputValueText = '';
@@ -55,6 +55,9 @@ class EditorType extends BaseType
     {
         if (!empty($value['TEXT']) && !empty($value['TYPE']) && $value['TYPE'] === 'text') {
             $value['TEXT'] = trim($value['TEXT']);
+        }
+        if ($this->isEmpty($value)) {
+            return '';
         }
         return $value;
     }

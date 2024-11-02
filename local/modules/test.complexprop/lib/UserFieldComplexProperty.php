@@ -36,7 +36,7 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
     public static function renderSettings($userField, ?array $additionalParameters, $varsFromForm): string
     {
         $subProperties = $userField['SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
 
         self::showCssForSetting();
         self::showJsForSetting($additionalParameters['NAME']);
@@ -86,6 +86,9 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
 
         $result .= '
             <tr><td colspan="2" style="text-align: center;">
+                <input type="hidden" name="MULTIPLE" value="Y">
+            </td></tr>
+            <tr><td colspan="2" style="text-align: center;">
                 <input type="button"
                     value="'.Loc::getMessage('COMPLEXPROP_USERFIELD_SETTINGS_ADDBUTTON_NAME').'"
                     onclick="addNewRows()">
@@ -120,6 +123,83 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
             }
         }
         return ['SUBPROPERTIES' => serialize($subProperties)];
+    }
+
+    public static function renderEditForm(array $userField, ?array $additionalParameters): string
+    {
+        $subProperties = $userField['SETTINGS']['SUBPROPERTIES'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+
+        $value = $additionalParameters['VALUE'][0] ?? '';
+        $value = is_string($value)? unserialize($value): $value;
+
+        $inputName = $additionalParameters['NAME'] ?? '';
+
+        self::showCss();
+        self::showJs();
+
+        $result = '<div class="mf-gray"><a class="cl mf-toggle">'
+        .Loc::getMessage('COMPLEXPROP_USERFIELD_EDIT_HIDEBUTTON_NAME').'</a></div>';
+
+        $result .= '<table class="mf-fields-list active">';
+
+        if (is_array($subProperties) && $inputName) {
+            foreach ($subProperties as $prop) {
+                if ($prop instanceof BaseType) {
+                    $val = $value[$prop->getCode()] ?? '';
+                    $result .= $prop->getPropertyFieldHtml($val, $inputName.'[0]');
+                }
+            }
+        }
+
+        $result .= '</table>';
+
+        return $result;
+    }
+
+    public static function onBeforeSave($userField, $value)
+    {
+        $subProperties = $userField['SETTINGS']['SUBPROPERTIES'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+
+        $isEmpty = true;
+        if (is_array($value) && is_array($subProperties)) {
+            foreach ($value as $code=>&$val) {
+                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
+                    $val = $subProperties[$code]->onBeforeSave($val);
+                    $isEmpty = $isEmpty && $subProperties[$code]->isEmpty($val);
+                }
+            }
+        }
+
+        $result = '';
+        if (!$isEmpty) {
+            $result = serialize($value);
+        }
+
+        return $result;
+    }
+
+    public static function checkFields(array $userField, $value): array
+    {
+        $errors = [];
+
+        $subProperties = $userField['SETTINGS']['SUBPROPERTIES'] ?? '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+
+        if (is_array($value) && is_array($subProperties)) {
+            foreach ($value as $code=>$val) {
+                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
+                    $err = $subProperties[$code]->checkFields($val);
+                    foreach ($err as &$msg) {
+                        $msg = ['id' => $subProperties[$code]->getTypeCode(), 'text' => $msg];
+                    }
+                    $errors = array_merge($errors, $err);
+                }
+            }
+        }
+
+        return $errors;
     }
 
     protected static function getPropertyTypesList($selectedType = '')
@@ -229,10 +309,10 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
                     var table = $(this).closest('tr').find('table.mf-fields-list');
                     $(table).toggleClass('active');
                     if($(table).hasClass('active')){
-                        $(this).text('<?=Loc::getMessage('COMPLEXPROP_IBLOCK_EDIT_HIDEBUTTON_NAME')?>');
+                        $(this).text('<?=Loc::getMessage('COMPLEXPROP_USERFIELD_EDIT_HIDEBUTTON_NAME')?>');
                     }
                     else{
-                        $(this).text('<?=Loc::getMessage('COMPLEXPROP_IBLOCK_EDIT_SHOWBUTTON_NAME')?>');
+                        $(this).text('<?=Loc::getMessage('COMPLEXPROP_USERFIELD_EDIT_SHOWBUTTON_NAME')?>');
                     }
                 });
 

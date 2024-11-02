@@ -49,7 +49,7 @@ class test_complexprop extends CModule
             'OnUserTypeBuildList',
             $this->MODULE_ID,
             UserFieldComplexProperty::class,
-            'getUserTypeDescription'
+            'GetUserTypeDescription'
         );
     }
 
@@ -68,7 +68,7 @@ class test_complexprop extends CModule
             'OnUserTypeBuildList',
             $this->MODULE_ID,
             UserFieldComplexProperty::class,
-            'getUserTypeDescription'
+            'GetUserTypeDescription'
         );
     }
 }

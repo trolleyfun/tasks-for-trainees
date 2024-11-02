@@ -11,12 +11,12 @@ class DateType extends BaseType
         return Loc::getMessage('COMPLEXPROP_SUBPROPERTY_DATETYPE_NAME');
     }
 
-    public function getPropertyFieldHtml($value, array $strHTMLControlName): string
+    public function getPropertyFieldHtml($value, string $name): string
     {
         $result = '';
         if ($this->code && $this->name) {
             $titleValue = htmlspecialcharsbx($this->name);
-            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($this->code).']';
+            $inputName = $name.'['.htmlspecialcharsbx($this->code).']';
             $inputValue = htmlspecialcharsbx($value);
 
             $result = '<tr>

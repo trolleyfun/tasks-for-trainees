@@ -34,7 +34,7 @@ abstract class BaseType
 
     abstract public static function getTypeName(): string;
 
-    abstract public function getPropertyFieldHtml($value, array $strHTMLControlName): string;
+    abstract public function getPropertyFieldHtml($value, string $name): string;
 
     public function onBeforeSave($value): mixed
     {
