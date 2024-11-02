@@ -4,6 +4,7 @@ use Bitrix\Main\EventManager;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 use Test\Complexprop\IblockComplexProperty;
+use Test\Complexprop\UserFieldComplexProperty;
 
 class test_complexprop extends CModule
 {
@@ -42,6 +43,14 @@ class test_complexprop extends CModule
             IblockComplexProperty::class,
             'GetUserTypeDescription'
         );
+
+        EventManager::getInstance()->registerEventHandler(
+            'main',
+            'OnUserTypeBuildList',
+            $this->MODULE_ID,
+            UserFieldComplexProperty::class,
+            'getUserTypeDescription'
+        );
     }
 
     public function UnInstallEvents()
@@ -52,6 +61,14 @@ class test_complexprop extends CModule
             $this->MODULE_ID,
             IblockComplexProperty::class,
             'GetUserTypeDescription'
+        );
+
+        EventManager::getInstance()->unRegisterEventHandler(
+            'main',
+            'OnUserTypeBuildList',
+            $this->MODULE_ID,
+            UserFieldComplexProperty::class,
+            'getUserTypeDescription'
         );
     }
 }
