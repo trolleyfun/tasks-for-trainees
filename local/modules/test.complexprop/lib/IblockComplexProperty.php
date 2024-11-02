@@ -2,7 +2,6 @@
 
 namespace Test\Complexprop;
 
-use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\Localization\Loc;
 use Test\Complexprop\SubProperties\BaseType;
@@ -201,7 +200,11 @@ class IblockComplexProperty
                 ) {
                     unset($prop);
                 } else {
-                    $prop = new $className($prop['CODE'], $prop['TITLE'], $prop['TYPE']);
+                    $prop = new $className(
+                        trim($prop['CODE']),
+                        trim($prop['TITLE']),
+                        $prop['TYPE']
+                    );
                 }
             }
         }
@@ -303,90 +306,6 @@ class IblockComplexProperty
         return $errors;
     }
 
-    protected static function getElementPropertyTypeHtml($settings, $value, $strHTMLControlName)
-    {
-        $result = '';
-        if (!empty($settings['CODE']) && !empty($settings['TITLE'])) {
-            $titleValue = htmlspecialcharsbx($settings['TITLE']);
-            $inputName = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).']';
-            $code = htmlspecialcharsbx($settings['CODE']);
-
-            $elementId = '';
-            $elementUrl = '';
-            if (!empty($value['VALUE'][$settings['CODE']])) {
-                $elementId = $value['VALUE'][$settings['CODE']];
-                $arElement = ElementTable::getRow([
-                    'filter' => ['ID' => $elementId],
-                    'select' => ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_TYPE_ID' => 'IBLOCK.IBLOCK_TYPE_ID']
-                ]);
-                if ($arElement) {
-                    $elementUrl = '<a target="_blank" href="/bitrix/admin/iblock_element_edit.php?IBLOCK_ID='
-                    .$arElement['IBLOCK_ID'].'&ID='.$arElement['ID'].'&type='.$arElement['IBLOCK_TYPE_ID']
-                    .'">'.$arElement['NAME'].'</a>';
-                }
-            }
-
-            $result = '
-                <tr>
-                    <td align="right">'.$titleValue.': </td>
-                    <td>
-                        <input name="'.$inputName.'" id="'.$inputName.'" value="'.$elementId.'" size="8"
-                            type="text" class="mf-inp-bind-elem">
-                        <input type="button" value="..." onClick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&IBLOCK_ID=0&n='.$strHTMLControlName['VALUE'].'&k='.$code.'\', 900, 700);">&nbsp;
-                        <span>'.$elementUrl.'</span>
-                    </td>
-                </tr>';
-        }
-
-        return $result;
-    }
-
-    protected static function getEditorPropertyTypeHtml($settings, $value, $strHTMLControlName)
-    {
-        $result = '';
-        if (!empty($settings['CODE']) && !empty($settings['TITLE'])) {
-            $titleValue = htmlspecialcharsbx($settings['TITLE']);
-            $inputNameText = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][TEXT]';
-            $inputNameType = $strHTMLControlName['VALUE'].'['.htmlspecialcharsbx($settings['CODE']).'][TYPE]';
-
-            if (!isset($value['VALUE'][$settings['CODE']])) {
-                $inputValueText = '';
-                $inputValueType = 'text';
-            } else {
-                $valueItem = $value['VALUE'][$settings['CODE']];
-                if (empty($valueItem['TEXT'])) {
-                    $inputValueText = '';
-                } else {
-                    $inputValueText = htmlspecialcharsbx($valueItem['TEXT']);
-                }
-                if (empty($valueItem['TYPE'])) {
-                    $inputValueType = 'text';
-                } else {
-                    $inputValueType = $valueItem['TYPE'] === 'html'? 'html': 'text';
-                }
-            }
-
-            $result = '
-                <tr>
-                    <td align="right" valign="top">'.$titleValue.': </td>
-                    <td>';
-
-            ob_start();
-            self::AddHTMLEditorFrame(
-                $inputNameText,
-                $inputValueText,
-                $inputNameType,
-                $inputValueType
-            );
-            $result .= ob_get_contents();
-            ob_end_clean();
-
-            $result .= '</td></tr>';
-        }
-
-        return $result;
-    }
-
     protected static function getPropertyTypesList($selectedType = '')
     {
         $result = '<option value="">'.Loc::getMessage('COMPLEXPROP_IBLOCK_SETTINGS_TYPEOPTION').'</option>';
@@ -402,16 +321,6 @@ class IblockComplexProperty
             }
         }
         return $result;
-    }
-
-    public static function elementIdValidation($fileId)
-    {
-        $arFile = ElementTable::getRow([
-            'filter' => ['ID' => $fileId],
-            'select' => ['ID']
-        ]);
-
-        return (bool)$arFile;
     }
 
     protected static function showJsForSetting($inputName)
@@ -529,97 +438,5 @@ class IblockComplexProperty
             </script>
             <?php
         }
-    }
-
-    public static function AddHTMLEditorFrame(
-        $strTextFieldName,
-        $strTextValue,
-        $strTextTypeFieldName,
-        $strTextTypeValue,
-        $arSize = Array("height"=>350),
-        $CONVERT_FOR_WORKFLOW="N",
-        $WORKFLOW_DOCUMENT_ID=0,
-        $NEW_DOCUMENT_PATH="",
-        $textarea_field="",
-        $site = false,
-        $bWithoutPHP = true,
-        $arTaskbars = false,
-        $arAdditionalParams = Array()
-    )
-    {
-        // We have to avoid of showing HTML-editor with probably unsecure content when loosing the session [mantis:#0007986]
-        if ($_SERVER["REQUEST_METHOD"] == "POST" && !check_bitrix_sessid())
-            return;
-
-        global $htmled, $usehtmled;
-        $strTextFieldId = preg_replace("/[^a-zA-Z0-9_:\.]/is", "", $strTextFieldName);
-
-        if(is_array($arSize))
-            $iHeight = $arSize["height"];
-        else
-            $iHeight = $arSize;
-
-        $strTextValue = htmlspecialcharsback($strTextValue);
-        $dontShowTA = isset($arAdditionalParams['dontshowta']) ? $arAdditionalParams['dontshowta'] : false;
-
-        if ($arAdditionalParams['hideTypeSelector'] ?? null)
-        {
-            $textType = $strTextTypeValue == 'html' ? 'editor' : 'text';
-            ?><input type="hidden" name="<?= $strTextTypeFieldName?>" value="<?= $strTextTypeValue?>"/><?
-        }
-        else
-        {
-            $textType = \CFileMan::ShowTypeSelector(array(
-                'name' => $strTextFieldId,
-                'key' => ($arAdditionalParams['saveEditorKey'] ?? null),
-                'strTextTypeFieldName' => $strTextTypeFieldName,
-                'strTextTypeValue' => $strTextTypeValue,
-                'bSave' => ($arAdditionalParams['saveEditorState'] ?? null) !== false
-            ));
-        }
-
-        $curHTMLEd = $textType == 'editor';
-        setEditorEventHandlers($strTextFieldId);
-        ?>
-        <textarea class="typearea" style="<? echo(($curHTMLEd || $dontShowTA) ? 'display:none;' : '');?>width:100%;height:<?=$iHeight?>px;" name="<?=htmlspecialcharsbx($strTextFieldName)?>" id="bxed_<?=$strTextFieldId?>" wrap="virtual" <?=$textarea_field?>><?= htmlspecialcharsbx($strTextValue)?></textarea>
-        <?
-
-        if ($bWithoutPHP)
-            $arTaskbars = Array("BXPropertiesTaskbar", "BXSnippetsTaskbar");
-        else if (!$arTaskbars)
-            $arTaskbars = Array("BXPropertiesTaskbar", "BXSnippetsTaskbar", "BXComponents2Taskbar");
-
-        $minHeight = ($arAdditionalParams['minHeight'] ?? null) ? intval($arAdditionalParams['minHeight']) : 450;
-        $arParams = Array(
-            "bUseOnlyDefinedStyles"=>\COption::GetOptionString("fileman", "show_untitled_styles", "N")!="Y",
-            "bFromTextarea" => true,
-            "bDisplay" => $curHTMLEd,
-            "bWithoutPHP" => $bWithoutPHP,
-            "arTaskbars" => $arTaskbars,
-            "height" => max($iHeight, $minHeight)
-        );
-
-        if (isset($arAdditionalParams['use_editor_3']))
-            $arParams['use_editor_3'] = $arAdditionalParams['use_editor_3'];
-
-        $arParams['site'] = ($site == ''?LANG:$site);
-        if(isset($arSize["width"]))
-            $arParams["width"] = $arSize["width"];
-
-        if (isset($arAdditionalParams))
-            $arParams["arAdditionalParams"] = $arAdditionalParams;
-
-        if (isset($arAdditionalParams['limit_php_access']))
-            $arParams['limit_php_access'] = $arAdditionalParams['limit_php_access'];
-
-        if (isset($arAdditionalParams['toolbarConfig']))
-            $arParams['toolbarConfig'] = $arAdditionalParams['toolbarConfig'];
-
-        if (isset($arAdditionalParams['componentFilter']))
-            $arParams['componentFilter'] = $arAdditionalParams['componentFilter'];
-
-        $arParams['setFocusAfterShow'] = isset($arParams['setFocusAfterShow']) ? $arParams['setFocusAfterShow'] : false;
-
-        \CFileman::ShowHTMLEditControl($strTextFieldId, $strTextValue, $arParams);
     }
 }

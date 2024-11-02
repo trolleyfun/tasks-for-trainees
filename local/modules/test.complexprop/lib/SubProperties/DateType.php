@@ -41,6 +41,11 @@ class DateType extends BaseType
         return $result;
     }
 
+    public function onBeforeSave($value): mixed
+    {
+        return trim($value);
+    }
+
     public function getLength($value): bool
     {
         return !$this->isEmpty($value);
