@@ -50,7 +50,7 @@ class IblockComplexProperty
             $arProperty = unserialize($arProperty['PROPINFO']);
         }
 
-        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         $isEmpty = true;
@@ -88,7 +88,7 @@ class IblockComplexProperty
             $arProperty = unserialize($arProperty['PROPINFO']);
         }
 
-        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         if (is_array($value['VALUE']) && is_array($subProperties)) {
@@ -124,7 +124,7 @@ class IblockComplexProperty
             $arProperty = unserialize($arProperty['PROPINFO']);
         }
 
-        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         self::showCssForSetting();
@@ -208,7 +208,7 @@ class IblockComplexProperty
                 }
             }
         }
-        return serialize($subProperties);
+        return ['SUBPROPERTIES' => serialize($subProperties)];
     }
 
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
@@ -221,7 +221,7 @@ class IblockComplexProperty
             $arProperty = unserialize($arProperty['PROPINFO']);
         }
 
-        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
+        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         $inputName = $strHTMLControlName['VALUE'] ?? '';
@@ -271,6 +271,7 @@ class IblockComplexProperty
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         $result = true;
@@ -299,6 +300,7 @@ class IblockComplexProperty
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): '';
 
         if (is_array($value['VALUE']) && is_array($subProperties)) {
