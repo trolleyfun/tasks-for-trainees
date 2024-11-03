@@ -13,7 +13,7 @@ use Test\Complexprop\SubProperties\StringType;
 /**
  * Добавляет комплексное свойство для пользовательских полей.
  *
- * В классе реализованы стандартные функции Bitrix для пользовательских полей.
+ * В классе реализованы стандартные функции Bitrix для типа пользовательских полей.
  */
 class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
 {
@@ -81,7 +81,8 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
      * Примечание: всем пользовательским полям с типом "Комплексное свойство" устанавливается флаг "Множественность".
      *
      * @param array $userField Массив метаданных пользовательского поля
-     * @param array|null $additionalParameters Массив, содержащий значение для аттрибута "name" полей формы
+     * @param array|null $additionalParameters Массив, содержащий в поле с ключом "NAME" значение
+     *                                         для аттрибута "name" полей формы
      * @param mixed $varsFromForm
      * @return string HTML-код формы дополнительных настроек пользовательского поля
      */
@@ -231,8 +232,8 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
      * ```
      *
      * @param array $userField Массив метаданных пользовательского поля
-     * @param array|null $additionalParameters Массив, содержащий значение для аттрибута "name" полей формы
-     *                                         и значение свойства
+     * @param array|null $additionalParameters Массив, содержащий в полях с ключами "NAME" и "VALUE"
+     *                                         значение для аттрибута "name" полей формы и значение свойства
      * @return string HTML-код формы редактирования пользовательского поля
      */
     public static function renderEditForm(array $userField, ?array $additionalParameters): string

@@ -4,6 +4,9 @@ namespace Test\Complexprop\SubProperties;
 
 use Bitrix\Main\Localization\Loc;
 
+/**
+ * Класс для работы со свойством типа "Дата" в составе комплексного свойства.
+ */
 class DateType extends BaseType
 {
     public static function getTypeName(): string
@@ -51,6 +54,15 @@ class DateType extends BaseType
         return !$this->isEmpty($value);
     }
 
+    /**
+     * Проверяет, является ли значение свойства корректной датой.
+     *
+     * Возвращает true, если значение свойства является датой в формате "dd.mm.yy" или "dd.mm.yyyy".
+     * В противном случае возвращает false.
+     *
+     * @param string $value Значение свойства.
+     * @return bool
+     */
     public function checkFields($value): array
     {
         if (!$value) {
@@ -77,6 +89,15 @@ class DateType extends BaseType
         return $errors;
     }
 
+    /**
+     * Проверяет, является ли значение целым числом.
+     *
+     * Возвращает true, если значение является целым числом или строкой, которую можно привести к целому числу.
+     * Допускаются ведущие нули (например, значение "03" является допустимым). В противном случае возвращает false.
+     *
+     * @param string|int $value
+     * @return bool
+     */
     public static function isInt($value)
     {
         return strval($value) == strval(intval($value));

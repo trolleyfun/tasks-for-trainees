@@ -4,6 +4,9 @@ namespace Test\Complexprop\SubProperties;
 
 use Bitrix\Main\Localization\Loc;
 
+/**
+ * Класс для работы со свойством типа "HTML/Визуальный редактор" в составе комплексного свойства.
+ */
 class EditorType extends BaseType
 {
     public static function getTypeName(): string
@@ -11,6 +14,26 @@ class EditorType extends BaseType
         return Loc::getMessage('COMPLEXPROP_SUBPROPERTY_EDITORTYPE_NAME');
     }
 
+    /**
+     * Формирует HTML-код для формы редактирования свойства в административном разделе.
+     *
+     * Значение свойства является массивом вида:
+     * ```
+     * Array
+     * (
+     *      ['TEXT'] => текст_свойства
+     *      ['TYPE'] => тип_текста
+     * )
+     * ```
+     *
+     * Тип текста может принимать два значения: "text" и "html".
+     *
+     * Если текст отсутствует, значение свойства &ndash; пустая строка.
+     *
+     * @param mixed $value Значение свойства
+     * @param string $name Значение аттрибута "name" полей формы
+     * @return string HTML-код формы редактирования свойства
+     */
     public function getPropertyFieldHtml($value, string $name): string
     {
         $result = '';
@@ -51,6 +74,25 @@ class EditorType extends BaseType
         return $result;
     }
 
+    /**
+     * Преобразовывает значение свойства перед сохранением в базу данных.
+     *
+     * Значение свойства является массивом вида:
+     * ```
+     * Array
+     * (
+     *      ['TEXT'] => текст_свойства
+     *      ['TYPE'] => тип_текста
+     * )
+     * ```
+     *
+     * Тип текста может принимать два значения: "text" и "html".
+     *
+     * Если текст отсутствует, возвращает пустую строку.
+     *
+     * @param mixed $value Значение свойства
+     * @return mixed Преобразованное значение свойства
+     */
     public function onBeforeSave($value): mixed
     {
         if (!empty($value['TEXT']) && !empty($value['TYPE']) && $value['TYPE'] === 'text') {
@@ -76,6 +118,18 @@ class EditorType extends BaseType
         return true;
     }
 
+    /**
+     * Выводит HTML-код HTML/Визуального редактора.
+     *
+     * Модификация метода CFileMan::AddHTMLEditorFrame. По сравнению с оригинальным методом изменено
+     * значение аттрибута "name" у текстового поля.
+     *
+     * @param string $strTextFieldName Значение аттрибута "name" текстового поля
+     * @param string $strTextValue Значение текстового поля
+     * @param string $strTextTypeFieldName Значение аттрибута "name" переключателя режимов редактора
+     * @param string $strTextTypeValue Режим редактора ("text" или "html")
+     * @return void
+     */
     protected static function AddHTMLEditorFrame(
         $strTextFieldName,
         $strTextValue,
@@ -165,6 +219,6 @@ class EditorType extends BaseType
 
         $arParams['setFocusAfterShow'] = isset($arParams['setFocusAfterShow']) ? $arParams['setFocusAfterShow'] : false;
 
-        \CFileman::ShowHTMLEditControl($strTextFieldId, $strTextValue, $arParams);
+        \CFileMan::ShowHTMLEditControl($strTextFieldId, $strTextValue, $arParams);
     }
 }

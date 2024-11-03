@@ -4,6 +4,9 @@ namespace Test\Complexprop\SubProperties;
 
 use Bitrix\Main\Localization\Loc;
 
+/**
+ * Класс для работы со свойством типа "Строка" в составе комплексного свойства.
+ */
 class StringType extends BaseType
 {
     public static function getTypeName(): string

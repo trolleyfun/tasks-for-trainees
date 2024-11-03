@@ -70,15 +70,22 @@ class IblockComplexProperty
      *
      * Стандартная функция Bitrix. Вызывается перед сохранением значения свойства в базу данных.
      *
-     * Значение комплексного свойства имеет вид массива:
+     * Значение комплексного свойства хранится в поле массива $value с ключом "VALUE" и имеет вид массива:
+     * ```
+     * ['VALUE'] => Array
+     *              (
+     *                  [код_свойства] => значение
+     *              )
+     * ```
+     *
+     * Метод производит необходимые преобразования с значениями свойства и сериализует их. Возвращает массив:
      * ```
      * Array
      * (
-     *      [код_свойства] => значение
+     *      ['VALUE'] => сериализованное_значение
+     *      ['DESCRIPTION'] => описание
      * )
      * ```
-     *
-     * Метод производит необходимые преобразования с значениями свойства и сериализует их.
      *
      * @param array $arProperty Массив метаданных свойства инфоблока
      * @param array $value Значение свойства
@@ -198,7 +205,8 @@ class IblockComplexProperty
      * массива $arProperty с ключом "PROPINFO".
      *
      * @param array $arProperty Массив метаданных свойства инфоблока
-     * @param array $strHTMLControlName Массив, содержащий значение для аттрибута "name" полей формы
+     * @param array $strHTMLControlName Массив, содержащий в поле с ключом "NAME" значение
+     *                                  для аттрибута "name" полей формы
      * @param array &$arPropertyFields Массив, в котором можно задать дополнительные настройки свойства
      * @return string HTML-код формы пользовательских настроек свойства инфоблока
      */
@@ -349,7 +357,8 @@ class IblockComplexProperty
      *
      * @param array $arProperty Массив метаданных свойства инфоблока
      * @param array $value Значение свойства
-     * @param array $strHTMLControlName Массив, содержащий значение для аттрибута "name" полей формы
+     * @param array $strHTMLControlName Массив, содержащий в поле с ключом "VALUE" значение
+     *                                  для аттрибута "name" полей формы
      * @return string HTML-код формы редактирования свойства
      */
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)

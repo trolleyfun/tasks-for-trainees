@@ -5,6 +5,9 @@ namespace Test\Complexprop\SubProperties;
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Main\Localization\Loc;
 
+/**
+ * Класс для работы со свойством типа "Привязка к элементу инфоблока" в составе комплексного свойства.
+ */
 class ElementType extends BaseType
 {
     public static function getTypeName(): string
@@ -12,6 +15,13 @@ class ElementType extends BaseType
         return Loc::getMessage('COMPLEXPROP_SUBPROPERTY_ELEMENTTYPE_NAME');
     }
 
+    /**
+     * Формирует HTML-код для формы редактирования свойства в административном разделе.
+     *
+     * @param int $value ID элемента инфоблока
+     * @param string $name Значение аттрибута "name" полей формы
+     * @return string HTML-код формы редактирования свойства
+     */
     public function getPropertyFieldHtml($value, string $name): string
     {
         $result = '';
@@ -50,11 +60,30 @@ class ElementType extends BaseType
         return $result;
     }
 
+    /**
+     * Преобразовывает значение свойства перед сохранением в базу данных.
+     *
+     * @param int $value ID элемента инфоблока
+     * @return mixed Преобразованное ID элемента инфоблока
+     */
+    public function onBeforeSave($value): mixed
+    {
+        return parent::onBeforeSave($value);
+    }
+
     public function getLength($value): bool
     {
         return !$this->isEmpty($value);
     }
 
+    /**
+     * Проверяет корректность введенных пользователем данных.
+     *
+     * Возвращает массив с текстом ошибок. Если введенные данные корректны, вернет пустой массив.
+     *
+     * @param int $value ID элемента инфоблока
+     * @return bool
+     */
     public function checkFields($value): array
     {
         if (!$value) {
