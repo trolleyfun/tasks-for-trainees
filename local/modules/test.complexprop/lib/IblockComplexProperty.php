@@ -102,7 +102,7 @@ class IblockComplexProperty
         }
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
 
         $isEmpty = true;
         if (is_array($value['VALUE']) && is_array($subProperties)) {
@@ -134,49 +134,13 @@ class IblockComplexProperty
      *
      * Стандартная функция Bitrix. Вызывается в методе CIBlockResult::Fetch.
      *
-     * Метод производит десериализацию значения свойства и производит с ним необходимые преобразования.
-     *
-     * Возвращает значение комплексного свойства в виде массива:
-     * ```
-     * Array
-     * (
-     *      [код_свойства] => значение
-     * )
-     * ```
-     *
      * @param array $arProperty Массив метаданных свойства инфоблока
      * @param array $value Значение свойства
      * @return array Преобразованное значение свойства
      */
     public static function ConvertFromDB($arProperty, $value)
     {
-        if (
-            empty($arProperty['USER_TYPE_SETTINGS'])
-            && !empty($arProperty['PROPINFO'])
-            && is_string($arProperty['PROPINFO'])
-        ) {
-            $arProperty = unserialize($arProperty['PROPINFO']);
-        }
-
-        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
-
-        if (is_array($value['VALUE']) && is_array($subProperties)) {
-            foreach ($value['VALUE'] as $code=>&$val) {
-                if (!empty($subProperties[$code]) && $subProperties[$code] instanceof BaseType) {
-                    $val = $subProperties[$code]->onAfterReceive($val);
-                }
-            }
-        }
-
-        $result = [
-            'VALUE' => is_string($value['VALUE'])? unserialize($value['VALUE']): '',
-            'DESCRIPTION' => $value['DESCRIPTION']
-        ];
-        if (!$result['VALUE']) {
-            $result['VALUE'] = array();
-        }
-        return $result;
+        return $value;
     }
 
     /**
@@ -226,7 +190,7 @@ class IblockComplexProperty
         }
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
 
         self::showCssForSetting();
         self::showJsForSetting($strHTMLControlName['NAME']);
@@ -355,6 +319,16 @@ class IblockComplexProperty
      *
      * Стандартная функция Bitrix. Вызывается во время построения формы редактирования элемента.
      *
+     * Значение комплексного свойства хранится в поле массива $value с ключом "VALUE" в сериализованном виде.
+     *
+     * После десериализации значение свойства является массивом:
+     * ```
+     * ['VALUE'] => Array
+     *              (
+     *                  [код_свойства] => значение
+     *              )
+     * ```
+     *
      * @param array $arProperty Массив метаданных свойства инфоблока
      * @param array $value Значение свойства
      * @param array $strHTMLControlName Массив, содержащий в поле с ключом "VALUE" значение
@@ -372,7 +346,10 @@ class IblockComplexProperty
         }
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+
+        $value_decode = $value['VALUE'] ?? '';
+        $value_decode = is_string($value_decode)? unserialize($value_decode): $value_decode;
 
         $inputName = $strHTMLControlName['VALUE'] ?? '';
 
@@ -393,7 +370,7 @@ class IblockComplexProperty
         if (is_array($subProperties) && $inputName) {
             foreach ($subProperties as $prop) {
                 if ($prop instanceof BaseType) {
-                    $val = $value['VALUE'][$prop->getCode()] ?? '';
+                    $val = $value_decode[$prop->getCode()] ?? '';
                     $result .= $prop->getPropertyFieldHtml($val, $inputName);
                 }
             }
@@ -427,9 +404,9 @@ class IblockComplexProperty
         }
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
         $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
 
         $result = true;
         if (is_array($value['VALUE']) && is_array($subProperties)) {
@@ -467,9 +444,9 @@ class IblockComplexProperty
         }
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
         $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): '';
+        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
 
         if (is_array($value['VALUE']) && is_array($subProperties)) {
             foreach ($value['VALUE'] as $code=>$val) {
