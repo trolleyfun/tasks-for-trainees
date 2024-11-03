@@ -11,8 +11,19 @@ use Test\Complexprop\SubProperties\ElementType;
 use Test\Complexprop\SubProperties\FileType;
 use Test\Complexprop\SubProperties\StringType;
 
+/**
+ * Добавляет комплексное свойство для инфоблока.
+ *
+ * В классе реализованы стандартные функции Bitrix для пользовательских свойств инфоблоков.
+ */
 class IblockComplexProperty
 {
+    /**
+     * @var string[] PROPERTIES_TYPES
+     *      Описывает типы свойств, которые поддерживает комплексное свойство. Ключом массива является
+     *      код типа, значением &ndash; класс типа. Классы должны наследоваться от базового класса
+     *      Test\Complexprop\SubProperties\BaseType.
+     */
     protected const PROPERTIES_TYPES = [
         'string' => StringType::class,
         'date' => DateType::class,
@@ -21,9 +32,23 @@ class IblockComplexProperty
         'editor' => EditorType::class
     ];
 
+    /**
+     * @var bool $showedCss Если false, то стили не подключены. Если true, то стили подключены.
+     */
     protected static $showedCss = false;
+
+    /**
+     * @var bool $showedJs Если false, то скрипты JavaScript не подключены. Если true, то скрипты подключены.
+     */
     protected static $showedJs = false;
 
+    /**
+     * Задает параметры пользовательского свойства инфоблока.
+     *
+     * Стандартная функция Bitrix. Вызывается по событию OnIBlockPropertyBuildList.
+     *
+     * @return array Параметры пользовательского свойства
+     */
     public static function GetUserTypeDescription()
     {
         return [
@@ -40,6 +65,25 @@ class IblockComplexProperty
         ];
     }
 
+    /**
+     * Преобразовывает значение свойства инфоблока перед записью в базу данных.
+     *
+     * Стандартная функция Bitrix. Вызывается перед сохранением значения свойства в базу данных.
+     *
+     * Значение комплексного свойства имеет вид массива:
+     * ```
+     * Array
+     * (
+     *      [код_свойства] => значение
+     * )
+     * ```
+     *
+     * Метод производит необходимые преобразования с значениями свойства и сериализует их.
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @param array $value Значение свойства
+     * @return array Значение свойства, пригодное для записи в базу данных
+     */
     public static function ConvertToDB($arProperty, $value)
     {
         if (
@@ -78,6 +122,25 @@ class IblockComplexProperty
         return $result;
     }
 
+    /**
+     * Преобразовывает значение свойства инфоблока после извлечения из базы данных.
+     *
+     * Стандартная функция Bitrix. Вызывается в методе CIBlockResult::Fetch.
+     *
+     * Метод производит десериализацию значения свойства и производит с ним необходимые преобразования.
+     *
+     * Возвращает значение комплексного свойства в виде массива:
+     * ```
+     * Array
+     * (
+     *      [код_свойства] => значение
+     * )
+     * ```
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @param array $value Значение свойства
+     * @return array Преобразованное значение свойства
+     */
     public static function ConvertFromDB($arProperty, $value)
     {
         if (
@@ -109,6 +172,36 @@ class IblockComplexProperty
         return $result;
     }
 
+    /**
+     * Формирует HTML-код для формы пользовательских настроек свойства инфоблока.
+     *
+     * Стандартная функция Bitrix. Вызывается при построении формы редактирования инфоблока.
+     *
+     * Пользовательские настройки хранятся в поле массива $arProperty с ключом "USER_TYPE_SETTINGS"
+     * в сериализованном виде:
+     * ```
+     * ['USER_TYPE_SETTINGS'] => Array
+     *                           (
+     *                              ['SUBPROPERTIES'] => serialize($subProperties)
+     *                           )
+     * ```
+     *
+     * Массив $subProperties имеет вид:
+     * ```
+     * Array
+     * (
+     *      [код_свойства] => объект_свойства
+     * )
+     * ```
+     *
+     * Примечание: в некоторых случаях пользовательские настройки свойства хранятся в поле
+     * массива $arProperty с ключом "PROPINFO".
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @param array $strHTMLControlName Массив, содержащий значение для аттрибута "name" полей формы
+     * @param array &$arPropertyFields Массив, в котором можно задать дополнительные настройки свойства
+     * @return string HTML-код формы пользовательских настроек свойства инфоблока
+     */
     public static function GetSettingsHTML($arProperty, $strHTMLControlName, &$arPropertyFields)
     {
         $arPropertyFields = [
@@ -184,6 +277,44 @@ class IblockComplexProperty
         return $result;
     }
 
+    /**
+     * Подготавливает параметры пользовательского свойства инфоблока для записи в базу данных.
+     *
+     * Стандартная функция Bitrix. Вызывается перед сохранением метаданных свойства в базу данных.
+     *
+     * Пользовательские настройки хранятся в поле массива $arProperty с ключом "USER_TYPE_SETTINGS":
+     * ```
+     * ['USER_TYPE_SETTINGS'] => Array
+     *                           (
+     *                              [код_свойства] => Array
+     *                                                (
+     *                                                      ['CODE'] => код_свойства
+     *                                                      ['TITLE'] => название_свойства
+     *                                                      ['TYPE'] => код_типа_свойства
+     *                                                )
+     *                           )
+     * ```
+     *
+     * Функция возвращает массив вида:
+     * ```
+     * Array
+     * (
+     *      ['SUBPROPERTIES'] => serialize($subProperties)
+     * )
+     * ```
+     *
+     * Массив $subProperties имеет вид:
+     * ```
+     * Array
+     * (
+     *      [код_свойства] => объект_свойства
+     * )
+     * ```
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @return array Массив дополнительных настроек свойства инфоблока, который будет храниться в поле
+     *               с ключом "USER_TYPE_SETTINGS"
+     */
     public static function PrepareSettings($arProperty)
     {
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
@@ -211,6 +342,16 @@ class IblockComplexProperty
         return ['SUBPROPERTIES' => serialize($subProperties)];
     }
 
+    /**
+     * Формирует HTML-код для формы редактирования свойства инфоблока в административном разделе.
+     *
+     * Стандартная функция Bitrix. Вызывается во время построения формы редактирования элемента.
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @param array $value Значение свойства
+     * @param array $strHTMLControlName Массив, содержащий значение для аттрибута "name" полей формы
+     * @return string HTML-код формы редактирования свойства
+     */
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
     {
         if (
@@ -254,6 +395,18 @@ class IblockComplexProperty
         return $result;
     }
 
+    /**
+     * Проверяет, заполнено ли свойство.
+     *
+     * Стандартная функция Bitrix. Вызывается при проверке обязательности заполнения значения свойства
+     * перед добавлением или изменением элемента, если свойство помечено как обязательное.
+     *
+     * Примечание: данные в поле массива $arProperty с ключом "USER_TYPE_SETTINGS" сериализованы.
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @param array $value Значение свойства
+     * @return bool Возвращает true, если свойство заполнено. Возвращает false, если свойство не заполнено.
+     */
     public static function GetLength($arProperty, $value)
     {
         if (
@@ -281,6 +434,17 @@ class IblockComplexProperty
         return $result;
     }
 
+    /**
+     * Проверяет корректность введенных пользователем данных.
+     *
+     * Стандартная функция Bitrix. Вызывается перед добавлением или изменением элемента.
+     *
+     * Примечание: данные в поле массива $arProperty с ключом "USER_TYPE_SETTINGS" сериализованы.
+     *
+     * @param array $arProperty Массив метаданных свойства инфоблока
+     * @param array $value Значение свойства
+     * @return array Массив с текстом ошибок. Если данные корректны, возвращает пустой массив.
+     */
     public static function CheckFields($arProperty, $value)
     {
         $errors = [];
@@ -310,6 +474,13 @@ class IblockComplexProperty
         return $errors;
     }
 
+    /**
+     * Формирует HTML-код для выпадающего списка с доступными типами свойств комплексного свойства инфоблока.
+     *
+     * @param string $selectedType Значение по умолчанию для выпадающего списка (код типа свойства).
+     *                             Необязательный параметр.
+     * @return string HTML-код выпадающего списка с доступными типами свойств
+     */
     protected static function getPropertyTypesList($selectedType = '')
     {
         $result = '<option value="">'.Loc::getMessage('COMPLEXPROP_IBLOCK_SETTINGS_TYPEOPTION').'</option>';
@@ -327,6 +498,12 @@ class IblockComplexProperty
         return $result;
     }
 
+    /**
+     * Подключает скрипт JavaScript для формы пользовательских настроек свойства инфоблока.
+     *
+     * @param string $inputName Значение для аттрибута "name" полей формы
+     * @return void
+     */
     protected static function showJsForSetting($inputName)
     {
         \CJSCore::Init(array("jquery"));
@@ -362,6 +539,11 @@ class IblockComplexProperty
         }
     }
 
+    /**
+     * Подключает стили для формы пользовательских настроек свойства инфоблока.
+     *
+     * @return void
+     */
     protected static function showCssForSetting()
     {
         if(!self::$showedCss) {
@@ -379,6 +561,11 @@ class IblockComplexProperty
         }
     }
 
+    /**
+     * Подключает стили для формы редактирования свойства инфоблока в административном разделе.
+     *
+     * @return void
+     */
     protected static function showCss()
     {
         if(!self::$showedCss) {
@@ -404,6 +591,11 @@ class IblockComplexProperty
         }
     }
 
+    /**
+     * Подключает скрипт JavaScript для формы редактирования свойства инфоблока в административном разделе.
+     *
+     * @return void
+     */
     protected static function showJs()
     {
         \CJSCore::Init(array("jquery"));
