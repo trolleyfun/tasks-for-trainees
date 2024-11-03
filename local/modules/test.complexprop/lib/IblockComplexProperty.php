@@ -254,11 +254,6 @@ class IblockComplexProperty
         return $result;
     }
 
-    public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
-    {
-        return '';
-    }
-
     public static function GetLength($arProperty, $value)
     {
         if (
@@ -447,5 +442,32 @@ class IblockComplexProperty
             </script>
             <?php
         }
+    }
+
+    // Не реализовано
+
+    public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
+    {
+        return '';
+    }
+
+    public static function GetAdminFilterHTML($arProperty, $strHTMLControlName)
+    {
+        return '';
+    }
+
+    public static function GetAdminListViewHTML($arProperty, $value, $strHTMLControlName)
+    {
+        return '';
+    }
+
+    public static function GetPublicEditHTML($arProperty, $value, $strHTMLControlName)
+    {
+        return '';
+    }
+
+    public static function GetPublicFilterHTML($arProperty, $strHTMLControlName)
+    {
+        return '';
     }
 }

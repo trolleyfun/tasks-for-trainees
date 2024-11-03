@@ -64,11 +64,21 @@ class DateType extends BaseType
             $errors[] = Loc::getMessage('COMPLEXPROP_IBLOCK_ERROR_INVALID_DATE');
         } else {
             list($day, $month, $year) = $dateArray;
-            if (!my_is_int($day) || !my_is_int($month) || !my_is_int($year) || !checkdate($month, $day, $year)) {
+            if (
+                !self::isInt($day)
+                || !self::isInt($month)
+                || !self::isInt($year)
+                || !checkdate($month, $day, $year)
+            ) {
                 $errors[] = Loc::getMessage('COMPLEXPROP_IBLOCK_ERROR_INVALID_DATE');
             }
         }
 
         return $errors;
+    }
+
+    public static function isInt($value)
+    {
+        return strval($value) == strval(intval($value));
     }
 }

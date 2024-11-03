@@ -335,4 +335,36 @@ class UserFieldComplexProperty extends \Bitrix\Main\UserField\Types\StringType
             <?php
         }
     }
+
+    // Не реализовано
+
+    public static function renderView(array $userField, ?array $additionalParameters = []): string
+    {
+        return '';
+    }
+
+    public static function renderEdit(array $userField, ?array $additionalParameters = []): string
+    {
+        return '';
+    }
+
+    public static function renderAdminListView(array $userField, ?array $additionalParameters): string
+    {
+        return '';
+    }
+
+    public static function renderAdminListEdit(array $userField, ?array $additionalParameters)
+    {
+        return '';
+    }
+
+    public static function renderFilter(array $userField, ?array $additionalParameters): string
+    {
+        return '';
+    }
+
+    public static function renderText(array $userField): string
+    {
+        return '';
+    }
 }
