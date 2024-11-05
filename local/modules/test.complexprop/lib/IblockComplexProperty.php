@@ -92,7 +92,7 @@ class IblockComplexProperty
      */
     public static function ConvertToDB($arProperty, $value)
     {
-        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
+        $subProperties = $arProperty['USER_TYPE_SETTINGS']['DATA_VALUE'] ?? '';
         $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         $isEmpty = true;
@@ -125,21 +125,39 @@ class IblockComplexProperty
      *
      * Стандартная функция Bitrix. Вызывается при построении формы редактирования инфоблока.
      *
-     * Пользовательские настройки хранятся в поле массива $arProperty с ключом "USER_TYPE_SETTINGS"
-     * в сериализованном виде:
+     * Пользовательские настройки хранятся в поле массива $arProperty с ключом "USER_TYPE_SETTINGS".
+     *
+     * Если введенные пользователем настройки обработаны, значение поля с ключом "DATA_TYPE" равно "object",
+     * данные хранятся в объектах и сериализованы:
      * ```
-     * ['USER_TYPE_SETTINGS'] => Array
-     *                           (
-     *                              ['SUBPROPERTIES'] => serialize($subProperties)
-     *                           )
+     * ['USER_TYPE_SETTINGS'] =>
+     *      Array
+     *      (
+     *          ['DATA_VALUE'] => serialize(Array
+     *                                      (
+     *                                          [код_свойства] => объект_свойства
+     *                                      ))
+     *          ['DATA_TYPE'] => "object"
+     *      )
      * ```
      *
-     * Массив $subProperties имеет вид:
+     * Если настройки не обработаны, значение поля с ключом "DATA_TYPE" равно "array", данные хранятся
+     * в массиве и не сериализованы:
      * ```
-     * Array
-     * (
-     *      [код_свойства] => объект_свойства
-     * )
+     * ['USER_TYPE_SETTINGS'] =>
+     *      Array
+     *      (
+     *          ['DATA_VALUE'] => Array
+     *                            (
+     *                                  [код_свойства] => Array
+     *                                                    (
+     *                                                          ['CODE'] => код_свойства
+     *                                                          ['TITLE'] => название_свойства
+     *                                                          ['TYPE'] => код_типа_свойства
+     *                                                    )
+     *                            )
+     *          ['DATA_TYPE'] => "array"
+     *      )
      * ```
      *
      * @param array $arProperty Массив метаданных свойства инфоблока
@@ -155,8 +173,18 @@ class IblockComplexProperty
             'HIDE' => ['ROW_COUNT', 'COL_COUNT', 'DEFAULT_VALUE', 'SEARCHABLE', 'SMART_FILTER', 'WITH_DESCRIPTION', 'FILTRABLE']
         ];
 
-        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
+        $dataType = $arProperty['USER_TYPE_SETTINGS']['DATA_TYPE'] ?? '';
+        switch ($dataType) {
+            case 'array':
+                $arProperty['USER_TYPE_SETTINGS'] = self::PrepareSettings($arProperty);
+            case 'object':
+                $subProperties = $arProperty['USER_TYPE_SETTINGS']['DATA_VALUE'] ?? '';
+                $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
+                break;
+            default:
+                $subProperties = '';
+                break;
+        }
 
         self::showCssForSetting();
         self::showJsForSetting($strHTMLControlName['NAME']);
@@ -173,11 +201,15 @@ class IblockComplexProperty
         if (is_array($subProperties)) {
             foreach ($subProperties as $prop) {
                 if ($prop instanceof BaseType && $prop->getCode()) {
-                    $codeName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($prop->getCode()).'][CODE]';
+                    $codeName = $strHTMLControlName['NAME'].'[DATA_VALUE]['.htmlspecialcharsbx($prop->getCode())
+                    .'][CODE]';
                     $codeValue = htmlspecialcharsbx($prop->getCode());
-                    $titleName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($prop->getCode()).'][TITLE]';
+                    $titleName = $strHTMLControlName['NAME'].'[DATA_VALUE]['.htmlspecialcharsbx($prop->getCode())
+                    .'][TITLE]';
                     $titleValue = htmlspecialcharsbx($prop->getName());
-                    $typeName = $strHTMLControlName['NAME'].'['.htmlspecialcharsbx($prop->getCode()).'][TYPE]';
+                    $typeName = $strHTMLControlName['NAME'].'[DATA_VALUE]['.htmlspecialcharsbx($prop->getCode())
+                    .'][TYPE]';
+                    $dataTypeName = $strHTMLControlName['NAME'].'[DATA_TYPE]';
                     $result .= '
                         <tr valign="top">
                             <td><input type="text" class="inp-code" size="20" name="'.$codeName.'"
@@ -206,6 +238,9 @@ class IblockComplexProperty
 
         $result .= '
             <tr><td colspan="2" style="text-align: center;">
+                <input type="hidden" name="'.$dataTypeName.'" value="array">
+            </td></tr>
+            <tr><td colspan="2" style="text-align: center;">
                 <input type="button"
                     value="'.Loc::getMessage('COMPLEXPROP_IBLOCK_SETTINGS_ADDBUTTON_NAME').'"
                     onclick="addNewRows()">
@@ -220,34 +255,42 @@ class IblockComplexProperty
      *
      * Стандартная функция Bitrix. Вызывается перед сохранением метаданных свойства в базу данных.
      *
-     * Пользовательские настройки хранятся в поле массива $arProperty с ключом "USER_TYPE_SETTINGS":
+     * Пользовательские настройки хранятся в поле массива $arProperty с ключом "USER_TYPE_SETTINGS".
+     *
+     * Если введенные пользователем настройки обработаны, значение поля с ключом "DATA_TYPE" равно "object",
+     * данные хранятся в объектах и сериализованы:
      * ```
-     * ['USER_TYPE_SETTINGS'] => Array
-     *                           (
-     *                              [код_свойства] => Array
-     *                                                (
-     *                                                      ['CODE'] => код_свойства
-     *                                                      ['TITLE'] => название_свойства
-     *                                                      ['TYPE'] => код_типа_свойства
-     *                                                )
-     *                           )
+     * ['USER_TYPE_SETTINGS'] =>
+     *      Array
+     *      (
+     *          ['DATA_VALUE'] => serialize(Array
+     *                                      (
+     *                                          [код_свойства] => объект_свойства
+     *                                      ))
+     *          ['DATA_TYPE'] => "object"
+     *      )
      * ```
      *
-     * Функция возвращает массив вида:
+     * Если настройки не обработаны, значение поля с ключом "DATA_TYPE" равно "array", данные хранятся
+     * в массиве и не сериализованы:
      * ```
-     * Array
-     * (
-     *      ['SUBPROPERTIES'] => serialize($subProperties)
-     * )
+     * ['USER_TYPE_SETTINGS'] =>
+     *      Array
+     *      (
+     *          ['DATA_VALUE'] => Array
+     *                            (
+     *                                  [код_свойства] => Array
+     *                                                    (
+     *                                                          ['CODE'] => код_свойства
+     *                                                          ['TITLE'] => название_свойства
+     *                                                          ['TYPE'] => код_типа_свойства
+     *                                                    )
+     *                            )
+     *          ['DATA_TYPE'] => "array"
+     *      )
      * ```
      *
-     * Массив $subProperties имеет вид:
-     * ```
-     * Array
-     * (
-     *      [код_свойства] => объект_свойства
-     * )
-     * ```
+     * Функция возвращает массив с обработанными и сериализованными данными.
      *
      * @param array $arProperty Массив метаданных свойства инфоблока
      * @return array Массив дополнительных настроек свойства инфоблока, который будет храниться в поле
@@ -255,33 +298,37 @@ class IblockComplexProperty
      */
     public static function PrepareSettings($arProperty)
     {
-        if (!empty($arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'])) {
-            return $arProperty['USER_TYPE_SETTINGS'];
-        }
+        $dataType = $arProperty['USER_TYPE_SETTINGS']['DATA_TYPE'] ?? '';
 
-        $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
-        if (!is_array($subProperties)) {
-            $subProperties = array();
-        } else {
-            foreach ($subProperties as &$prop) {
-                $className = self::PROPERTIES_TYPES[$prop['TYPE']] ?? '';
-                if (
-                    empty($prop['CODE'])
-                    || empty($prop['TITLE'])
-                    || empty($prop['TYPE'])
-                    || !class_exists($className)
-                ) {
-                    unset($prop);
-                } else {
-                    $prop = new $className(
-                        trim($prop['CODE']),
-                        trim($prop['TITLE']),
-                        $prop['TYPE']
-                    );
+        if ($dataType === 'object') {
+            return $arProperty['USER_TYPE_SETTINGS'];
+        } elseif ($dataType === 'array') {
+            $subProperties = $arProperty['USER_TYPE_SETTINGS']['DATA_VALUE'] ?? '';
+            if (!is_array($subProperties)) {
+                $subProperties = array();
+            } else {
+                foreach ($subProperties as &$prop) {
+                    $className = self::PROPERTIES_TYPES[$prop['TYPE']] ?? '';
+                    if (
+                        empty($prop['CODE'])
+                        || empty($prop['TITLE'])
+                        || empty($prop['TYPE'])
+                        || !class_exists($className)
+                    ) {
+                        unset($prop);
+                    } else {
+                        $prop = new $className(
+                            trim($prop['CODE']),
+                            trim($prop['TITLE']),
+                            $prop['TYPE']
+                        );
+                    }
                 }
             }
+        } else {
+            $subProperties = array();
         }
-        return ['SUBPROPERTIES' => base64_encode(serialize($subProperties))];
+        return ['DATA_VALUE' => base64_encode(serialize($subProperties)), 'DATA_TYPE' => 'object'];
     }
 
     /**
@@ -307,7 +354,7 @@ class IblockComplexProperty
      */
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
     {
-        $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
+        $subProperties = $arProperty['USER_TYPE_SETTINGS']['DATA_VALUE'] ?? '';
         $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         $value_decode = $value['VALUE'] ?? '';
@@ -359,7 +406,7 @@ class IblockComplexProperty
     {
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
-        $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
+        $subProperties = $subProperties['DATA_VALUE'] ?? '';
         $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         $result = true;
@@ -391,7 +438,7 @@ class IblockComplexProperty
 
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
-        $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
+        $subProperties = $subProperties['DATA_VALUE'] ?? '';
         $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         if (is_array($value['VALUE']) && is_array($subProperties)) {
