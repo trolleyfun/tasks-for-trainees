@@ -56,7 +56,6 @@ class IblockComplexProperty
             'USER_TYPE' => 'COMPLEX',
             'DESCRIPTION' => Loc::getMessage('COMPLEXPROP_IBLOCK_NAME'),
             'ConvertToDB' => [__CLASS__, 'ConvertToDB'],
-            'ConvertFromDB' => [__CLASS__, 'ConvertFromDB'],
             'GetSettingsHTML' => [__CLASS__, 'GetSettingsHTML'],
             'PrepareSettings' => [__CLASS__, 'PrepareSettings'],
             'GetPropertyFieldHtml' => [__CLASS__, 'GetPropertyFieldHtml'],
@@ -93,16 +92,8 @@ class IblockComplexProperty
      */
     public static function ConvertToDB($arProperty, $value)
     {
-        if (
-            empty($arProperty['USER_TYPE_SETTINGS'])
-            && !empty($arProperty['PROPINFO'])
-            && is_string($arProperty['PROPINFO'])
-        ) {
-            $arProperty = unserialize($arProperty['PROPINFO']);
-        }
-
         $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+        $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         $isEmpty = true;
         if (is_array($value['VALUE']) && is_array($subProperties)) {
@@ -121,26 +112,12 @@ class IblockComplexProperty
             ];
         } else {
             $result = [
-                'VALUE' => serialize($value['VALUE']),
+                'VALUE' => base64_encode(serialize($value['VALUE'])),
                 'DESCRIPTION' => $value['DESCRIPTION']
             ];
         }
 
         return $result;
-    }
-
-    /**
-     * Преобразовывает значение свойства инфоблока после извлечения из базы данных.
-     *
-     * Стандартная функция Bitrix. Вызывается в методе CIBlockResult::Fetch.
-     *
-     * @param array $arProperty Массив метаданных свойства инфоблока
-     * @param array $value Значение свойства
-     * @return array Преобразованное значение свойства
-     */
-    public static function ConvertFromDB($arProperty, $value)
-    {
-        return $value;
     }
 
     /**
@@ -165,9 +142,6 @@ class IblockComplexProperty
      * )
      * ```
      *
-     * Примечание: в некоторых случаях пользовательские настройки свойства хранятся в поле
-     * массива $arProperty с ключом "PROPINFO".
-     *
      * @param array $arProperty Массив метаданных свойства инфоблока
      * @param array $strHTMLControlName Массив, содержащий в поле с ключом "NAME" значение
      *                                  для аттрибута "name" полей формы
@@ -181,16 +155,8 @@ class IblockComplexProperty
             'HIDE' => ['ROW_COUNT', 'COL_COUNT', 'DEFAULT_VALUE', 'SEARCHABLE', 'SMART_FILTER', 'WITH_DESCRIPTION', 'FILTRABLE']
         ];
 
-        if (
-            empty($arProperty['USER_TYPE_SETTINGS'])
-            && !empty($arProperty['PROPINFO'])
-            && is_string($arProperty['PROPINFO'])
-        ) {
-            $arProperty = unserialize($arProperty['PROPINFO']);
-        }
-
         $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+        $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         self::showCssForSetting();
         self::showJsForSetting($strHTMLControlName['NAME']);
@@ -289,6 +255,10 @@ class IblockComplexProperty
      */
     public static function PrepareSettings($arProperty)
     {
+        if (!empty($arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'])) {
+            return $arProperty['USER_TYPE_SETTINGS'];
+        }
+
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         if (!is_array($subProperties)) {
             $subProperties = array();
@@ -311,7 +281,7 @@ class IblockComplexProperty
                 }
             }
         }
-        return ['SUBPROPERTIES' => serialize($subProperties)];
+        return ['SUBPROPERTIES' => base64_encode(serialize($subProperties))];
     }
 
     /**
@@ -337,19 +307,11 @@ class IblockComplexProperty
      */
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
     {
-        if (
-            empty($arProperty['USER_TYPE_SETTINGS'])
-            && !empty($arProperty['PROPINFO'])
-            && is_string($arProperty['PROPINFO'])
-        ) {
-            $arProperty = unserialize($arProperty['PROPINFO']);
-        }
-
         $subProperties = $arProperty['USER_TYPE_SETTINGS']['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+        $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         $value_decode = $value['VALUE'] ?? '';
-        $value_decode = is_string($value_decode)? unserialize($value_decode): $value_decode;
+        $value_decode = is_string($value_decode)? unserialize(base64_decode($value_decode)): $value_decode;
 
         $inputName = $strHTMLControlName['VALUE'] ?? '';
 
@@ -395,18 +357,10 @@ class IblockComplexProperty
      */
     public static function GetLength($arProperty, $value)
     {
-        if (
-            empty($arProperty['USER_TYPE_SETTINGS'])
-            && !empty($arProperty['PROPINFO'])
-            && is_string($arProperty['PROPINFO'])
-        ) {
-            $arProperty = unserialize($arProperty['PROPINFO']);
-        }
-
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
         $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+        $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         $result = true;
         if (is_array($value['VALUE']) && is_array($subProperties)) {
@@ -435,18 +389,10 @@ class IblockComplexProperty
     {
         $errors = [];
 
-        if (
-            empty($arProperty['USER_TYPE_SETTINGS'])
-            && !empty($arProperty['PROPINFO'])
-            && is_string($arProperty['PROPINFO'])
-        ) {
-            $arProperty = unserialize($arProperty['PROPINFO']);
-        }
-
         $subProperties = $arProperty['USER_TYPE_SETTINGS'] ?? '';
         $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
         $subProperties = $subProperties['SUBPROPERTIES'] ?? '';
-        $subProperties = is_string($subProperties)? unserialize($subProperties): $subProperties;
+        $subProperties = is_string($subProperties)? unserialize(base64_decode($subProperties)): $subProperties;
 
         if (is_array($value['VALUE']) && is_array($subProperties)) {
             foreach ($value['VALUE'] as $code=>$val) {
