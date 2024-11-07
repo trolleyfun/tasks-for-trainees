@@ -8,6 +8,16 @@ require_once('token.php');
 
 $dirPath = $_GET['dir'] ?? 'disk:/';
 $manager = new DiskManager(OAUTH_TOKEN, urldecode($dirPath));
+
+if (!empty($_POST['folder_name'])) {
+    $folderName = $_POST['folder_name'];
+    $manager->createFolder($folderName);
+}
+
+if (!empty($_FILES['file']['name'])) {
+    $file = $_FILES['file'];
+    $manager->uploadFile($file);
+}
 ?>
 
 <!DOCTYPE html>
@@ -24,14 +34,18 @@ $manager = new DiskManager(OAUTH_TOKEN, urldecode($dirPath));
     </nav>
     <div class="container">
         <section class="col-menu">
-            <div class="form-container">
-                <input type="text" name="folder_name" placeholder="Название папки" class="form-input">
-                <button class="form-button">Создать</button>
-            </div>
-            <div class="form-container">
-                <input type="file" name="file_name" class="form-input">
-                <button class="form-button">Загрузить</button>
-            </div>
+            <form action="" method="post">
+                <div class="form-container">
+                    <input type="text" name="folder_name" placeholder="Название папки" class="form-input">
+                    <button type="submit" class="form-button">Создать</button>
+                </div>
+            </form>
+            <form action="" method="post" enctype="multipart/form-data">
+                <div class="form-container">
+                    <input type="file" name="file" class="form-input">
+                    <button type="submit" class="form-button">Загрузить</button>
+                </div>
+            </form>
         </section>
         <section id="resources">
         <?php

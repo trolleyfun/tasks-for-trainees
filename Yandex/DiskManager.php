@@ -21,7 +21,7 @@ class DiskManager
 
     public function getParentPath()
     {
-        $arPath = explode('/', $this->resource->path);
+        $arPath = explode('/', $this->resource->get('path'));
         while (!array_pop($arPath) && count($arPath) > 0) {
             continue;
         }
@@ -46,6 +46,36 @@ class DiskManager
         }
 
         return $result;
+    }
+
+    public function createFolder($name)
+    {
+        $parentPath = $this->resource->get('path');
+        if ($parentPath[-1] === '/') {
+            $newPath = $parentPath . trim($name);
+        } else {
+            $newPath = $parentPath . '/' . trim($name);
+        }
+
+        $newResource = $this->disk->getResource($newPath);
+        $newResource->create();
+        header('Location: ' . $_SERVER['REQUEST_URI']);
+    }
+
+    public function uploadFile($file)
+    {
+        if (!empty($file['name']) && !empty($file['tmp_name']) && isset($file['error']) && !$file['error']) {
+            $parentPath = $this->resource->get('path');
+            if ($parentPath[-1] === '/') {
+                $filePath = $parentPath . trim($file['name']);
+            } else {
+                $filePath = $parentPath . '/' . trim($file['name']);
+            }
+
+            $fileResource = $this->disk->getResource($filePath);
+            $fileResource->upload($file['tmp_name']);
+        }
+        header('Location: ' . $_SERVER['REQUEST_URI']);
     }
 
     public static function getFolderHtml($path, $name)
