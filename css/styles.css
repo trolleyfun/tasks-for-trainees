@@ -51,7 +51,7 @@ nav a {
     display: flex;
     justify-content: start;
     align-items: center;
-    padding: 10px 30px;
+    padding: 10px 15px;
     gap: 20px;
     border: 2px solid var(--item-border);
     cursor: pointer;
@@ -69,4 +69,3 @@ nav a {
 .resource-item h1 {
     font-size: 16px;
 }
-

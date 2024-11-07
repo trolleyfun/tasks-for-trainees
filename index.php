@@ -32,10 +32,12 @@ $collection = $resource->get('items');
     <div class="container">
         <section id="resources">
             <a href="index.php?dir=Папка1" class="resource-item">
+                <input type="checkbox">
                 <img src="images/folder.svg" alt="">
                 <h1>Папка1</h1>
             </a>
             <a href="index.php?dir=Папка2" class="resource-item">
+                <input type="checkbox">
                 <img src="images/folder.svg" alt="">
                 <h1>Папка2</h1>
             </a>
