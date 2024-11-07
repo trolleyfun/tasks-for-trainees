@@ -52,7 +52,7 @@ nav a {
     justify-content: start;
     align-items: center;
     padding: 10px 15px;
-    gap: 20px;
+    gap: 10px;
     border: 2px solid var(--item-border);
     cursor: pointer;
 }
@@ -63,9 +63,12 @@ nav a {
 }
 
 .resource-item img {
-    height: 15px;
+    height: 20px;
 }
 
 .resource-item h1 {
     font-size: 16px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
