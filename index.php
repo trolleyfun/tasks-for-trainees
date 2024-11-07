@@ -23,6 +23,16 @@ $manager = new DiskManager(OAUTH_TOKEN, urldecode($dirPath));
         <a href="index.php">Главная</a>
     </nav>
     <div class="container">
+        <section class="col-menu">
+            <div class="form-container">
+                <input type="text" name="folder_name" placeholder="Название папки" class="form-input">
+                <button class="form-button">Создать</button>
+            </div>
+            <div class="form-container">
+                <input type="file" name="file_name" class="form-input">
+                <button class="form-button">Загрузить</button>
+            </div>
+        </section>
         <section id="resources">
         <?php
         echo $manager->displayItems();

@@ -40,13 +40,46 @@ nav a {
     font-weight: bold;
 }
 
+/* Menu */
+.col-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 20px;
+}
+.form-container {
+    display: flex;
+    justify-content: start;
+    align-items: stretch;
+    gap: 10px;
+}
+.form-input {
+    outline: none;
+    border: 2px solid var(--item-border);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    width: 250px;
+}
+.form-button {
+    border: 2px solid var(--item-border);
+    border-radius: 5px;
+    background-color: var(--item-border);
+    color: var(--text-hover-color);
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 150px;
+}
+
 /* Resources */
 #resources {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
-
 .resource-item {
     display: flex;
     justify-content: start;
@@ -56,18 +89,15 @@ nav a {
     border: 2px solid var(--item-border);
     cursor: pointer;
 }
-
 .resource-item:hover {
     background-color: var(--item-border);
     color: var(--text-hover-color);
 }
-
 .resource-item img {
     height: 20px;
 }
-
 .resource-item h1 {
-    font-size: 16px;
+    font-size: 14px;
     white-space: nowrap;
     overflow-x: hidden;
     text-overflow: ellipsis;
