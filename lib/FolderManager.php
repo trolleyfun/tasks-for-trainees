@@ -27,7 +27,7 @@ class FolderManager extends DiskManager
             if ($item->isDir()) {
                 $result .= self::getFolderHtml($item->get('path'), $item->get('name'));
             } elseif ($item->isFile()) {
-                $result .= self::getFileHtml($item->get('path'), $item->get('name'));
+                $result .= self::getFileHtml($item->get('path'), $item->get('name'), $item->get('media_type'));
             }
         }
 
@@ -103,14 +103,14 @@ class FolderManager extends DiskManager
     {
         if ($parent) {
             $result = '
-            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item">
+            <a href="index.php?path='.htmlspecialchars(urlencode($path)).'" class="resource-item">
                 <input type="checkbox" class="checkbox-item">
                 <img src="images/folder.svg" alt="">
                 <h1>'.htmlspecialchars($name).'</h1>
             </a>';
         } else {
             $result = '
-            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
+            <a href="index.php?path='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
             .htmlspecialchars($name).'">
                 <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
                 .'" class="checkbox-item">
@@ -121,15 +121,34 @@ class FolderManager extends DiskManager
         return $result;
     }
 
-    public static function getFileHtml($path, $name)
+    public static function getFileHtml($path, $name, $type = '')
     {
+        switch ($type) {
+            case 'audio':
+                $icon = 'images/audio.svg';
+                break;
+            case 'image':
+                $icon = 'images/image.svg';
+                break;
+            case 'text':
+                $icon = 'images/text.svg';
+                break;
+            case 'video':
+                $icon = 'images/video.svg';
+                break;
+            default:
+                $icon = 'images/blank.svg';
+                break;
+        }
+
         $result = '
-        <div class="resource-item" title="'.htmlspecialchars($name).'">
+            <a href="file.php?path='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
+            .htmlspecialchars($name).'">
             <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
             .'" class="checkbox-item">
-            <img src="images/image.svg" alt="">
+            <img src="'.$icon.'" alt="">
             <h1>'.htmlspecialchars($name).'</h1>
-        </div>';
+        </a>';
         return $result;
     }
 }

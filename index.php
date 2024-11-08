@@ -9,7 +9,7 @@ session_start();
 
 $_SESSION['csrf_token'] = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
 
-$dirPath = $_GET['dir'] ?? 'disk:/';
+$dirPath = $_GET['path'] ?? 'disk:/';
 $folder = new FolderManager(OAUTH_TOKEN, urldecode($dirPath));
 
 if (isset($_POST['create_folder_button'])) {
@@ -47,8 +47,9 @@ if (isset($_POST['delete_item_button'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walle</title>
+    <title>Walle &bull; Disk Manager</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="favicon.ico">
 </head>
 <body>
     <nav>
