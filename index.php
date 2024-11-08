@@ -1,22 +1,21 @@
 <?php
 
-use Yandex\DiskManager;
+use Trolleyfun\Yandex\FolderManager;
 
-require_once('vendor/autoload.php');
-require_once('Yandex/DiskManager.php');
-require_once('token.php');
+require_once(__DIR__.'/vendor/autoload.php');
+require_once(__DIR__.'/token.php');
 
 $dirPath = $_GET['dir'] ?? 'disk:/';
-$manager = new DiskManager(OAUTH_TOKEN, urldecode($dirPath));
+$folder = new FolderManager(OAUTH_TOKEN, urldecode($dirPath));
 
 if (!empty($_POST['folder_name'])) {
     $folderName = $_POST['folder_name'];
-    $manager->createFolder($folderName);
+    $folder->createFolder($folderName);
 }
 
 if (!empty($_FILES['file']['name'])) {
     $file = $_FILES['file'];
-    $manager->uploadFile($file);
+    $folder->uploadFile($file);
 }
 ?>
 
@@ -49,7 +48,7 @@ if (!empty($_FILES['file']['name'])) {
         </section>
         <section id="resources">
         <?php
-        echo $manager->displayItems();
+        echo $folder->displayItems();
         ?>
         </section>
     </div>
