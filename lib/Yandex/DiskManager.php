@@ -29,10 +29,11 @@ class DiskManager
     public static function getFolderHtml($path, $name)
     {
         $result = '
-        <a href="index.php?dir='.urlencode($path).'" class="resource-item" title="'.$name.'">
+        <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
+        .htmlspecialchars($name).'">
             <input type="checkbox">
             <img src="images/folder.svg" alt="">
-            <h1>'.$name.'</h1>
+            <h1>'.htmlspecialchars($name).'</h1>
         </a>';
         return $result;
     }
@@ -40,10 +41,10 @@ class DiskManager
     public static function getFileHtml($path, $name)
     {
         $result = '
-        <div class="resource-item" title="'.$name.'">
+        <div class="resource-item" title="'.htmlspecialchars($name).'">
             <input type="checkbox">
             <img src="images/image.svg" alt="">
-            <h1>'.$name.'</h1>
+            <h1>'.htmlspecialchars($name).'</h1>
         </div>';
         return $result;
     }

@@ -2,11 +2,16 @@
 
 namespace Trolleyfun\Yandex;
 
+use Trolleyfun\Yandex\Exception\ResourceTypeNotValidException;
+
 class FolderManager extends DiskManager
 {
     public function __construct($oauthToken, $resourcePath)
     {
         parent::__construct($oauthToken, $resourcePath);
+        if (!$this->resource->isDir()) {
+            throw new ResourceTypeNotValidException('Ресурс не является папкой');
+        }
     }
 
     public function displayItems()
