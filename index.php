@@ -31,6 +31,16 @@ if (!empty($_FILES['file']['name'])) {
         header('Location: ' . $_SERVER['REQUEST_URI']);
     }
 }
+
+if (!empty($_POST['item_path'])) {
+    $arItemPath = $_POST['item_path'];
+    $csrfToken = $_POST['csrf_token'] ?? '';
+    if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+        $folder->deleteResources($arItemPath);
+    } else {
+        header('Location: ' . $_SERVER['REQUEST_URI']);
+    }
+}
 ?>
 
 <!DOCTYPE html>

@@ -19,7 +19,7 @@ class FolderManager extends DiskManager
         $result = '';
 
         if ($parentPath = $this->getParentPath()) {
-            $result .= self::getFolderHtml($parentPath, '..');
+            $result .= self::getFolderHtml($parentPath, '..', true);
         }
 
         foreach ($this->resource->get('items') as $item) {
@@ -59,6 +59,19 @@ class FolderManager extends DiskManager
 
             $fileResource = $this->disk->getResource($filePath);
             $fileResource->upload($file['tmp_name']);
+        }
+        header('Location: ' . $_SERVER['REQUEST_URI']);
+    }
+
+    public function deleteResources($items_path)
+    {
+        if (is_array($items_path)) {
+            foreach ($items_path as $path) {
+                if ($path) {
+                    $deleteResource = $this->disk->getResource($path);
+                    $deleteResource->delete();
+                }
+            }
         }
         header('Location: ' . $_SERVER['REQUEST_URI']);
     }

@@ -26,16 +26,25 @@ class DiskManager
         return implode('/', $arPath);
     }
 
-    public static function getFolderHtml($path, $name)
+    public static function getFolderHtml($path, $name, $parent = false)
     {
-        $result = '
-        <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
-        .htmlspecialchars($name).'">
-            <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
-            .'" class="checkbox-item">
-            <img src="images/folder.svg" alt="">
-            <h1>'.htmlspecialchars($name).'</h1>
-        </a>';
+        if ($parent) {
+            $result = '
+            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item">
+                <input type="checkbox" class="checkbox-item">
+                <img src="images/folder.svg" alt="">
+                <h1>'.htmlspecialchars($name).'</h1>
+            </a>';
+        } else {
+            $result = '
+            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
+            .htmlspecialchars($name).'">
+                <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
+                .'" class="checkbox-item">
+                <img src="images/folder.svg" alt="">
+                <h1>'.htmlspecialchars($name).'</h1>
+            </a>';
+        }
         return $result;
     }
 
