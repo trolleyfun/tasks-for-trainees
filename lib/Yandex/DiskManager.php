@@ -31,7 +31,8 @@ class DiskManager
         $result = '
         <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
         .htmlspecialchars($name).'">
-            <input type="checkbox">
+            <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
+            .'" class="checkbox-item">
             <img src="images/folder.svg" alt="">
             <h1>'.htmlspecialchars($name).'</h1>
         </a>';
@@ -42,7 +43,8 @@ class DiskManager
     {
         $result = '
         <div class="resource-item" title="'.htmlspecialchars($name).'">
-            <input type="checkbox">
+            <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
+            .'" class="checkbox-item">
             <img src="images/image.svg" alt="">
             <h1>'.htmlspecialchars($name).'</h1>
         </div>';

@@ -19,14 +19,14 @@ class FolderManager extends DiskManager
         $result = '';
 
         if ($parentPath = $this->getParentPath()) {
-            $result .= self::getFolderHtml(urlencode($parentPath), '..');
+            $result .= self::getFolderHtml($parentPath, '..');
         }
 
         foreach ($this->resource->get('items') as $item) {
             if ($item->isDir()) {
-                $result .= self::getFolderHtml(urlencode($item->get('path')), $item->get('name'));
+                $result .= self::getFolderHtml($item->get('path'), $item->get('name'));
             } elseif ($item->isFile()) {
-                $result .= self::getFileHtml(urlencode($item->get('path')), $item->get('name'));
+                $result .= self::getFileHtml($item->get('path'), $item->get('name'));
             }
         }
 

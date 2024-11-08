@@ -46,15 +46,16 @@ if (!empty($_FILES['file']['name'])) {
         <a href="index.php">Главная</a>
     </nav>
     <div class="container">
+        <!-- Верхнее меню -->
         <section class="col-menu">
-            <form action="" method="post">
+            <form id="create-folder" action="" method="post">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <input type="text" name="folder_name" placeholder="Название папки" class="form-input">
                     <button type="submit" class="form-button">Создать</button>
                 </div>
             </form>
-            <form action="" method="post" enctype="multipart/form-data">
+            <form id="upload-file" action="" method="post" enctype="multipart/form-data">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <input type="file" name="file" class="form-input">
@@ -62,11 +63,34 @@ if (!empty($_FILES['file']['name'])) {
                 </div>
             </form>
         </section>
-        <section id="resources">
-        <?php
-        echo $folder->displayItems();
-        ?>
-        </section>
+
+        <!-- Список файлов и папок -->
+        <form id="delete-items" action="" method="post">
+            <section id="resources">
+            <?php
+            echo $folder->displayItems();
+            ?>
+            </section>
+
+            <!-- Нижнее меню -->
+            <section class="col-menu">
+                <div class="form-container">
+                    <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
+                    <button id="select-all" class="form-button">Выбрать все</button>
+                    <button id="unselect-all" class="form-button">Снять выделение</button>
+                    <button type="submit" class="form-button">Удалить выбранные</button>
+                </div>
+            </section>
+        </form>
     </div>
+
+    <!-- JQuery -->
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+		crossorigin="anonymous"></script>
+
+    <!-- Пользовательские скрипты -->
+    <script src="js/scripts.js"></script>
 </body>
 </html>
