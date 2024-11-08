@@ -2,6 +2,7 @@
 
 namespace Trolleyfun\Yandex;
 
+use Arhitector\Yandex\Disk\Operation;
 use Trolleyfun\Yandex\Exception\ResourceTypeNotValidException;
 
 class FolderManager extends DiskManager
@@ -35,20 +36,27 @@ class FolderManager extends DiskManager
 
     public function createFolder($name)
     {
-        $parentPath = $this->resource->get('path');
-        if ($parentPath[-1] === '/') {
-            $newPath = $parentPath . trim($name);
-        } else {
-            $newPath = $parentPath . '/' . trim($name);
+        $status = false;
+        if (trim($name)) {
+            $parentPath = $this->resource->get('path');
+            if ($parentPath[-1] === '/') {
+                $newPath = $parentPath . trim($name);
+            } else {
+                $newPath = $parentPath . '/' . trim($name);
+            }
+
+            $newResource = $this->disk->getResource($newPath);
+            $newResource->create();
+
+            $status = true;
         }
 
-        $newResource = $this->disk->getResource($newPath);
-        $newResource->create();
-        header('Location: ' . $_SERVER['REQUEST_URI']);
+        return $status;
     }
 
     public function uploadFile($file)
     {
+        $status = false;
         if (!empty($file['name']) && !empty($file['tmp_name']) && isset($file['error']) && !$file['error']) {
             $parentPath = $this->resource->get('path');
             if ($parentPath[-1] === '/') {
@@ -58,21 +66,70 @@ class FolderManager extends DiskManager
             }
 
             $fileResource = $this->disk->getResource($filePath);
-            $fileResource->upload($file['tmp_name']);
-        }
-        header('Location: ' . $_SERVER['REQUEST_URI']);
-    }
+            $operation = $fileResource->upload($file['tmp_name']);
 
-    public function deleteResources($items_path)
-    {
-        if (is_array($items_path)) {
-            foreach ($items_path as $path) {
-                if ($path) {
-                    $deleteResource = $this->disk->getResource($path);
-                    $deleteResource->delete();
-                }
+            if (is_bool($operation)) {
+                $status = $operation;
+            } elseif ($operation instanceof Operation) {
+                do {
+                    $status = $operation->isSuccess()? true: ($operation->isFailure()? false: $status);
+                } while ($operation->isPending());
             }
         }
-        header('Location: ' . $_SERVER['REQUEST_URI']);
+
+        return $status;
+    }
+
+    public function deleteResource($path)
+    {
+        $status = false;
+        if (trim($path)) {
+            $deleteResource = $this->disk->getResource(trim($path));
+            $operation = $deleteResource->delete();
+
+            if (is_bool($operation)) {
+                $status = $operation;
+            } elseif ($operation instanceof Operation) {
+                do {
+                    $status = $operation->isSuccess()? true: ($operation->isFailure()? false: $status);
+                } while ($operation->isPending());
+            }
+        }
+
+        return $status;
+    }
+
+    public static function getFolderHtml($path, $name, $parent = false)
+    {
+        if ($parent) {
+            $result = '
+            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item">
+                <input type="checkbox" class="checkbox-item">
+                <img src="images/folder.svg" alt="">
+                <h1>'.htmlspecialchars($name).'</h1>
+            </a>';
+        } else {
+            $result = '
+            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
+            .htmlspecialchars($name).'">
+                <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
+                .'" class="checkbox-item">
+                <img src="images/folder.svg" alt="">
+                <h1>'.htmlspecialchars($name).'</h1>
+            </a>';
+        }
+        return $result;
+    }
+
+    public static function getFileHtml($path, $name)
+    {
+        $result = '
+        <div class="resource-item" title="'.htmlspecialchars($name).'">
+            <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
+            .'" class="checkbox-item">
+            <img src="images/image.svg" alt="">
+            <h1>'.htmlspecialchars($name).'</h1>
+        </div>';
+        return $result;
     }
 }

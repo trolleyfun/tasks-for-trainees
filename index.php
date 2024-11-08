@@ -12,34 +12,33 @@ $_SESSION['csrf_token'] = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
 $dirPath = $_GET['dir'] ?? 'disk:/';
 $folder = new FolderManager(OAUTH_TOKEN, urldecode($dirPath));
 
-if (!empty($_POST['folder_name'])) {
-    $folderName = $_POST['folder_name'];
+if (isset($_POST['create_folder_button'])) {
+    $folderName = $_POST['folder_name'] ?? '';
     $csrfToken = $_POST['csrf_token'] ?? '';
     if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
         $folder->createFolder($folderName);
-    } else {
-        header('Location: ' . $_SERVER['REQUEST_URI']);
     }
+    header('Location: ' . $_SERVER['REQUEST_URI']);
 }
 
-if (!empty($_FILES['file']['name'])) {
-    $file = $_FILES['file'];
+if (isset($_POST['upload_file_button'])) {
+    $file = $_FILES['file'] ?? '';
     $csrfToken = $_POST['csrf_token'] ?? '';
     if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
         $folder->uploadFile($file);
-    } else {
-        header('Location: ' . $_SERVER['REQUEST_URI']);
     }
+    header('Location: ' . $_SERVER['REQUEST_URI']);
 }
 
-if (!empty($_POST['item_path'])) {
-    $arItemPath = $_POST['item_path'];
+if (isset($_POST['delete_item_button'])) {
+    $arItemPath = $_POST['item_path'] ?? '';
     $csrfToken = $_POST['csrf_token'] ?? '';
-    if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
-        $folder->deleteResources($arItemPath);
-    } else {
-        header('Location: ' . $_SERVER['REQUEST_URI']);
+    if (hash_equals($_SESSION['csrf_token'], $csrfToken) && is_array($arItemPath)) {
+        foreach ($arItemPath as $path) {
+            $folder->deleteResource($path);
+        }
     }
+    header('Location: ' . $_SERVER['REQUEST_URI']);
 }
 ?>
 
@@ -57,38 +56,42 @@ if (!empty($_POST['item_path'])) {
     </nav>
     <div class="container">
         <!-- Верхнее меню -->
-        <section class="col-menu">
+        <section id="top-menu" class="col-menu">
             <form id="create-folder" action="" method="post">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <input type="text" name="folder_name" placeholder="Название папки" class="form-input">
-                    <button type="submit" class="form-button">Создать</button>
+                    <button type="submit" name="create_folder_button" class="form-button">Создать</button>
                 </div>
             </form>
             <form id="upload-file" action="" method="post" enctype="multipart/form-data">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <input type="file" name="file" class="form-input">
-                    <button type="submit" class="form-button">Загрузить</button>
+                    <button type="submit" name="upload_file_button" class="form-button">Загрузить</button>
                 </div>
             </form>
         </section>
 
-        <!-- Список файлов и папок -->
         <form id="delete-items" action="" method="post">
+            <!-- Список файлов и папок -->
             <section id="resources">
-            <?php
-            echo $folder->displayItems();
-            ?>
+                <h1>Папка: <?=$folder->getName()?></h1>
+                <div class="resource-container">
+                <?php
+                echo $folder->displayItems();
+                ?>
+                </div>
             </section>
 
             <!-- Нижнее меню -->
-            <section class="col-menu">
+            <section id="bottom-menu" class="col-menu">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <button id="select-all" class="form-button">Выбрать все</button>
                     <button id="unselect-all" class="form-button">Снять выделение</button>
-                    <button type="submit" class="form-button">Удалить выбранные</button>
+                    <button type="submit" name="delete_item_button"
+                        class="form-button">Удалить выбранные</button>
                 </div>
             </section>
         </form>

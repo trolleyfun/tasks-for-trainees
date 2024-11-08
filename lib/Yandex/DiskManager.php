@@ -16,6 +16,11 @@ class DiskManager
         $this->resource = $this->disk->getResource($resourcePath);
     }
 
+    public function getName()
+    {
+        return $this->resource->get('name');
+    }
+
     public function getParentPath()
     {
         $arPath = explode('/', $this->resource->get('path'));
@@ -24,39 +29,5 @@ class DiskManager
         }
         array_push($arPath, '');
         return implode('/', $arPath);
-    }
-
-    public static function getFolderHtml($path, $name, $parent = false)
-    {
-        if ($parent) {
-            $result = '
-            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item">
-                <input type="checkbox" class="checkbox-item">
-                <img src="images/folder.svg" alt="">
-                <h1>'.htmlspecialchars($name).'</h1>
-            </a>';
-        } else {
-            $result = '
-            <a href="index.php?dir='.htmlspecialchars(urlencode($path)).'" class="resource-item" title="'
-            .htmlspecialchars($name).'">
-                <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
-                .'" class="checkbox-item">
-                <img src="images/folder.svg" alt="">
-                <h1>'.htmlspecialchars($name).'</h1>
-            </a>';
-        }
-        return $result;
-    }
-
-    public static function getFileHtml($path, $name)
-    {
-        $result = '
-        <div class="resource-item" title="'.htmlspecialchars($name).'">
-            <input type="checkbox" name="item_path[]" value="'.htmlspecialchars($path)
-            .'" class="checkbox-item">
-            <img src="images/image.svg" alt="">
-            <h1>'.htmlspecialchars($name).'</h1>
-        </div>';
-        return $result;
     }
 }

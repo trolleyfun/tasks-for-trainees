@@ -76,7 +76,12 @@ nav a {
 }
 
 /* Списой файлов и папок */
-#resources {
+#resources > h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.resource-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
