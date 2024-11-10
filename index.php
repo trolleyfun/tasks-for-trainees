@@ -77,7 +77,7 @@ if (isset($_POST['delete_item_button'])) {
         <form id="delete-items" action="" method="post">
             <!-- Список файлов и папок -->
             <section id="resources">
-                <h1>Папка: <?=$folder->getName()?></h1>
+                <h1>Папка: <?=htmlspecialchars($folder->getName())?></h1>
                 <div class="resource-container">
                 <?php
                 echo $folder->displayItems();

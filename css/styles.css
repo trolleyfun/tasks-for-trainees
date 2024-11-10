@@ -40,7 +40,7 @@ nav a {
     font-weight: bold;
 }
 
-/* Меню */
+/* Поля формы, кнопки */
 .col-menu {
     display: flex;
     flex-direction: column;
@@ -55,13 +55,17 @@ nav a {
     gap: 10px;
     flex-wrap: wrap;
 }
-.form-input {
+.form-input, .file-textarea {
     outline: none;
     border: 2px solid var(--item-border);
     border-radius: 5px;
     padding: 5px 10px;
     font-size: 14px;
     width: 250px;
+}
+.file-textarea {
+    width: 800px;
+    height: 400px;
 }
 .form-button {
     border: 2px solid var(--item-border);
@@ -75,9 +79,22 @@ nav a {
     width: 150px;
     text-align: center;
 }
+.input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 5px;
+    margin: 20px 0;
+}
+.input-container label {
+    font-size: 14px;
+    font-weight: bold;
+}
 
-/* Списой файлов и папок */
-#resources > h1 {
+
+/* Основная часть */
+#resources > h1, #file > h1 {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -110,16 +127,12 @@ nav a {
     text-overflow: ellipsis;
 }
 
-/* Файл */
-#file > h1 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
 /* Для мобильных устройств */
-@media only screen and (max-width: 750px) {
+@media only screen and (max-width: 1000px) {
     .container {
+        width: 90%;
+    }
+    .file-textarea {
         width: 90%;
     }
 }

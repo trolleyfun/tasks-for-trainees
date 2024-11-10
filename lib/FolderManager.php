@@ -27,7 +27,7 @@ class FolderManager extends DiskManager
             if ($item->isDir()) {
                 $result .= self::getFolderHtml($item->get('path'), $item->get('name'));
             } elseif ($item->isFile()) {
-                $result .= self::getFileHtml($item->get('path'), $item->get('name'), $item->get('media_type'));
+                $result .= self::getFileHtml($item->get('path'), $item->get('name'), $item->get('mime_type'));
             }
         }
 
@@ -123,17 +123,17 @@ class FolderManager extends DiskManager
 
     public static function getFileHtml($path, $name, $type = '')
     {
-        switch ($type) {
-            case 'audio':
+        switch (true) {
+            case preg_match('/audio\/.+/', $type):
                 $icon = 'images/audio.svg';
                 break;
-            case 'image':
+            case preg_match('/image\/.+/', $type):
                 $icon = 'images/image.svg';
                 break;
-            case 'text':
+            case preg_match('/text\/.+/', $type):
                 $icon = 'images/text.svg';
                 break;
-            case 'video':
+            case preg_match('/video\/.+/', $type):
                 $icon = 'images/video.svg';
                 break;
             default:

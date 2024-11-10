@@ -9,8 +9,15 @@ session_start();
 
 $_SESSION['csrf_token'] = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
 
-$filePath = $_GET['path'] ?? 'disk:/';
-$file = new FileManager(OAUTH_TOKEN, urldecode($filePath));
+$arFile = [];
+$arFile['path'] = $_GET['path'] ?? 'disk:/';
+$file = new FileManager(OAUTH_TOKEN, urldecode($arFile['path']));
+$arFile['type'] = $file->getFileType();
+$arFile['name'] = $file->getName();
+$arFile['isText'] = $file->isText();
+$arFile['content'] = $file->getTextFileContent();
+$arFile['downloadLink'] = $file->getDownloadLink();
+$arFile['parentPath'] = $file->getParentPath();
 
 ?>
 
@@ -31,7 +38,18 @@ $file = new FileManager(OAUTH_TOKEN, urldecode($filePath));
         <form id="update-file" action="" method="post">
             <!-- Просмотр файла -->
             <section id="file">
-                <h1>Файл: <?=$file->getName()?></h1>
+                <h1>Тип файла: <?=htmlspecialchars($arFile['type'])?></h1>
+                <div class="input-container">
+                    <label for="file_name">Название:</label>
+                    <input type="text" name="file_name" id="file_name" class="form-input"
+                        value="<?=htmlspecialchars($arFile['name'])?>">
+                </div>
+            <?php if ($arFile['isText']): ?>
+                <div class="input-container">
+                    <textarea name="file_content"
+                        class="file-textarea"><?=htmlspecialchars($arFile['content'])?></textarea>
+                </div>
+            <?php endif; ?>
 
             </section>
 
@@ -41,7 +59,9 @@ $file = new FileManager(OAUTH_TOKEN, urldecode($filePath));
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <button type="submit" name="update_file_button"
                         class="form-button">Сохранить</button>
-                    <a href="index.php?path=<?=htmlspecialchars(urlencode($file->getParentPath()))?>"
+                    <a href="<?=htmlspecialchars($arFile['downloadLink'])?>"
+                        class="form-button">Загрузить</a>
+                    <a href="index.php?path=<?=htmlspecialchars(urlencode($arFile['parentPath']))?>"
                         class="form-button">Назад</a>
                 </div>
             </section>
