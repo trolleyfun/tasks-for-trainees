@@ -19,6 +19,15 @@ $arFile['content'] = $file->getTextFileContent();
 $arFile['downloadLink'] = $file->getDownloadLink();
 $arFile['parentPath'] = $file->getParentPath();
 
+if (isset($_POST['update_file_button'])) {
+    $arFile['name'] = $_POST['file_name'] ?? '';
+    $arFile['content'] = $_POST['file_content'] ?? '';
+    $csrfToken = $_POST['csrf_token'] ?? '';
+    if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+        $file->updateFile($arFile['name'], $arFile['content']);
+    }
+    header('Location: file.php?path=' . urlencode($file->getPath()));
+}
 ?>
 
 <!DOCTYPE html>

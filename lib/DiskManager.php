@@ -21,6 +21,11 @@ class DiskManager
         return $this->resource->get('name');
     }
 
+    public function getPath()
+    {
+        return $this->resource->get('path');
+    }
+
     public function getParentPath()
     {
         $arPath = explode('/', $this->resource->get('path'));
