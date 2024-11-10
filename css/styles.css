@@ -46,7 +46,6 @@ nav a {
     flex-direction: column;
     justify-content: start;
     align-items: start;
-    gap: 20px;
 }
 .form-container {
     display: flex;
@@ -54,6 +53,7 @@ nav a {
     align-items: stretch;
     gap: 10px;
     flex-wrap: wrap;
+    margin: 20px 0;
 }
 .form-input, .file-textarea {
     outline: none;

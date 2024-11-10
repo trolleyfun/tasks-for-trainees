@@ -44,10 +44,10 @@ if (isset($_POST['update_file_button'])) {
         <a href="index.php">Главная</a>
     </nav>
     <div class="container">
-        <form id="update-file" action="" method="post">
-            <!-- Просмотр файла -->
-            <section id="file">
-                <h1>Тип файла: <?=htmlspecialchars($arFile['type'])?></h1>
+        <!-- Просмотр файла -->
+        <section id="file">
+            <h1>Тип файла: <?=htmlspecialchars($arFile['type'])?></h1>
+            <form id="update-file" action="" method="post">
                 <div class="input-container">
                     <label for="file_name">Название:</label>
                     <input type="text" name="file_name" id="file_name" class="form-input"
@@ -59,11 +59,6 @@ if (isset($_POST['update_file_button'])) {
                         class="file-textarea"><?=htmlspecialchars($arFile['content'])?></textarea>
                 </div>
             <?php endif; ?>
-
-            </section>
-
-            <!-- Нижнее меню -->
-            <section id="bottom-menu" class="col-menu">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <button type="submit" name="update_file_button"
@@ -73,8 +68,8 @@ if (isset($_POST['update_file_button'])) {
                     <a href="index.php?path=<?=htmlspecialchars(urlencode($arFile['parentPath']))?>"
                         class="form-button">Назад</a>
                 </div>
-            </section>
-        </form>
+            </form>
+        </section>
     </div>
 </body>
 </html>

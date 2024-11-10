@@ -74,19 +74,13 @@ if (isset($_POST['delete_item_button'])) {
             </form>
         </section>
 
-        <form id="delete-items" action="" method="post">
-            <!-- Список файлов и папок -->
-            <section id="resources">
-                <h1>Папка: <?=htmlspecialchars($folder->getName())?></h1>
+        <!-- Список файлов и папок -->
+        <section id="resources">
+            <h1>Папка: <?=htmlspecialchars($folder->getName())?></h1>
+            <form id="delete-items" action="" method="post">
                 <div class="resource-container">
-                <?php
-                echo $folder->displayItems();
-                ?>
+                    <?=$folder->displayItems()?>
                 </div>
-            </section>
-
-            <!-- Нижнее меню -->
-            <section id="bottom-menu" class="col-menu">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
                     <button id="select-all" class="form-button">Выбрать все</button>
@@ -94,8 +88,8 @@ if (isset($_POST['delete_item_button'])) {
                     <button type="submit" name="delete_item_button"
                         class="form-button">Удалить выбранные</button>
                 </div>
-            </section>
-        </form>
+            </form>
+        </section>
     </div>
 
     <!-- JQuery -->
