@@ -87,9 +87,12 @@ nav a {
     gap: 5px;
     margin: 20px 0;
 }
-.input-container label {
+.input-container label, .form-container label {
     font-size: 14px;
     font-weight: bold;
+}
+.form-container label {
+    align-self: center;
 }
 
 

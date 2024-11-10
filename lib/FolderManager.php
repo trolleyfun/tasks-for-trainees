@@ -15,6 +15,11 @@ class FolderManager extends DiskManager
         }
     }
 
+    public function isRoot()
+    {
+        return $this->resource->get('path') === 'disk:/' || $this->resource->get('path') === '/';
+    }
+
     public function displayItems()
     {
         $result = '';
@@ -93,6 +98,38 @@ class FolderManager extends DiskManager
                 do {
                     $status = $operation->isSuccess()? true: ($operation->isFailure()? false: $status);
                 } while ($operation->isPending());
+            }
+        }
+
+        return $status;
+    }
+
+    public function changeFolderName($name)
+    {
+        $status = false;
+        if ($this->resource->get('name') === trim($name)) {
+            $status = true;
+        } elseif (trim($name)) {
+            $parentPath = $this->getParentPath();
+            if ($parentPath[-1] === '/') {
+                $newPath = $parentPath . trim($name);
+            } else {
+                $newPath = $parentPath . '/' . trim($name);
+            }
+
+            $newResource = $this->disk->getResource($newPath);
+            $operation = $this->resource->move($newResource);
+
+            if (is_bool($operation)) {
+                $status = $operation;
+            } elseif ($operation instanceof Operation) {
+                do {
+                    $status = $operation->isSuccess()? true: ($operation->isFailure()? false: $status);
+                } while ($operation->isPending());
+            }
+
+            if ($status) {
+                $this->resource = $newResource;
             }
         }
 

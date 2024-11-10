@@ -9,14 +9,19 @@ session_start();
 
 $_SESSION['csrf_token'] = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
 
-$dirPath = $_GET['path'] ?? 'disk:/';
-$folder = new FolderManager(OAUTH_TOKEN, urldecode($dirPath));
+$arFolder = [];
+$arFolder['path']= $_GET['path'] ?? 'disk:/';
+$folder = new FolderManager(OAUTH_TOKEN, urldecode($arFolder['path']));
+$arFolder['newFolderName'] = '';
+$arFolder['isRoot'] = $folder->isRoot();
+$arFolder['name'] = $folder->getName();
+$arFolder['itemsListHtml'] = $folder->displayItems();
 
 if (isset($_POST['create_folder_button'])) {
-    $folderName = $_POST['folder_name'] ?? '';
+    $arFolder['newFolderName'] = $_POST['folder_name'] ?? '';
     $csrfToken = $_POST['csrf_token'] ?? '';
     if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
-        $folder->createFolder($folderName);
+        $folder->createFolder($arFolder['newFolderName']);
     }
     header('Location: ' . $_SERVER['REQUEST_URI']);
 }
@@ -28,6 +33,15 @@ if (isset($_POST['upload_file_button'])) {
         $folder->uploadFile($file);
     }
     header('Location: ' . $_SERVER['REQUEST_URI']);
+}
+
+if (isset($_POST['update_folder_button'])) {
+    $arFolder['name'] = $_POST['folder_name'] ?? '';
+    $csrfToken = $_POST['csrf_token'] ?? '';
+    if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+        $folder->changeFolderName($arFolder['name']);
+    }
+    header('Location: index.php?path=' . urlencode($folder->getPath()));
 }
 
 if (isset($_POST['delete_item_button'])) {
@@ -61,7 +75,8 @@ if (isset($_POST['delete_item_button'])) {
             <form id="create-folder" action="" method="post">
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
-                    <input type="text" name="folder_name" placeholder="Название папки" class="form-input">
+                    <input type="text" name="folder_name" placeholder="Название папки" class="form-input"
+                        value="<?=htmlspecialchars($arFolder['newFolderName'])?>">
                     <button type="submit" name="create_folder_button" class="form-button">Создать</button>
                 </div>
             </form>
@@ -76,10 +91,23 @@ if (isset($_POST['delete_item_button'])) {
 
         <!-- Список файлов и папок -->
         <section id="resources">
-            <h1>Папка: <?=htmlspecialchars($folder->getName())?></h1>
+        <?php if ($arFolder['isRoot']): ?>
+            <h1>Папка: <?=htmlspecialchars($arFolder['name'])?></h1>
+        <?php else: ?>
+            <form id="update-folder" action="" method="post">
+                <div class="form-container">
+                    <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
+                    <label for="folder_name">Папка:</label>
+                    <input type="text" name="folder_name" id="folder_name"
+                        value="<?=htmlspecialchars($arFolder['name'])?>" class="form-input">
+                    <button type="submit" name="update_folder_button" class="form-button">Переименовать</button>
+                </div>
+            </form>
+        <?php endif; ?>
+
             <form id="delete-items" action="" method="post">
                 <div class="resource-container">
-                    <?=$folder->displayItems()?>
+                    <?=$arFolder['itemsListHtml']?>
                 </div>
                 <div class="form-container">
                     <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
