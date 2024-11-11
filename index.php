@@ -8,9 +8,12 @@ use Trolleyfun\Yandex\Exception\ResourceTypeNotValidException;
 use Trolleyfun\Yandex\FolderManager;
 
 require_once(__DIR__.'/vendor/autoload.php');
-require_once(__DIR__.'/token.php');
 
 session_start();
+
+if (empty($_SESSION['oauth_token'])) {
+    header('Location: login.php');
+}
 
 $_SESSION['csrf_token'] = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
 
@@ -21,7 +24,7 @@ $arFolder['path']= $_GET['path'] ?? 'disk:/';
 $arFolder['success'] = $_GET['success'] ?? '';
 
 try {
-    $folder = new FolderManager(OAUTH_TOKEN, urldecode($arFolder['path']));
+    $folder = new FolderManager($_SESSION['oauth_token'], urldecode($arFolder['path']));
     $arFolder['newFolderName'] = '';
     $arFolder['isRoot'] = $folder->isRoot();
     $arFolder['name'] = $folder->getName();

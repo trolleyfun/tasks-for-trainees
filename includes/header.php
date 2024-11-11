@@ -9,6 +9,9 @@
 </head>
 <body>
     <nav>
-        <a href="index.php">Главная</a>
+        <ul class="nav-list">
+            <li><a href="index.php">Главная</a></li>
+            <li><a href="login.php?logout=ok">Выйти</a></li>
+        </ul>
     </nav>
     <div class="container">

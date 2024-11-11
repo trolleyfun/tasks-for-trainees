@@ -25,6 +25,9 @@ a {
     text-decoration: none;
     color: var(--item-text-color);
 }
+ul {
+    list-style: none;
+}
 .container {
     width: 80%;
     margin: 0 auto;
@@ -36,10 +39,47 @@ nav {
     color: var(--nav-text-color);
     padding: 10px 30px;
 }
-nav a {
+.nav-list {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 30px;
+}
+.nav-list a {
     color: var(--nav-text-color);
     font-size: 18px;
     font-weight: bold;
+}
+
+/* Форма авторизации */
+#login h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px
+}
+.login-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    border: 4px solid var(--item-border);
+    border-radius: 15px;
+    padding: 30px;
+}
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.logo-img {
+    height: 120px;
 }
 
 /* Информационные сообщения */
