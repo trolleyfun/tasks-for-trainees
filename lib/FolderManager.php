@@ -5,8 +5,18 @@ namespace Trolleyfun\Yandex;
 use Arhitector\Yandex\Disk\Operation;
 use Trolleyfun\Yandex\Exception\ResourceTypeNotValidException;
 
+/**
+ * Класс для управлениями директориями на яндекс-диске.
+ */
 class FolderManager extends DiskManager
 {
+    /**
+     * @param string $oauthToken
+     * @param string $resourcePath
+     * @throws Trolleyfun\Yandex\Exception\ResourceTypeNotValidException
+     *      если ресурс не является папкой.
+     * @return void
+     */
     public function __construct($oauthToken, $resourcePath)
     {
         parent::__construct($oauthToken, $resourcePath);
@@ -15,11 +25,24 @@ class FolderManager extends DiskManager
         }
     }
 
+    /**
+     * Проверяет, является ли ресурс корневой директорией диска.
+     *
+     * Возвращает true, если ресурс является корневой директорией на диске. Возвращает false, если ресурс
+     * не является корневой директорией на диске.
+     *
+     * @return bool
+     */
     public function isRoot()
     {
         return $this->resource->get('path') === 'disk:/' || $this->resource->get('path') === '/';
     }
 
+    /**
+     * Формирует HTML-код списка элементов директории яндекс-диска.
+     *
+     * @return string HTML-код списка элементов
+     */
     public function displayItems()
     {
         $result = '';
@@ -39,6 +62,16 @@ class FolderManager extends DiskManager
         return $result;
     }
 
+    /**
+     * Создает новую папку в текущем каталоге яндекс диска.
+     *
+     * Возвращает true, если новая папка создана. Возвращает false, если не удалось создать новую папку.
+     *
+     * Если ресурс с таким именем уже существует, папка создана не будет.
+     *
+     * @param string $name Имя новой папки
+     * @return bool
+     */
     public function createFolder($name)
     {
         $status = false;
@@ -59,6 +92,28 @@ class FolderManager extends DiskManager
         return $status;
     }
 
+    /**
+     * Загружает файл в текущую директорию яндекс-диска.
+     *
+     * Входной параметр должен быть массивом описывающим файл:
+     * ```
+     * Array
+     * (
+     *      [name] => имя_файла
+     *      [type] => тип_файла
+     *      [tmp_name] => путь_к_временному_файлу
+     *      [error] => код_ошибки
+     *      [size] => размер_файла
+     * )
+     * ```
+     *
+     * Возвращает true, если файл загружен. Возвращает false, если не удалось загрузить файл на диск.
+     *
+     * Если ресурс с таким именем уже существует, файл загружен не будет.
+     *
+     * @param array $file Параметры файла
+     * @return bool
+     */
     public function uploadFile($file)
     {
         $status = false;
@@ -85,6 +140,14 @@ class FolderManager extends DiskManager
         return $status;
     }
 
+    /**
+     * Удаляет ресурс с яндекс-диска.
+     *
+     * Возвращает true, если ресурс удален. Возвращает false, если не удалось удалить ресурс с яндекс-диска.
+     *
+     * @param string $path Путь к удаляемому ресурсу на диске
+     * @return bool
+     */
     public function deleteResource($path)
     {
         $status = false;
@@ -104,6 +167,16 @@ class FolderManager extends DiskManager
         return $status;
     }
 
+    /**
+     * Изменяет название текущей директории яндекс-диска.
+     *
+     * Возвращает true, если название было изменено. Возвращает false, если не удалось изменить название.
+     *
+     * Если ресурс с таким именем уже существует, папка переименована не будет.
+     *
+     * @param string Новое имя папки
+     * @return bool
+     */
     public function changeFolderName($name)
     {
         $status = false;
@@ -136,6 +209,19 @@ class FolderManager extends DiskManager
         return $status;
     }
 
+    /**
+     * Формирует HTML-код для иконки директории яндекс-диска.
+     *
+     * Если директория является родительской для текущей директории, следует передавать значение true
+     * для параметра $parent. В этом случае отсутствует всплывающая подсказка, и элемент checkbox формируется
+     * без аттрибута "name" (не передается вместе с другими полями формы).
+     *
+     * @param string $path Путь к папке на диске, для которой формируется иконка
+     * @param string $name Имя иконки
+     * @param bool $parent Тип папки, для которой формируется иконка (родительская или дочерняя).
+     *                     Необязательный параметр
+     * @return string HTML-код иконки
+     */
     public static function getFolderHtml($path, $name, $parent = false)
     {
         if ($parent) {
@@ -158,6 +244,17 @@ class FolderManager extends DiskManager
         return $result;
     }
 
+    /**
+     * Формирует HTML-код для иконки файла яндекс-диска.
+     *
+     * Параметр $type влияет на изображение, размещенное на иконке. Если параметр не передан, на иконке
+     * будет изображение по умолчанию.
+     *
+     * @param string $path Путь к файлу на диске, для которого формируется иконка
+     * @param string $name Имя иконки
+     * @param string $type MIME-тип файла. Необязательный параметр
+     * @return string HTML-код иконки
+     */
     public static function getFileHtml($path, $name, $type = '')
     {
         switch (true) {
