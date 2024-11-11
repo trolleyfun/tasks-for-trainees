@@ -50,6 +50,9 @@ nav a {
 .error {
     color: var(--text-error);
 }
+.success {
+    color: var(--text-success);
+}
 
 /* Поля формы, кнопки */
 .col-menu {

@@ -18,6 +18,7 @@ $arFolder = [];
 $arErrors = [];
 $displayMainSection = true;
 $arFolder['path']= $_GET['path'] ?? 'disk:/';
+$arFolder['success'] = $_GET['success'] ?? '';
 
 try {
     $folder = new FolderManager(OAUTH_TOKEN, urldecode($arFolder['path']));
@@ -55,7 +56,7 @@ try {
         $csrfToken = $_POST['csrf_token'] ?? '';
         if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
             $folder->changeFolderName($arFolder['name']);
-            header('Location: index.php?path=' . urlencode($folder->getPath()));
+            header('Location: index.php?success=ok&path=' . urlencode($folder->getPath()));
         } else {
             $arErrors[] = 'Неверный CSRF-токен';
             $displayMainSection = true;
@@ -85,9 +86,11 @@ try {
     header('Location: error.php');
 }
 
-include('includes/header.php');
-include('includes/errors.php');
-if ($displayMainSection) {
-    include('includes/folder_main_section.php');
+include(__DIR__.'/includes/header.php');
+include(__DIR__.'/includes/errors.php');
+if ($arFolder['success']) {
+    include(__DIR__.'/includes/folder_success.php');
+} elseif ($displayMainSection) {
+    include(__DIR__.'/includes/folder_main_section.php');
 }
-include('includes/footer.php');
+include(__DIR__.'/includes/footer.php');

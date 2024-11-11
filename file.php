@@ -18,6 +18,7 @@ $arFile = [];
 $arErrors = [];
 $displayMainSection = true;
 $arFile['path'] = $_GET['path'] ?? 'disk:/';
+$arFile['success'] = $_GET['success'] ?? '';
 
 try {
     $file = new FileManager(OAUTH_TOKEN, urldecode($arFile['path']));
@@ -34,7 +35,7 @@ try {
         $csrfToken = $_POST['csrf_token'] ?? '';
         if (hash_equals($_SESSION['csrf_token'], $csrfToken)) {
             $file->updateFile($arFile['name'], $arFile['content']);
-            header('Location: file.php?path=' . urlencode($file->getPath()));
+            header('Location: file.php?success=ok&path=' . urlencode($file->getPath()));
         } else {
             $arErrors[] = 'Неверный CSRF-токен';
             $displayMainSection = true;
@@ -50,9 +51,11 @@ try {
     header('Location: error.php');
 }
 
-include('includes/header.php');
-include('includes/errors.php');
-if ($displayMainSection) {
-    include('includes/file_main_section.php');
+include(__DIR__.'/includes/header.php');
+include(__DIR__.'/includes/errors.php');
+if ($arFile['success']) {
+    include(__DIR__.'/includes/file_success.php');
+} elseif ($displayMainSection) {
+    include(__DIR__.'/includes/file_main_section.php');
 }
-include('includes/footer.php');
+include(__DIR__.'/includes/footer.php');
