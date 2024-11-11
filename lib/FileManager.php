@@ -3,7 +3,7 @@
 namespace Trolleyfun\Yandex;
 
 use Arhitector\Yandex\Disk\Operation;
-use Trolleyfun\Yandex\Exception\FileCreationFailure;
+use Trolleyfun\Yandex\Exception\FileCreationFailureException;
 use Trolleyfun\Yandex\Exception\ResourceTypeNotValidException;
 
 class FileManager extends DiskManager
@@ -37,7 +37,7 @@ class FileManager extends DiskManager
         if ($this->isText()) {
             $fp = tmpfile();
             if (!$fp) {
-                throw new FileCreationFailure('Не удалось создать временный файл');
+                throw new FileCreationFailureException('Не удалось создать временный файл');
             } else {
                 $this->resource->download($fp);
                 rewind($fp);
@@ -95,7 +95,7 @@ class FileManager extends DiskManager
         if ($this->isText()) {
             $fp = tmpfile();
             if (!$fp) {
-                throw new FileCreationFailure('Не удалось создать временный файл');
+                throw new FileCreationFailureException('Не удалось создать временный файл');
             } else {
                 fwrite($fp, $content);
                 rewind($fp);

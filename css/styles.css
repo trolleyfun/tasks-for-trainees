@@ -10,6 +10,8 @@
     --item-text-color: #ffa500;
     --item-border: #ffa500;
     --text-hover-color: #ffffff;
+    --text-error: #ff0000;
+    --text-success: #008000;
 }
 body {
     background-color: var(--background-color);
@@ -38,6 +40,15 @@ nav a {
     color: var(--nav-text-color);
     font-size: 18px;
     font-weight: bold;
+}
+
+/* Информационные сообщения */
+.info {
+    font-size: 14px;
+    margin: 10px 0;
+}
+.error {
+    color: var(--text-error);
 }
 
 /* Поля формы, кнопки */

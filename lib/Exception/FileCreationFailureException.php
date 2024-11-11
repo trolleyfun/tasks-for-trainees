@@ -4,6 +4,6 @@ namespace Trolleyfun\Yandex\Exception;
 
 use Exception;
 
-class FileCreationFailure extends Exception
+class FileCreationFailureException extends Exception
 {
 }
