@@ -53,7 +53,7 @@ nav {
 
 /* Форма авторизации */
 #login h1 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 15px
 }
@@ -70,7 +70,7 @@ nav {
     align-items: center;
     border: 4px solid var(--item-border);
     border-radius: 15px;
-    padding: 30px;
+    padding: 20px;
 }
 .login-container {
     display: flex;
@@ -79,7 +79,7 @@ nav {
     gap: 10px;
 }
 .logo-img {
-    height: 120px;
+    height: 100px;
 }
 
 /* Информационные сообщения */
