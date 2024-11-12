@@ -7,3 +7,4 @@
 + неделя 3: [Шаблон комплексного компонента news](https://github.com/trolleyfun/tasks-for-trainees/tree/task_3)
 + неделя 2: [Шаблон компонента form.result.new](https://github.com/trolleyfun/tasks-for-trainees/tree/task_2)
 + неделя 1: [Шаблон компонента news.list](https://github.com/trolleyfun/tasks-for-trainees/tree/task_1)
++ неделя 0: [Форма авторизации с Яндекс-captcha](https://github.com/trolleyfun/RegistrationForm)
