@@ -27,16 +27,6 @@ class FileManager extends DiskManager
     }
 
     /**
-     * Возвращает ссылку на загрузку текущего файла с диска.
-     *
-     * @return string
-     */
-    public function getDownloadLink()
-    {
-        return $this->resource->get('file');
-    }
-
-    /**
      * Возвращает MIME-тип текущего файла.
      *
      * @return string

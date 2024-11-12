@@ -29,7 +29,6 @@ try {
     $arFile['name'] = $file->getName();
     $arFile['isText'] = $file->isText();
     $arFile['content'] = $file->getTextFileContent();
-    $arFile['downloadLink'] = $file->getDownloadLink();
     $arFile['parentPath'] = $file->getParentPath();
 
     if (isset($_POST['update_file_button'])) {

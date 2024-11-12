@@ -7,8 +7,6 @@
             <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
             <button type="submit" name="update_file_button"
                 class="form-button">Сохранить</button>
-            <a href="<?=htmlspecialchars($arFile['downloadLink'])?>"
-                class="form-button">Скачать</a>
             <a href="index.php?path=<?=htmlspecialchars(urlencode($arFile['parentPath']))?>"
                 class="form-button">Назад</a>
         </div>
@@ -28,8 +26,6 @@
             <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
             <button type="submit" name="update_file_button"
                 class="form-button">Сохранить</button>
-            <a href="<?=htmlspecialchars($arFile['downloadLink'])?>"
-                class="form-button">Скачать</a>
             <a href="index.php?path=<?=htmlspecialchars(urlencode($arFile['parentPath']))?>"
                 class="form-button">Назад</a>
         </div>
