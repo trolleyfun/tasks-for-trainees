@@ -105,6 +105,8 @@ class CarsAvailableComponent extends \CBitrixComponent
         if (!$carClasses) {
             throw new ComponentException('NO_CAR_CLASSES_FOUND');
         }
+
+        $carOrderedIds = $this->getCarsOrdered();
     }
 
     protected function getUserCarClasses()
@@ -134,7 +136,29 @@ class CarsAvailableComponent extends \CBitrixComponent
         return $userCarClasses;
     }
 
-    public static function validateDate($date, $format = 'd.m.Y H:i')
+    protected function getCarsOrdered()
+    {
+        $rsCars = CIBlockElement::GetList(
+            array(),
+            [
+                'IBLOCK_CODE' => $this->arParams['ORDERS_IBLOCK_CODE'],
+                '<PROPERTY_TIME_FROM' => $this->timeTo,
+                '>PROPERTY_TIME_TO' => $this->timeFrom
+            ],
+            false,
+            false,
+            ['ID', 'PROPERTY_CAR']
+        );
+
+        $carIds = [];
+        while ($row = $rsCars->Fetch()) {
+            $carIds[] = $row['PROPERTY_CAR_VALUE'];
+        }
+
+        return $carIds;
+    }
+
+    public static function validateDate($date, $format = 'Y-m-d H:i')
     {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
