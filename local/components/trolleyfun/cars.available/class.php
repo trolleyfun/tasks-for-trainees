@@ -70,13 +70,13 @@ class CarsAvailableComponent extends CBitrixComponent
     {
         global $USER;
 
-        $this->userId = $USER->GetId();
+        $this->userId = $USER->GetID();
         if (!$this->userId) {
             throw new ComponentException(Loc::getMessage('USER_NOT_AUTHORIZED'));
         }
 
-        $this->timeFrom = $_GET[$this->arParams['TIME_FROM_ALIAS']] ?? '';
-        $this->timeTo = $_GET[$this->arParams['TIME_TO_ALIAS']] ?? '';
+        $this->timeFrom = urldecode($_GET[$this->arParams['TIME_FROM_ALIAS']] ?? '');
+        $this->timeTo = urldecode($_GET[$this->arParams['TIME_TO_ALIAS']] ?? '');
         if (!$this->timeFrom || !$this->timeTo) {
             throw new ComponentException(Loc::getMessage('TIME_NOT_SET'));
         } elseif (!self::validateDate($this->timeFrom) || !self::validateDate($this->timeTo)) {
@@ -159,7 +159,9 @@ class CarsAvailableComponent extends CBitrixComponent
         );
         $userCarClasses = [];
         while ($row = $rsUserCarClasses->Fetch()) {
-            $userCarClasses[] = $row['PROPERTY_CAR_CLASS_VALUE'];
+            if ($row['PROPERTY_CAR_CLASS_VALUE']) {
+                $userCarClasses[] = $row['PROPERTY_CAR_CLASS_VALUE'];
+            }
         }
 
         return $userCarClasses;
