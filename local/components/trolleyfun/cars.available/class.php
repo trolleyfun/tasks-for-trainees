@@ -7,6 +7,7 @@
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\SystemException;
 use Bitrix\Main\UserTable;
 use Dev\Site\Exceptions\ComponentException;
 
@@ -14,7 +15,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
 
-class CarsAvailableComponent extends \CBitrixComponent
+class CarsAvailableComponent extends CBitrixComponent
 {
     protected $userId;
 
@@ -27,6 +28,7 @@ class CarsAvailableComponent extends \CBitrixComponent
         $arParams['CARS_IBLOCK_CODE'] = trim(((string)$arParams['CARS_IBLOCK_CODE'] ?? ''));
         $arParams['ORDERS_IBLOCK_CODE'] = trim(((string)$arParams['ORDERS_IBLOCK_CODE'] ?? ''));
         $arParams['JOBS_IBLOCK_CODE'] = trim(((string)$arParams['JOBS_IBLOCK_CODE'] ?? ''));
+        $arParams['DRIVERS_IBLOCK_CODE'] = trim(((string)$arParams['DRIVERS_IBLOCK_CODE'] ?? ''));
         $arParams['TIME_FROM_ALIAS'] = trim(((string)$arParams['TIME_FROM_ALIAS'] ?? ''));
         $arParams['TIME_TO_ALIAS'] = trim(((string)$arParams['TIME_TO_ALIAS'] ?? ''));
 
@@ -50,6 +52,8 @@ class CarsAvailableComponent extends \CBitrixComponent
             $this->includeComponentTemplate();
         } catch (ComponentException $e) {
             ShowError($e->getMessage());
+        } catch (SystemException $e) {
+            ShowError(Loc::getMessage('OTHER_ERRORS'));
         }
     }
 
@@ -68,25 +72,26 @@ class CarsAvailableComponent extends \CBitrixComponent
 
         $this->userId = $USER->GetId();
         if (!$this->userId) {
-            throw new ComponentException('USER_NOT_AUTHORIZED');
+            throw new ComponentException(Loc::getMessage('USER_NOT_AUTHORIZED'));
         }
 
         $this->timeFrom = $_GET[$this->arParams['TIME_FROM_ALIAS']] ?? '';
         $this->timeTo = $_GET[$this->arParams['TIME_TO_ALIAS']] ?? '';
         if (!$this->timeFrom || !$this->timeTo) {
-            throw new ComponentException('TIME_NOT_SET');
+            throw new ComponentException(Loc::getMessage('TIME_NOT_SET'));
         } elseif (!self::validateDate($this->timeFrom) || !self::validateDate($this->timeTo)) {
-            throw new ComponentException('INVALID_TIME');
+            throw new ComponentException(Loc::getMessage('INVALID_TIME'));
         } elseif ($this->timeFrom > $this->timeTo) {
-            throw new ComponentException('TIME_FROM_LARGER_THAN_TIME_TO');
+            throw new ComponentException(Loc::getMessage('TIME_FROM_LARGER_THAN_TIME_TO'));
         }
 
         if (
             !self::iblockCodeExists($this->arParams['CARS_IBLOCK_CODE'])
             || !self::iblockCodeExists($this->arParams['JOBS_IBLOCK_CODE'])
             || !self::iblockCodeExists($this->arParams['ORDERS_IBLOCK_CODE'])
+            || !self::iblockCodeExists($this->arParams['DRIVERS_IBLOCK_CODE'])
         ) {
-            throw new ComponentException('IBLOCK_CODE_INVALID');
+            throw new ComponentException(Loc::getMessage('IBLOCK_CODE_INVALID'));
         }
     }
 
@@ -103,10 +108,32 @@ class CarsAvailableComponent extends \CBitrixComponent
     {
         $carClasses = $this->getUserCarClasses();
         if (!$carClasses) {
-            throw new ComponentException('NO_CAR_CLASSES_FOUND');
+            throw new ComponentException(Loc::getMessage('NO_CAR_CLASSES_FOUND'));
         }
 
         $carOrderedIds = $this->getCarsOrdered();
+
+        $rsCars = CIBlockElement::GetList(
+            array(),
+            [
+                'IBLOCK_CODE' => $this->arParams['CARS_IBLOCK_CODE'],
+                '!ID' => $carOrderedIds,
+                'PROPERTY_CLASS' => $carClasses
+            ],
+            false,
+            false,
+            ['ID', 'NAME', 'PROPERTY_REG_ID', 'PROPERTY_DRIVER', 'PROPERTY_CLASS']
+        );
+
+        $cars = [];
+        while ($row = $rsCars->Fetch()) {
+            $cars[$row['ID']]['MODEL'] = $row['NAME'];
+            $cars[$row['ID']]['REG_ID'] = $row['PROPERTY_REG_ID_VALUE'];
+            $cars[$row['ID']]['CLASS'] = $row['PROPERTY_CLASS_VALUE'];
+            $cars[$row['ID']]['DRIVER'] = $this->getDriverById($row['PROPERTY_DRIVER_VALUE']);
+        }
+
+        return $cars;
     }
 
     protected function getUserCarClasses()
@@ -115,10 +142,10 @@ class CarsAvailableComponent extends \CBitrixComponent
             'filter' => ['ID' => $this->userId],
             'select' => ['ID', 'UF_POSITION']
         ]);
-        if (!is_null($arUser)) {
+        if (!is_null($arUser) && !empty($arUser['UF_POSITION'])) {
             $userPositionId = $arUser['UF_POSITION'];
         } else {
-            $userPositionId = '';
+            $userPositionId = false;
         }
 
         $rsUserCarClasses = CIBlockElement::GetList(
@@ -155,7 +182,31 @@ class CarsAvailableComponent extends \CBitrixComponent
             $carIds[] = $row['PROPERTY_CAR_VALUE'];
         }
 
-        return $carIds;
+        return array_unique($carIds);
+    }
+
+    protected function getDriverById($driverId)
+    {
+        if (!$driverId) {
+            $driverId = false;
+        }
+        $arDriver = CIBlockElement::GetList(
+            array(),
+            ['ID' => $driverId],
+            false,
+            false,
+            ['ID', 'PROPERTY_FIRST_NAME', 'PROPERTY_SECOND_NAME', 'PROPERTY_AGE']
+        )->Fetch();
+
+        $result = [];
+        if ($arDriver) {
+            $result['ID'] = $arDriver['ID'];
+            $result['FIRST_NAME'] = $arDriver['PROPERTY_FIRST_NAME_VALUE'];
+            $result['SECOND_NAME'] = $arDriver['PROPERTY_SECOND_NAME_VALUE'];
+            $result['AGE'] = $arDriver['PROPERTY_AGE_VALUE'];
+        }
+
+        return $result;
     }
 
     public static function validateDate($date, $format = 'Y-m-d H:i')
@@ -173,7 +224,7 @@ class CarsAvailableComponent extends \CBitrixComponent
     public static function iblockCodeExists($iblock_code)
     {
         return !is_null(IblockTable::getRow([
-            'filter' => ['CODE' => $iblock_code, 'ACTIVE' => 'Y'],
+            'filter' => ['CODE' => $iblock_code],
             'select' => ['ID']
         ]));
     }
