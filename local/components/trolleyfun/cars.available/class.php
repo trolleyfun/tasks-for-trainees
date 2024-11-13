@@ -107,7 +107,7 @@ class CarsAvailableComponent extends CBitrixComponent
      *                                                  (
      *                                                      [ID] =>
      *                                                      [FIRST_NAME] =>
-     *                                                      [SECOND_NAME] =>
+     *                                                      [LAST_NAME] =>
      *                                                      [AGE] =>
      *                                                  )
      *                                )
@@ -332,7 +332,7 @@ class CarsAvailableComponent extends CBitrixComponent
             ['ID' => $driverId],
             false,
             false,
-            ['ID', 'PROPERTY_FIRST_NAME', 'PROPERTY_SECOND_NAME', 'PROPERTY_AGE']
+            ['ID', 'PROPERTY_FIRST_NAME', 'PROPERTY_LAST_NAME', 'PROPERTY_AGE']
         )->Fetch();
 
         if (!$arDriver) {
@@ -341,7 +341,7 @@ class CarsAvailableComponent extends CBitrixComponent
             $result = [
                 'ID' => $arDriver['ID'],
                 'FIRST_NAME' => $arDriver['PROPERTY_FIRST_NAME_VALUE'],
-                'SECOND_NAME' => $arDriver['PROPERTY_SECOND_NAME_VALUE'],
+                'LAST_NAME' => $arDriver['PROPERTY_LAST_NAME_VALUE'],
                 'AGE' => $arDriver['PROPERTY_AGE_VALUE']
             ];
         }
