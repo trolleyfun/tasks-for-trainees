@@ -99,18 +99,19 @@ class CarsAvailableComponent extends CBitrixComponent
     {
         $result = ['TIME_FROM' => $this->timeFrom, 'TIME_TO' => $this->timeTo];
 
-        $result['CARS'] = $this->getCarsAvailable();
-
-        return $result;
-    }
-
-    protected function getCarsAvailable()
-    {
         $carClasses = $this->getUserCarClasses();
         if (!$carClasses) {
             throw new ComponentException(Loc::getMessage('NO_CAR_CLASSES_FOUND'));
         }
+        $result['CLASSES'] = $carClasses;
 
+        $result['CARS'] = $this->getCarsAvailable($carClasses);
+
+        return $result;
+    }
+
+    protected function getCarsAvailable($availableClasses)
+    {
         $carOrderedIds = $this->getCarsOrdered();
 
         $rsCars = CIBlockElement::GetList(
@@ -118,7 +119,7 @@ class CarsAvailableComponent extends CBitrixComponent
             [
                 'IBLOCK_CODE' => $this->arParams['CARS_IBLOCK_CODE'],
                 '!ID' => $carOrderedIds,
-                'PROPERTY_CLASS' => $carClasses
+                'PROPERTY_CLASS' => $availableClasses
             ],
             false,
             false,
@@ -127,6 +128,7 @@ class CarsAvailableComponent extends CBitrixComponent
 
         $cars = [];
         while ($row = $rsCars->Fetch()) {
+            $cars[$row['ID']]['ID'] = $row['ID'];
             $cars[$row['ID']]['MODEL'] = $row['NAME'];
             $cars[$row['ID']]['REG_ID'] = $row['PROPERTY_REG_ID_VALUE'];
             $cars[$row['ID']]['CLASS'] = $row['PROPERTY_CLASS_VALUE'];
