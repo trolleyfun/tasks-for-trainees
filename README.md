@@ -1,4 +1,5 @@
 # Задания стажировки
++ тестовое задание: [Компонент, который выводит список свободных автомобилей для сотрудников](https://github.com/trolleyfun/tasks-for-trainees/tree/final)
 + неделя 8: [Приложение для Яндекс-диска](https://github.com/trolleyfun/tasks-for-trainees/tree/task_8)
 + неделя 7: [Комплексное свойство](https://github.com/trolleyfun/tasks-for-trainees/tree/task_7)
 + неделя 6: [Компонент news.list для инфоблоков заданного типа](https://github.com/trolleyfun/tasks-for-trainees/tree/task_6)
