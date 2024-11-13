@@ -15,6 +15,12 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
 
+/**
+ * Компонент выводит список доступных для поездки служебных автомобилей.
+ *
+ * Компонент по GET-запросу, содержащему время начала и окончания поездки, формирует список доступных
+ * для поездки служебных автомобилей. Учитывается, какие классы автомобилей доступны текущему пользователю.
+ */
 class CarsAvailableComponent extends CBitrixComponent
 {
     protected $userId;
@@ -25,12 +31,12 @@ class CarsAvailableComponent extends CBitrixComponent
 
     public function onPrepareComponentParams($arParams)
     {
-        $arParams['CARS_IBLOCK_CODE'] = trim(((string)$arParams['CARS_IBLOCK_CODE'] ?? ''));
-        $arParams['ORDERS_IBLOCK_CODE'] = trim(((string)$arParams['ORDERS_IBLOCK_CODE'] ?? ''));
-        $arParams['JOBS_IBLOCK_CODE'] = trim(((string)$arParams['JOBS_IBLOCK_CODE'] ?? ''));
-        $arParams['DRIVERS_IBLOCK_CODE'] = trim(((string)$arParams['DRIVERS_IBLOCK_CODE'] ?? ''));
-        $arParams['TIME_FROM_ALIAS'] = trim(((string)$arParams['TIME_FROM_ALIAS'] ?? ''));
-        $arParams['TIME_TO_ALIAS'] = trim(((string)$arParams['TIME_TO_ALIAS'] ?? ''));
+        $arParams['CARS_IBLOCK_CODE'] = trim(((string)$arParams['CARS_IBLOCK_CODE'] ?? 'cars'));
+        $arParams['ORDERS_IBLOCK_CODE'] = trim(((string)$arParams['ORDERS_IBLOCK_CODE'] ?? 'orders'));
+        $arParams['JOBS_IBLOCK_CODE'] = trim(((string)$arParams['JOBS_IBLOCK_CODE'] ?? 'jobs'));
+        $arParams['DRIVERS_IBLOCK_CODE'] = trim(((string)$arParams['DRIVERS_IBLOCK_CODE'] ?? 'drivers'));
+        $arParams['TIME_FROM_ALIAS'] = trim(((string)$arParams['TIME_FROM_ALIAS'] ?? 'from'));
+        $arParams['TIME_TO_ALIAS'] = trim(((string)$arParams['TIME_TO_ALIAS'] ?? 'to'));
 
         return $arParams;
     }
