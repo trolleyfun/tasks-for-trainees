@@ -16,34 +16,35 @@ if (!empty($_GET['logout'])) {
 }
 
 /* Получение OAuth-токена для сервисов Яндекс */
-if (!empty($_GET['code']))
-  {
-    $query = array(
-      'grant_type' => 'authorization_code',
-      'code' => $_GET['code'],
-      'client_id' => CLIENT_ID,
-      'client_secret' => CLIENT_SECRET
-    );
-    $query = http_build_query($query);
+if (!empty($_GET['code'])) {
+    $query = http_build_query([
+        'grant_type' => 'authorization_code',
+        'code' => $_GET['code'],
+        'client_id' => CLIENT_ID,
+        'client_secret' => CLIENT_SECRET
+    ]);
 
-    $header = "Content-type: application/x-www-form-urlencoded";
+    $curlOptions = [
+        CURLOPT_URL => 'https://oauth.yandex.ru/token',
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_POST => 1,
+        CURLOPT_HTTPHEADER => ['Content-Type' => 'application/x-www-form-urlencoded'],
+        CURLOPT_POSTFIELDS => $query
+    ];
 
-    $opts = array('http' =>
-      array(
-      'method'  => 'POST',
-      'header'  => $header,
-      'content' => $query
-      )
-    );
-    $context = stream_context_create($opts);
-    $result = file_get_contents('https://oauth.yandex.ru/token', false, $context);
-    $result = json_decode($result);
+    $ch = curl_init();
+    curl_setopt_array($ch, $curlOptions);
+    $response = curl_exec($ch);
 
-    if ($result) {
-        $_SESSION['oauth_token'] = $result->access_token;
+    if (!curl_errno($ch)) {
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpCode == 200) {
+            $response = json_decode($response, true);
+            $_SESSION['oauth_token'] = $response['access_token'];
+        }
     }
     header('Location: index.php');
-  }
+}
 
 ?>
 
