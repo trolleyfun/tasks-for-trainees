@@ -1,8 +1,8 @@
 <?php
 
 /* Идентификатор и пароль приложения */
-define('CLIENT_ID', '');
-define('CLIENT_SECRET', '');
+define('CLIENT_ID', 'e4d9b04ea00c4bebb8037e23c5ad485b');
+define('CLIENT_SECRET', '8d8680a3ffa54ad9b62f318006f565a0');
 
 session_start();
 

@@ -1,11 +1,12 @@
 <!-- Верхнее меню -->
 <section id="top-menu" class="col-menu">
-    <form id="create-folder" action="" method="post">
+    <form id="create-folder" action="create_folder.php" method="post">
         <div class="form-container">
             <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token']?>">
+            <input type="hidden" name="dir_path" value="<?=$arFolder['path']?>">
             <input type="text" name="folder_name" placeholder="Название папки" class="form-input"
                 value="<?=htmlspecialchars($arFolder['newFolderName'])?>">
-            <button type="submit" name="create_folder_button" class="form-button">Создать</button>
+            <button type="submit" class="form-button">Создать</button>
         </div>
     </form>
     <form id="upload-file" action="" method="post" enctype="multipart/form-data">
